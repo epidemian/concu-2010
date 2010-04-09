@@ -30,14 +30,14 @@ int main(int argc, char* argv[])
 
 	pid_t pid = fork();
 	return pid ? writerProcess(pid, pathName)
-	           : readerProcess(pathName);
+			   : readerProcess(pathName);
 }
 
 
 int writerProcess(pid_t childPid, const string& pathName)
 {
-	SharedMemory<int>    sharedInt   (pathName, ::INT_ID);
-	SharedMemory<Person> sharedPerson(pathName, ::PERSON_ID);
+	SharedMemory<int>    sharedInt   (pathName, INT_ID);
+	SharedMemory<Person> sharedPerson(pathName, PERSON_ID);
 
 	sharedInt.get() = 481516;
 	Person& person = sharedPerson.get(); // A reference to the shared person.
