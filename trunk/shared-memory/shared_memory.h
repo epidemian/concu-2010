@@ -32,7 +32,7 @@ public:
 	 * @param pathName A path to an existing file.
 	 * @param id       A char to identify the shared memory object.
 	 * @param freeOnExit Whether the physical shared memory segment should be
-	 *                   freed when the SharedMemory is destroyed.
+	 *                   deallocated when the SharedMemory is destroyed.
 	 */
 	RawSharedMemory(size_t size, const string& pathName, char id,
 			bool freeOnExit = true);
@@ -70,13 +70,14 @@ public:
 
 	/**
 	 * Creates a shared memory segment containing an object of type T.
-	 * The memory of the object is zero-initialized.
+	 * The memory of the object is zero-initialized and it's constructor is not
+	 * called.
 	 * The shared memory is attached to the calling process.
 	 *
 	 * @param pathName A path to an existing file
 	 * @param id       A char to identify the shared memory object.
 	 * @param freeOnExit Whether the physical shared memory segment should be
-	 *                   freed when the SharedMemory is destroyed.
+	 *                   deallocated when the SharedMemory is destroyed.
 	 */
 	SharedMemory(const string& pathName, char id, bool freeOnExit = true):
 		_sharedMem(sizeof(T), pathName, id, freeOnExit)
@@ -85,7 +86,10 @@ public:
 
 	/**
 	 * Detaches the shared memory from the calling process and, in case
-	 * freeOnExit is true, the physical shared memory is destroyed.
+	 * freeOnExit is true, the physical shared memory is deallocated.
+	 * The destructor of the shared object is never called, and it shouldn't
+	 * be necessary, as it should be a primitive object with no resources to
+	 * deallocate.
 	 */
 	~SharedMemory() { }
 
