@@ -14,7 +14,7 @@
 using std::string;
 
 /** The runtime error type thrown by RawSharedMemory and SharedMemory. */
-class SharedMemoryError: std::runtime_error
+class SharedMemoryError: public std::runtime_error
 { public: SharedMemoryError(const string& msj, int errorCode = 0); };
 
 
@@ -92,6 +92,7 @@ public:
 	 * deallocate.
 	 */
 	~SharedMemory() { }
+
 
 	/** Returns a reference to the shared object. */
 	const T& get() const { return * (T*) _sharedMem.get(); }
