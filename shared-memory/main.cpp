@@ -12,6 +12,7 @@
 #include <sys/wait.h>
 
 #include <string>
+#include <cstdlib>
 #include <iostream>
 
 using std::string;
@@ -38,7 +39,7 @@ int writerProcess(pid_t childPid, const string& pathName)
 	SharedMemory<int>    sharedInt   (pathName, ::INT_ID);
 	SharedMemory<Person> sharedPerson(pathName, ::PERSON_ID);
 
-	sharedInt.get() = 666;
+	sharedInt.get() = 481516;
 	Person& person = sharedPerson.get(); // A reference to the shared person.
 	person = Person("Jesus", 2010);
 
