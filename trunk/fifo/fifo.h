@@ -77,6 +77,7 @@ public:
 
 private:
 	int _fileDescriptor;
+	int pwrite(const char* buffer, int size);
 };
 
 /**
@@ -104,10 +105,11 @@ public:
 	 * @param size       The size, in bytes, of the data to be read.
 	 */
 
-	int read(char* buffer, int size);
+	int read(char* buffer);
 
 private:
 	int _fileDescriptor;
+	int pread(char* buffer, int size);
 };
 
 #endif /* FIFO_H_ */

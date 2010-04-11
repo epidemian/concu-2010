@@ -40,11 +40,17 @@ FifoWriter::~FifoWriter()
 
 int FifoWriter::write(const char* buffer, int size)
 {
+	pwrite((char*)&size,sizeof(int));
+	return pwrite(buffer,size);
+}
+
+int FifoWriter::pwrite(const char* buffer, int size)
+{
 	int bytesToSend = size, bytesSended = 0;
 	char* index = (char*)buffer;
 
-	 while (bytesToSend)
-	 {
+	while (bytesToSend)
+	{
 		bytesSended = ::write(_fileDescriptor,buffer,size);
 
 		if (bytesSended <= 0)
@@ -72,12 +78,32 @@ FifoReader::~FifoReader()
 		perror("~FifoReader(): Could not close the fifo's file");
 }
 
-int FifoReader::read(char* buffer, int size)
+int FifoReader::read(char* buffer)
 {
-	int bytesReceived = ::read(_fileDescriptor,buffer,size);
-	if (bytesReceived <= 0)
-		perror("~FifoReader(): Could not read from fifo");
+	int bytesToReceived = 0;
+	pread((char*)&bytesToReceived, sizeof(int));
+
+	return pread(buffer, bytesToReceived);
+}
+
+int FifoReader::pread(char* buffer, int size){
+
+	int bytesToReceived = size, bytesReceived = 0;
+	char* index = (char*)buffer;
+
+	while (bytesToReceived)
+	{
+		bytesReceived = ::read(_fileDescriptor,buffer,size);
+
+		if (bytesReceived <= 0)
+		{
+			perror("~FifoReader(): Could not read from fifo");
+			return bytesReceived;
+		}
+
+		bytesToReceived -= bytesReceived;
+		index += bytesReceived;
+	 }
 
 	return bytesReceived;
-
 }
