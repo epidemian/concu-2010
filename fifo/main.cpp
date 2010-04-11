@@ -54,7 +54,7 @@ int readerProcess()
 	 */
 
 	char* p_person = (char*)&person;
-	r_fifo.read(p_person,sizeof(Person));
+	r_fifo.read(p_person);
 
 	/**
 	 * In the new world he becomeOlder ten times.
