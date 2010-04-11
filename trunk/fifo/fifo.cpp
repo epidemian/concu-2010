@@ -40,11 +40,24 @@ FifoWriter::~FifoWriter()
 
 int FifoWriter::write(const char* buffer, int size)
 {
-	int bytes = ::write(_fileDescriptor,buffer,size);
-	if (bytes == -1)
-		perror("~FifoWriter(): Could not write the fifo");
+	int bytesToSend = size, bytesSended = 0;
+	char* index = (char*)buffer;
 
-	return bytes;
+	 while (bytesToSend)
+	 {
+		bytesSended = ::write(_fileDescriptor,buffer,size);
+
+		if (bytesSended <= 0)
+		{
+			perror("~FifoWriter(): Could not write the fifo");
+			return bytesSended;
+		}
+
+		bytesToSend -= bytesSended;
+		index += bytesSended;
+	 }
+
+	return bytesSended;
 }
 
 FifoReader::FifoReader(const Fifo& fifo)
@@ -61,10 +74,10 @@ FifoReader::~FifoReader()
 
 int FifoReader::read(char* buffer, int size)
 {
-	int bytes = ::read(_fileDescriptor,buffer,size);
-	if (bytes == -1)
+	int bytesReceived = ::read(_fileDescriptor,buffer,size);
+	if (bytesReceived <= 0)
 		perror("~FifoReader(): Could not read from fifo");
 
-	return bytes;
+	return bytesReceived;
 
 }
