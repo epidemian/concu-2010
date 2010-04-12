@@ -33,8 +33,7 @@ int writerProcess(pid_t childPid)
 			"is " << person.age() << " years old.\n";
 	sleep(4);
 
-	const char* p_person = (char*)&person;
-	w_fifo.write(p_person,sizeof(Person));
+	w_fifo.writeFixedSize(&person, sizeof(Person));
 
 	waitpid(childPid, NULL, 0);
 
@@ -53,8 +52,7 @@ int readerProcess()
 	 * Mario Bros arrives into the Bros's World.
 	 */
 
-	char* p_person = (char*)&person;
-	r_fifo.read(p_person);
+	r_fifo.readFixedSize(&person, sizeof(person));
 
 	/**
 	 * In the new world he becomeOlder ten times.
