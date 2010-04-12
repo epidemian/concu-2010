@@ -76,8 +76,21 @@ public:
 	 */
 	size_t write(const void* buffer, size_t size);
 
+	/**
+	 * Writes a given number of bytes to the fifo.
+	 *
+	 * @param buffer Data to be written on the fifo.
+	 * @param size   The size, in bytes, of the data.
+	 */
 	void writeFixedSize(const void* buffer, size_t size);
 
+	/**
+	 * Writes an object to the pipe. Note that the object must be of scalar type
+	 * (or it's internal structure be all scalar types), as it will be written
+	 * as bytes.
+	 *
+	 * @param obj The object to be written to the pipe.
+	 */
 	template <typename T> void write(const T& obj)
 	{
 		writeFixedSize(&obj, sizeof(T));
@@ -116,8 +129,22 @@ public:
 	 */
 	size_t read(void* buffer, size_t size);
 
+	/**
+	 * Reads a given number of bytes from the fifo. In case less bytes could be
+	 * read, an exception is thrown.
+	 *
+	 * @param buffer Destination of the data.
+	 * @param size   The size, in bytes, of the data to be read.
+	 */
 	void readFixedSize(void* buffer, size_t size);
 
+	/**
+	 * Reads an object from the pipe. Note that the object must be of scalar
+	 * type (or it's internal structure be all scalar types), as it will be
+	 * written as bytes.
+	 *
+	 * @param obj The object to be read from the pipe.
+	 */
 	template <typename T> void read(T& obj)
 	{
 		readFixedSize(&obj, sizeof(T));
