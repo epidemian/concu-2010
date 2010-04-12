@@ -67,17 +67,20 @@ public:
 	virtual ~FifoWriter();
 
 	/**
-	 * Writes on the fifo.
+	 * Writes to the fifo.
 	 *
-	 * @param buffer     Data to be written on the fifo.
-	 * @param size       The size, in bytes, of the data.
+	 * @param buffer Data to be written on the fifo.
+	 * @param size   The size, in bytes, of the data.
+	 * @return       The number of bytes written to the fifo. Might be less than
+	 *               size.
 	 */
+	size_t write(const void* buffer, size_t size);
 
-	int write(const char* buffer, int size);
+	void writeFixedSize(const void* buffer, size_t size);
 
 private:
 	int _fileDescriptor;
-	int pwrite(const char* buffer, int size);
+	//int pwrite(const char* buffer, int size);
 };
 
 /**
@@ -101,15 +104,18 @@ public:
 	/**
 	 * Reads from the fifo.
 	 *
-	 * @param buffer     Destination of the data.
-	 * @param size       The size, in bytes, of the data to be read.
+	 * @param buffer Destination of the data.
+	 * @param size   The size, in bytes, of the data to be read.
+	 * @return       The number of bytes read and stored into the buffer. Might
+	 *               be less than size. Zero indicates end of file.
 	 */
+	size_t read(void* buffer, size_t size);
 
-	int read(char* buffer);
+	void readFixedSize(void* buffer, size_t size);
 
 private:
 	int _fileDescriptor;
-	int pread(char* buffer, int size);
+	//int pread(char* buffer, int size);
 };
 
 #endif /* FIFO_H_ */
