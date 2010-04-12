@@ -78,6 +78,11 @@ public:
 
 	void writeFixedSize(const void* buffer, size_t size);
 
+	template <typename T> void write(const T& obj)
+	{
+		writeFixedSize(&obj, sizeof(T));
+	}
+
 private:
 	int _fileDescriptor;
 	//int pwrite(const char* buffer, int size);
@@ -112,6 +117,11 @@ public:
 	size_t read(void* buffer, size_t size);
 
 	void readFixedSize(void* buffer, size_t size);
+
+	template <typename T> void read(T& obj)
+	{
+		readFixedSize(&obj, sizeof(T));
+	}
 
 private:
 	int _fileDescriptor;
