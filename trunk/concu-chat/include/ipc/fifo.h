@@ -33,7 +33,7 @@ public:
 	 *
 	 * @param pathName     A path to a non-existing file.
 	 */
-	Fifo(const string& pathName);
+	explicit Fifo(const string& pathName);
 
 	/**
 	 * Unlinks the associated file to the fifo from the file-system.
@@ -62,7 +62,7 @@ public:
 	 *
 	 * @param Fifo     A named-pipe that is use to get the pathName to open it.
 	 */
-	FifoWriter(const Fifo& fifo);
+	explicit FifoWriter(const Fifo& fifo);
 
 	/**
 	 * Closes the file of the fifo.
@@ -116,7 +116,7 @@ public:
 	 *
 	 * @param Fifo     A named-pipe that is use to get the pathName to open it.
 	 */
-	FifoReader(const Fifo& fifo);
+	explicit FifoReader(const Fifo& fifo);
 
 	/**
 	 * Closes the file of the fifo.
