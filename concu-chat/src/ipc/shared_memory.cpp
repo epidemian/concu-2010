@@ -16,7 +16,7 @@
 #include <cstdio>
 
 SharedMemoryError::SharedMemoryError(const string& msj, int errorCode) :
-	runtime_error(msj + " - Error: " + (errorCode ? strerror(errorCode) : ""))
+	Exception(msj + " - Error: " + (errorCode ? strerror(errorCode) : ""))
 { }
 
 RawSharedMemory::RawSharedMemory(size_t size, const string& pathName, char id,

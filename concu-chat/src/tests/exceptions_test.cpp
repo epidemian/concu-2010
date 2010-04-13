@@ -16,12 +16,13 @@ using std::cout;
 void test1();
 void test2();
 void test3();
+void test4();
 
 int exceptionsTest  (int argc, char* argv[])
 {
 	cout << "Exceptions Test\n\n";
 
-	void ( *tests[] )() = { test1, test2, test3 };
+	void ( *tests[] )() = { test1, test2, test3, test4 };
 	size_t nTests = ARR_SIZE(tests);
 
 	for (size_t i = 0; i < nTests; ++i)
@@ -54,7 +55,7 @@ void recursiveFunc(int n)
 		divide(5, n);
 }
 
-string thirdFunction(const string& foobar)
+string thirdFunction(const string& foobar = "default parameter")
 {
 	recursiveFunc(3);
 	return foobar;
@@ -74,8 +75,30 @@ void firstFunc()
 
 void test1()
 {
-	cout << "Test 1: Long stack\n";
+	cout << "Test 1: Normal functions, long stack\n";
 	firstFunc();
+}
+
+class Explosion
+{
+public:
+	Explosion(int a, float lol) { method1(lol, a); }
+
+private:
+	float method1(float m, int n) { return method2(n); }
+	float method2(int what, char the = 't', string fuck = "foo")
+	{ return explode(fuck); }
+	float explode(string lol)
+	{
+		throw Exception("Booooooooom!");
+	}
+
+};
+
+void test2()
+{
+	cout << "Test 2: Class methods\n";
+	Explosion e(1, 2);
 }
 
 
@@ -99,9 +122,9 @@ private:
 
 };
 
-void test2()
+void test3()
 {
-	cout << "Test 2: Parameterized class\n";
+	cout << "Test 3: Parameterized class\n";
 	SuperClass<double, std::string> superObject(4, "lalala");
 	superObject.explode();
 }
@@ -122,9 +145,9 @@ static void hiddenFunc()
 	hiddenRecursiveFunc(3);
 }
 
-void test3()
+void test4()
 {
-	cout << "Test 3: Static functions\n";
+	cout << "Test 4: Static functions\n";
 	hiddenFunc();
 }
 
