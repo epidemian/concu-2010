@@ -12,6 +12,7 @@ typedef int (*TestFunction) (int argc, char* argv[]);
 
 int sharedMemoryTest(int argc, char* argv[]);
 int fifoTest        (int argc, char* argv[]);
+int exceptionsTest  (int argc, char* argv[]);
 
 
 #endif /* TESTS_H_ */

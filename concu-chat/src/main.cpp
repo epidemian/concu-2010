@@ -15,8 +15,10 @@ using std::cerr;
 
 int main(int argc, char* argv[])
 {
-	TestFunction tests[] = { sharedMemoryTest,
-	                         fifoTest,
+	TestFunction tests[] = {
+//	                         sharedMemoryTest,
+//	                         fifoTest,
+	                         exceptionsTest,
 	                       };
 	size_t nTests = ARR_SIZE(tests);
 
