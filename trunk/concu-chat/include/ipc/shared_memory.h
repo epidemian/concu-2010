@@ -9,14 +9,14 @@
 #define IPC_SHARED_MEMORY_H_
 
 #include "utils.h"
+#include "exception.h"
 
 #include <string>
-#include <stdexcept>
 
 using std::string;
 
 /** The runtime error type thrown by RawSharedMemory and SharedMemory. */
-class SharedMemoryError: public std::runtime_error
+class SharedMemoryError: public Exception
 { public: SharedMemoryError(const string& msj, int errorCode = 0); };
 
 

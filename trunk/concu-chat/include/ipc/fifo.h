@@ -9,14 +9,14 @@
 #define IPC_FIFO_H_
 
 #include "utils.h"
+#include "exception.h"
 
 #include <string>
-#include <stdexcept>
 
 using std::string;
 
 /** The runtime error type thrown by Fifo. */
-class FifoError: public std::runtime_error
+class FifoError: public Exception
 { public: FifoError(const string& msj, int errorCode = 0); };
 
 /**

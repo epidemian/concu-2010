@@ -23,7 +23,7 @@ bool isFifoFile(const string& pathName)
 
 
 FifoError::FifoError(const string& msj, int errorCode) :
-	runtime_error(msj + " - Error: " + (errorCode ? strerror(errorCode) : ""))
+	Exception(msj + " - Error: " + (errorCode ? strerror(errorCode) : ""))
 { }
 
 
