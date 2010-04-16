@@ -151,5 +151,10 @@ void test4()
 	hiddenFunc();
 }
 
+int main(int argc, char **argv)
+{
+	return exceptionsTest(argc, argv);
+}
+
 
 
