@@ -8,9 +8,12 @@
 #include <iostream>
 
 // Helper functions.
-namespace
-{
 
+/**
+ * Checks if a file is a fifo.
+ * @param pathName A path of an existing file.
+ * @return Whether the file is a fifo or not.
+ */
 bool isFifoFile(const string& pathName)
 {
 	struct stat fileStat;
@@ -19,8 +22,6 @@ bool isFifoFile(const string& pathName)
 
 	return fileStat.st_mode & S_IFIFO;
 }
-
-} // end namespace.
 
 
 Fifo::Fifo(const string& pathName) : _pathName(pathName)

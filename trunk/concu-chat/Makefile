@@ -49,7 +49,7 @@ $(adios)_ldflags =
 #static = yes
 
 # Uncomment to make the compilation process more verbose.
-#verbose = yes
+verbose = yes
 
 
 ##### ADVANCED CONFIGURATION ###################################################
