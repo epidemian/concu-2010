@@ -26,20 +26,23 @@ all_src_dirs = $(common_src_dirs) \
 CFLAGS += $(patsubst %,-I%,$(include_dirs))
 
 
-# C flags go for C++ too.
-CXXFLAGS += $(CFLAGS)
-
-
 # Configures source file extensions, linker and standard depending on language.
 ifeq ($(language), C++)
 src_extension = .cpp
 LD = $(CXX)
+CFLAGS += -std=c++98
 else ifeq ($(language), C)
 src_extension = .c
 LD = $(CC)
+CFLAGS += -std=c99
 else
 # TODO: abort make here.
 endif
+
+
+# C flags go for C++ too.
+CXXFLAGS += $(CFLAGS)
+
 
 ifdef verbose
 RM := $(RM) -v
