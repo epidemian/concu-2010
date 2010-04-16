@@ -78,6 +78,11 @@ int readerProcess()
 	cout << "The new age of " << person.name() << " is: " << person.age() << "\n";
 
 	return 0;
-
 }
+
+int main(int argc, char **argv)
+{
+	return fifoTest(argc, argv);
+}
+
 

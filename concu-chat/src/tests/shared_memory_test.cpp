@@ -86,3 +86,8 @@ int readerProcess(const string& pathName)
 	cout << "Reader: I'm finished\n";
 	return 0;
 }
+
+int main(int argc, char **argv)
+{
+	return sharedMemoryTest(argc, argv);
+}
