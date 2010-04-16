@@ -5,8 +5,6 @@
  *      Author: nicolas
  */
 
-#include "tests.h"
-
 #include "ipc/fifo.h"
 #include "person.h"
 

@@ -5,8 +5,6 @@
  *      Author: demian
  */
 
-#include "tests.h"
-
 #include "ipc/shared_memory.h"
 #include "person.h"
 
