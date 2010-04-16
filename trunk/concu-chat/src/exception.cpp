@@ -35,27 +35,21 @@ string demangleStackString(const string& str)
 		string mangledName = str.substr(begin + 1, end - begin - 1);
 		string fileName = str.substr(0, begin);
 
-		// Calls g++ ABI for demangling.
+		// Calls C++ ABI for demangling (quite hacky... but very nice!).
 		int status;
 		char* demangledName =
 				abi::__cxa_demangle(mangledName.c_str(), NULL, NULL, &status);
 
-		if (demangledName)
-		{
-			ret = fileName + ":" + demangledName;
+		ret = demangledName ? fileName + ":" + demangledName
+		                    : fileName + ":" + mangledName + "()";
 
-			free(demangledName);
-		}
-		else {
-			std::cerr << "Could not demangle name \"" << mangledName << "\"\n";
-			ret = fileName + ":" + mangledName + "()";
-		}
+		free(demangledName);
 	}
-	else
-	{
+	else {
 		// Did'n find the mangled name. Returns the whole line.
 		ret = str;
 	}
+
 	return ret;
 }
 

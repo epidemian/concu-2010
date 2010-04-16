@@ -16,8 +16,8 @@ using std::cerr;
 int main(int argc, char* argv[])
 {
 	TestFunction tests[] = {
-//	                         sharedMemoryTest,
-//	                         fifoTest,
+	                         sharedMemoryTest,
+	                         fifoTest,
 	                         exceptionsTest,
 	                       };
 	size_t nTests = ARR_SIZE(tests);
@@ -30,6 +30,13 @@ int main(int argc, char* argv[])
 		cerr << "Invalid index\n";
 		return 1;
 	}
-	else
-		return tests[index](argc, argv);
+	else {
+		try {
+			return tests[index](argc, argv);
+		}
+		catch(...)
+		{
+			throw; // To force stack-unwinding.
+		}
+	}
 }
