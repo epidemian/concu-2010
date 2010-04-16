@@ -1,4 +1,5 @@
 #include "ipc/fifo.h"
+#include "ipc/ipc_error.h"
 
 #include <fcntl.h>
 #include <cerrno>
@@ -14,17 +15,12 @@ bool isFifoFile(const string& pathName)
 {
 	struct stat fileStat;
 	if (stat(pathName.c_str(), &fileStat) == -1)
-		throw FifoError("isFifoFile(): Could not get file info", errno);
+		throw IpcError("isFifoFile(): Could not get file info", errno);
 
 	return fileStat.st_mode & S_IFIFO;
 }
 
 } // end namespace.
-
-
-FifoError::FifoError(const string& msj, int errorCode) :
-	Exception(msj + " - Error: " + (errorCode ? strerror(errorCode) : ""))
-{ }
 
 
 Fifo::Fifo(const string& pathName) : _pathName(pathName)
@@ -37,11 +33,11 @@ Fifo::Fifo(const string& pathName) : _pathName(pathName)
 		if (fileAlreadyExists)
 		{
 			if (!isFifoFile(pathName))
-				throw FifoError("Fifo(): File " + pathName + " already exists, "
+				throw IpcError("Fifo(): File " + pathName + " already exists, "
 			                "but it's not a fifo");
 		}
 		else
-			throw FifoError("Fifo(): Could not create fifo file", errno);
+			throw IpcError("Fifo(): Could not create fifo file", errno);
 	}
 
 }
@@ -60,7 +56,7 @@ FifoWriter::FifoWriter(const Fifo& fifo)
 {
 	_fileDescriptor = open(fifo.getPathName().c_str(), O_WRONLY);
 	if (_fileDescriptor == -1)
-		throw FifoError("FifoWriter(): Could not open" + fifo.getPathName(),
+		throw IpcError("FifoWriter(): Could not open" + fifo.getPathName(),
 		                errno);
 }
 
@@ -76,7 +72,7 @@ size_t FifoWriter::write(const void* buffer, size_t size)
 {
 	int bytes = ::write(_fileDescriptor, buffer, size);
 	if (bytes == -1)
-		throw FifoError("FifoWriter::write(): Could not write to fifo", errno);
+		throw IpcError("FifoWriter::write(): Could not write to fifo", errno);
 
 	return bytes;
 }
@@ -93,7 +89,7 @@ void FifoWriter::writeFixedSize(const void* buffer, size_t size)
 
 		if (bytes == 0)
 			// Does not use errno.
-			throw FifoError("FifoWriter::writeFixedSize(): Could not write to "
+			throw IpcError("FifoWriter::writeFixedSize(): Could not write to "
 			                "fifo");
 
 		totalBytes += bytes;
@@ -106,7 +102,7 @@ FifoReader::FifoReader(const Fifo& fifo)
 {
 	_fileDescriptor = open(fifo.getPathName().c_str(), O_RDONLY);
 	if (_fileDescriptor == -1)
-		throw FifoError("FifoReader(): Could not open" + fifo.getPathName(),
+		throw IpcError("FifoReader(): Could not open" + fifo.getPathName(),
 		                errno);
 }
 
@@ -122,7 +118,7 @@ size_t FifoReader::read(void* buffer, size_t size)
 {
 	int bytes = ::read(_fileDescriptor, buffer, size);
 	if (bytes == -1)
-		throw FifoError("FifoReader::read(): Could not read from fifo", errno);
+		throw IpcError("FifoReader::read(): Could not read from fifo", errno);
 
 	return bytes;
 }
@@ -139,7 +135,7 @@ void FifoReader::readFixedSize(void* buffer, size_t size)
 
 		if (bytes == 0)
 			// Does not use errno.
-			throw FifoError("FifoReader::readFixedSize(): Unexpected EOF");
+			throw IpcError("FifoReader::readFixedSize(): Unexpected EOF");
 
 		totalBytes += bytes;
 		index += bytes;

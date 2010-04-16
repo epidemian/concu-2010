@@ -15,9 +15,6 @@
 
 using std::string;
 
-/** The runtime error type thrown by Fifo. */
-class FifoError: public Exception
-{ public: FifoError(const string& msj, int errorCode = 0); };
 
 /**
  * A class responsible for inter-process communication. Fifo (named pipe) is
