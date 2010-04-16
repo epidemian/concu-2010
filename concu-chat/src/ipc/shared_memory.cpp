@@ -6,18 +6,14 @@
  */
 
 #include "ipc/shared_memory.h"
+#include "ipc/ipc_error.h"
 
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <errno.h>
 
-#include <cstring>
 #include <cstdio>
-
-SharedMemoryError::SharedMemoryError(const string& msj, int errorCode) :
-	Exception(msj + " - Error: " + (errorCode ? strerror(errorCode) : ""))
-{ }
 
 RawSharedMemory::RawSharedMemory(size_t size, const string& pathName, char id,
 		bool freeOnExit)
@@ -27,18 +23,18 @@ RawSharedMemory::RawSharedMemory(size_t size, const string& pathName, char id,
 	// Creates key.
 	key_t key = ftok(pathName.c_str(), id);
 	if (key == (key_t)-1)
-		throw SharedMemoryError("SharedMemory(): Could not create key", errno);
+		throw IpcError("SharedMemory(): Could not create key", errno);
 
 	// Allocates a shared memory segment.
 	_shmId = shmget(key, size, 0644 | IPC_CREAT);
 	if (_shmId == -1)
-		throw SharedMemoryError("SharedMemory(): "
+		throw IpcError("SharedMemory(): "
 				"Could not allocate shared memory", errno);
 
 	// Attaches the shared memory to some address.
 	_data = shmat(_shmId, NULL, 0);
 	if (_data == (void*)-1)
-		throw SharedMemoryError("SharedMemory(): "
+		throw IpcError("SharedMemory(): "
 				"Could not attach shared memory", errno);
 }
 
