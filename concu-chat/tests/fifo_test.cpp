@@ -21,7 +21,7 @@ using std::cout;
 int writerProcess(pid_t);
 int readerProcess();
 
-int fifoTest(int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
 
 	cout << "Fifo Test\n\n";
 
@@ -79,10 +79,4 @@ int readerProcess()
 
 	return 0;
 }
-
-int main(int argc, char **argv)
-{
-	return fifoTest(argc, argv);
-}
-
 

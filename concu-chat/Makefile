@@ -13,8 +13,8 @@
 ##### BASIC CONFIGURATION ######################################################
 
 # Programs' names.
-shmtest = hola-mundo
-fifotest = adios-mundo
+shmtest = shared-memory-test
+fifotest = fifo-test
 exceptiontest = exceptions-test
 
 # Programs to build.
@@ -32,9 +32,13 @@ include_dirs = include
 
 # Program-specific source directories. 
 # Variable names must be <program name>_src_dirs
-$(shmtest)_src_dirs       = tests/shared_memory_test
-$(fifotest)_src_dirs      = tests/fifo_test
-$(exceptiontest)_src_dirs = tests/exceptions_test
+$(shmtest)_src_dirs       = 
+$(fifotest)_src_dirs      = 
+$(exceptiontest)_src_dirs = 
+
+$(shmtest)_src_files       = tests/shared_memory_test.cpp
+$(fifotest)_src_files      = tests/fifo_test.cpp
+$(exceptiontest)_src_files = tests/exceptions_test.cpp
 
 # Program-scpecific LDFLAGS. (CFLAGS are global... sorry)
 $(hola)_ldflags =
@@ -51,7 +55,7 @@ $(adios)_ldflags =
 ##### ADVANCED CONFIGURATION ###################################################
 
 # Linker options.
-#LDFLAGS =
+LDFLAGS = -rdynamic
 
 # Compiler options.
 #CFLAGS =
