@@ -65,7 +65,8 @@ find_src_files = $(foreach dir,$(1),\
 
 # Uses := asignment so variable doesn't expand every time it's used (and call
 # find command every time).
-all_src_files := $(call find_src_files,$(all_src_dirs))
+all_src_files := $(call find_src_files,$(all_src_dirs)) \
+    $(foreach prog,$(programs),$($(prog)_src_files))
 
 
 # Converts a source file to the corresponding object file. 
@@ -154,7 +155,8 @@ $(1) : $(2) Makefile
 endef
 
 get_program_obj_files = $(foreach src_file,\
-	$(call find_src_files,$(common_src_dirs) $($(notdir $(1))_src_dirs)),\
+	$(call find_src_files,$(common_src_dirs) $($(notdir $(1))_src_dirs)) \
+	$($(notdir $(1))_src_files),\
 	$(patsubst %,$(dir $(1))%,$(call src_to_obj, $(src_file))))
 
 get_program_ldflags = $($(notdir $(1))_ldflags) $(LDFLAGS)

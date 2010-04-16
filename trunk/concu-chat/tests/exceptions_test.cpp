@@ -12,13 +12,14 @@
 #include <vector>
 
 using std::cout;
+using std::cerr;
 
 void test1();
 void test2();
 void test3();
 void test4();
 
-int exceptionsTest  (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	cout << "Exceptions Test\n\n";
 
@@ -150,11 +151,5 @@ void test4()
 	cout << "Test 4: Static functions\n";
 	hiddenFunc();
 }
-
-int main(int argc, char **argv)
-{
-	return exceptionsTest(argc, argv);
-}
-
 
 
