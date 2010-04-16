@@ -45,7 +45,7 @@ public:
 private:
 	const string _pathName;
 
-	DECLARE_NON_COPIABLE(Fifo);
+	DECLARE_NON_COPIABLE(Fifo)
 };
 
 /**
@@ -99,7 +99,7 @@ public:
 private:
 	int _fileDescriptor;
 
-	DECLARE_NON_COPIABLE(FifoWriter);
+	DECLARE_NON_COPIABLE(FifoWriter)
 };
 
 /**
@@ -154,7 +154,7 @@ public:
 private:
 	int _fileDescriptor;
 
-	DECLARE_NON_COPIABLE(FifoReader);
+	DECLARE_NON_COPIABLE(FifoReader)
 };
 
 #endif /* FIFO_H_ */

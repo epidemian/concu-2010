@@ -49,7 +49,7 @@ private:
 	int   _shmId;
 
 	// Non copiable.
-	DECLARE_NON_COPIABLE(RawSharedMemory);
+	DECLARE_NON_COPIABLE(RawSharedMemory)
 };
 
 
@@ -98,7 +98,7 @@ private:
 	RawSharedMemory _sharedMem;
 
 	// Non copiable.
-	DECLARE_NON_COPIABLE(SharedMemory);
+	DECLARE_NON_COPIABLE(SharedMemory)
 };
 
 
