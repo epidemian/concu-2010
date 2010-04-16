@@ -1,0 +1,176 @@
+##### VARIABLES CALCULATED FROM CONFIGURATION ##################################
+
+# Compiler options to make it more strict.
+CFLAGS += -Wall -Wextra -pedantic -pedantic-errors
+
+# Debug compiler options.
+debug_cflags = -ggdb -g3 -DDEBUG -O0
+debug_cflags += -fno-inline
+
+# Release compiler options. 
+# Definig the NDEBUG avoids comipiling the asserts.
+release_cflags = -DNDEBUG -O3
+
+# Adds the -static flag if specified.
+ifdef static
+LDFLAGS += -static
+endif
+
+
+
+# All src and include dirs.
+all_src_dirs = $(common_src_dirs) \
+	$(foreach var,$(programs:%=%_src_dirs),$($(var)))
+
+# Adds every directory in include_dirs to the CFLAGS to search for .h files.
+CFLAGS += $(patsubst %,-I%,$(include_dirs))
+
+
+# C flags go for C++ too.
+CXXFLAGS += $(CFLAGS)
+
+
+# Configures source file extensions, linker and standard depending on language.
+ifeq ($(language), C++)
+src_extension = .cpp
+LD = $(CXX)
+else ifeq ($(language), C)
+src_extension = .c
+LD = $(CC)
+else
+# TODO: abort make here.
+endif
+
+ifdef verbose
+RM := $(RM) -v
+on_link_start     = @echo "Linking file \"$(strip $(1))\""
+on_compile_start  = @echo "Compiling file \"$(strip $(1))\""
+on_link_finish    = @echo "Finished linking \"$(strip $(1))\"" && echo
+on_compile_finish = @echo "Finished compiling \"$(strip $(1))\"" && echo
+else
+CC  := @$(CC)
+CXX := @$(CXX)
+RM  := @$(RM)
+LD  := @$(LD)
+on_link_start     = @echo "Linking file   \"$(strip $(1))\""
+on_compile_start  = @echo "Compiling file \"$(strip $(1))\""
+on_link_finish    = 
+on_compile_finish = 
+endif
+
+
+# Varieble/function to find all source files in a given list of directories.
+find_src_files = $(foreach dir,$(1),\
+	$(shell find $(dir) -name '*$(src_extension)'))
+
+# Uses := asignment so variable doesn't expand every time it's used (and call
+# find command every time).
+all_src_files := $(call find_src_files,$(all_src_dirs))
+
+
+# Converts a source file to the corresponding object file. 
+src_to_obj = $(patsubst %$(src_extension),%.o,\
+	$(patsubst $(framework_dir)/src/%, framework-src/%, $(1)))
+
+all_obj_files := $(foreach file,$(all_src_files),$(call src_to_obj,$(file)))
+
+# Creates the dependency files names by substituting the object files extension. 
+debug_deps_files   = $(all_obj_files:%.o=debug/%.d)
+release_deps_files = $(all_obj_files:%.o=release/%.d)
+
+# "Real" programs.
+debug_programs   = $(programs:%=debug/%)
+release_programs = $(programs:%=release/%)
+
+
+
+##### RULES ####################################################################
+
+# PHONY rules: Are not associated to a file.
+.PHONY : all clean debug release release-ub $(programs)
+
+# Includes the dependecy files.
+-include $(debug_deps_files)
+-include $(release_deps_files)
+
+all :
+	@echo "all $(all_obj_files)"
+	@echo "Use make <target>"
+	@echo "Where target might be:"
+	@echo " debug:   builds all executables with debug information"
+	@echo " release: builds all executables optimized"
+	@echo " clean:   deletes all object and dependency files as well as \
+executables"
+	@echo " <program>: builds program with the debug configuration"
+	@echo "<program> might be any of: $(programs)"
+
+
+# $(1) = complete object file path
+# $(2) = complete source file path
+# $(3) = compiler flags.
+define OBJ_RULE
+$(1) : $(2) Makefile
+	$(call on_compile_start,$(2))
+	@mkdir -p $(dir $(1))
+	$(CXX) $(strip -c $(3) -o $(1) $(2))
+	$(call on_compile_finish,$(2))
+endef
+
+
+# $(1) complete object file path
+# $(2) "debug" or "release"
+get_obj_cflags = $(CFLAGS) $($(2)_cflags) -MMD -MF $(1:%.o=%.d) -MP -MT $(1)
+
+generate_obj_rule = $(eval $(call OBJ_RULE,\
+	$(2)/$(call src_to_obj,$(1)),\
+	$(1),\
+	$(call get_obj_cflags,$(2)/$(call src_to_obj,$(1)),$(2))))
+
+$(foreach file,$(all_src_files), $(call generate_obj_rule,$(file),debug))
+$(foreach file,$(all_src_files), $(call generate_obj_rule,$(file),release))
+
+
+debug : $(debug_programs)
+
+release : $(release_programs)
+
+
+# Every program depends on the debug compilation of that program.
+define DEFAULT_PROGRAM
+$(1) : debug/$(1)
+endef
+$(foreach program,$(programs),$(eval $(call DEFAULT_PROGRAM,$(program))))
+
+
+# Specifies the rules to make the programs.
+# $(1) = The program executable to compile.
+# $(2) = The object files the excecutable need to compile.
+# $(3) = The linker flags for the excecutable.
+define PROGRAM_RULES
+$(1) : $(2) Makefile
+	$(call on_link_start,$(1))
+	$(LD) $(strip $(3) -o $(1) $(2))
+	$(call on_link_finish,$(1))
+endef
+
+get_program_obj_files = $(foreach src_file,\
+	$(call find_src_files,$(common_src_dirs) $($(notdir $(1))_src_dirs)),\
+	$(patsubst %,$(dir $(1))%,$(call src_to_obj, $(src_file))))
+
+get_program_ldflags = $($(notdir $(1))_ldflags) $(LDFLAGS)
+
+# Evaluates that macro for every program, defining the prerequisites to make 
+# them.
+$(foreach program,\
+	$(debug_programs) $(release_programs),\
+	$(eval $(call PROGRAM_RULES,\
+		$(program),\
+		$(call get_program_obj_files, $(program)),\
+		$(call get_program_ldflags, $(program)))))
+
+
+# Deletes all object and dependency files as well as the executables. 
+clean :
+	@echo "Cleaning project"
+	$(RM) -r debug release
+	@echo "Finished cleaning project"

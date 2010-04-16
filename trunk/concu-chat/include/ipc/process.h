@@ -25,7 +25,7 @@ private:
 	struct ProcessImpl;
 	ProcessImpl* _impl;
 
-	DECLARE_NON_COPIABLE(Process);
+	DECLARE_NON_COPIABLE(Process)
 };
 
 
