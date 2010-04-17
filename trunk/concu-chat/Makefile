@@ -16,9 +16,10 @@
 shmtest = shared-memory-test
 fifotest = fifo-test
 exceptiontest = exceptions-test
+messagetest = message-queue-test
 
 # Programs to build.
-programs = $(shmtest) $(fifotest) $(exceptiontest)
+programs = $(shmtest) $(fifotest) $(exceptiontest) $(messagetest)
 
 # Language: C or C++
 language = C++
@@ -35,10 +36,12 @@ include_dirs = include
 $(shmtest)_src_dirs       = 
 $(fifotest)_src_dirs      = 
 $(exceptiontest)_src_dirs = 
+$(messagetest)_src_dirs   = 
 
 $(shmtest)_src_files       = tests/shared_memory_test.cpp
 $(fifotest)_src_files      = tests/fifo_test.cpp
 $(exceptiontest)_src_files = tests/exceptions_test.cpp
+$(messagetest)_src_files   = tests/message_queue_test.cpp
 
 # Program-scpecific LDFLAGS. (CFLAGS are global... sorry)
 $(hola)_ldflags =
