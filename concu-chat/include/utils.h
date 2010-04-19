@@ -18,6 +18,4 @@
 
 int strToInt(const char* str) throw (std::invalid_argument);
 
-#define forever while(true)
-
 #endif /* UTILS_H_ */
