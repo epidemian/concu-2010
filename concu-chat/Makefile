@@ -18,13 +18,15 @@ fifotest = fifo-test
 exceptiontest = exceptions-test
 messagetest = message-queue-test
 semaphoretest = semaphore-test
+producertest = producer-consumer-test
 
 # Programs to build.
 programs = $(shmtest)\
 	$(fifotest)\
 	$(exceptiontest)\
 	$(messagetest)\
-	$(semaphoretest)
+	$(semaphoretest)\
+	$(producertest)
 
 # Language: C or C++
 language = C++
@@ -49,6 +51,7 @@ $(fifotest)_src_files      = tests/fifo_test.cpp
 $(exceptiontest)_src_files = tests/exceptions_test.cpp
 $(messagetest)_src_files   = tests/message_queue_test.cpp
 $(semaphoretest)_src_files = tests/semaphore_test.cpp
+$(producertest)_src_files  = tests/producer_consumer_test.cpp
 
 # Program-scpecific LDFLAGS. (CFLAGS are global... sorry)
 $(hola)_ldflags =

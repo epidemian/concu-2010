@@ -8,6 +8,7 @@
 #ifndef IPC_SHARED_MEMORY_H_
 #define IPC_SHARED_MEMORY_H_
 
+#include "ipc/resource.h"
 #include "utils.h"
 
 #include <string>
@@ -18,7 +19,7 @@ using std::string;
 /**
  * A class responsible for a segment of shared-between-processes memory.
  */
-class RawSharedMemory
+class RawSharedMemory: public Resource
 {
 public:
 	/**
@@ -28,23 +29,23 @@ public:
 	 * @param size     The size, in bytes, of the shared memory segment.
 	 * @param pathName A path to an existing file.
 	 * @param id       A char to identify the shared memory object.
-	 * @param freeOnExit Whether the physical shared memory segment should be
-	 *                   deallocated when the SharedMemory is destroyed.
+	 * @param ownResource Whether the physical shared memory segment
+	 *                   should be deallocated when the SharedMemory is
+	 *                   destroyed.
 	 */
 	RawSharedMemory(size_t size, const string& pathName, char id,
-			bool freeOnExit = true);
+			bool ownResource = true);
 
 	/**
 	 * Detaches the shared memory from the calling process and, in case
-	 * freeOnExit is true, the physical shared memory is destroyed.
+	 * ownResource is true, the physical shared memory is destroyed.
 	 */
-	~RawSharedMemory();
+	~RawSharedMemory() throw ();
 
 	const void* get() const { return _data; }
 		  void* get()       { return _data; }
 
 private:
-	bool  _freeOnExit;
 	void* _data;
 	int   _shmId;
 
@@ -60,7 +61,7 @@ private:
  *          struct of primitives types.
  */
 template <typename T>
-class SharedMemory
+class SharedMemory: public Resource
 {
 public:
 
@@ -72,27 +73,36 @@ public:
 	 *
 	 * @param pathName A path to an existing file
 	 * @param id       A char to identify the shared memory object.
-	 * @param freeOnExit Whether the physical shared memory segment should be
-	 *                   deallocated when the SharedMemory is destroyed.
+	 * @param ownResource Whether the physical shared memory segment
+	 *                   should be deallocated when the SharedMemory is
+	 *                   destroyed.
 	 */
-	SharedMemory(const string& pathName, char id, bool freeOnExit = true):
-		_sharedMem(sizeof(T), pathName, id, freeOnExit)
+	SharedMemory(const string& pathName, char id, bool ownResource):
+		Resource(ownResource),
+		_sharedMem(sizeof(T), pathName, id, ownResource)
 	{ }
 
 
 	/**
 	 * Detaches the shared memory from the calling process and, in case
-	 * freeOnExit is true, the physical shared memory is deallocated.
+	 * ownResource is true, the physical shared memory is deallocated.
 	 * The destructor of the shared object is never called, and it shouldn't
 	 * be necessary, as it should be a primitive object with no resources to
 	 * deallocate.
 	 */
-	~SharedMemory() { }
+	~SharedMemory() throw () { }
 
 
 	/** Returns a reference to the shared object. */
 	const T& get() const { return * (T*) _sharedMem.get(); }
 	      T& get()       { return * (T*) _sharedMem.get(); }
+
+
+	virtual bool ownResources() const
+	{ return _sharedMem.ownResources(); }
+
+	virtual void setOwnResources(bool value)
+	{ _sharedMem.setOwnResources(value); }
 
 private:
 	RawSharedMemory _sharedMem;

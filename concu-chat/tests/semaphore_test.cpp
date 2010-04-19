@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 
 int writerProcess(pid_t childPid, const string& pathName)
 {
-	SharedMemory<Person> sharedPerson(pathName, SHARED_MEM_ID);
+	SharedMemory<Person> sharedPerson(pathName, SHARED_MEM_ID, true);
 	int initValue = 0;
 	SemaphoreSet semSet(pathName, SEMAPHORE_ID, 1, &initValue, true); // true =
 	// own resources.
@@ -66,7 +66,7 @@ int writerProcess(pid_t childPid, const string& pathName)
 
 int readerProcess(const string& pathName)
 {
-	SharedMemory<Person> sharedPerson(pathName, SHARED_MEM_ID);
+	SharedMemory<Person> sharedPerson(pathName, SHARED_MEM_ID, true);
 	Person& person = sharedPerson.get();
 
 	int initValue = 0;

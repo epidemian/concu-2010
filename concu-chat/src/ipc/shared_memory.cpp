@@ -16,10 +16,9 @@
 #include <cstdio>
 
 RawSharedMemory::RawSharedMemory(size_t size, const string& pathName, char id,
-		bool freeOnExit)
+		bool ownResources):
+	Resource(ownResources)
 {
-	_freeOnExit = freeOnExit;
-
 	// Creates key.
 	key_t key = ftok(pathName.c_str(), id);
 	if (key == (key_t)-1)
@@ -38,7 +37,7 @@ RawSharedMemory::RawSharedMemory(size_t size, const string& pathName, char id,
 				"Could not attach shared memory", errno);
 }
 
-RawSharedMemory::~RawSharedMemory()
+RawSharedMemory::~RawSharedMemory() throw ()
 {
 	int errorCode = shmdt(_data);
 	if (errorCode == -1)
@@ -50,7 +49,7 @@ RawSharedMemory::~RawSharedMemory()
 	if (errorCode == -1)
 		perror("~SharedMemory() Could not get shared memory state");
 
-	if (state.shm_nattch == 0 && _freeOnExit)
+	if (state.shm_nattch == 0 && ownResources())
 	{
 		// TODO: qué pasa si justo acá el scheduler cambia a otro proceso y
 		// ese proceso hace un shmat de esta memoria?

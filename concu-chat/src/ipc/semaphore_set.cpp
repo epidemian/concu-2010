@@ -155,24 +155,24 @@ int semOperation(int semId, size_t semIndex, int op, int flags = 0)
 // End helper functions.
 
 SemaphoreSet::SemaphoreSet(const string& pathName, char id,
-		size_t nSems, int initVals[], bool ownExternalResources) :
+		size_t nSems, int initVals[], bool ownResources) :
+	Resource(ownResources),
 	_semId(initSemSet(pathName, id, InitValues(initVals, initVals + nSems))),
-	_nSems(nSems),
-	_ownResources(ownExternalResources)
+	_nSems(nSems)
 { }
 
 
 SemaphoreSet::SemaphoreSet(const string& pathName, char id,
-		const InitValues& initVals, bool ownExternalResources) :
+		const InitValues& initVals, bool ownResources) :
+	Resource(ownResources),
 	_semId(initSemSet(pathName, id, initVals)),
-	_nSems(initVals.size()),
-	_ownResources(ownExternalResources)
+	_nSems(initVals.size())
 { }
 
 
-SemaphoreSet::~SemaphoreSet()
+SemaphoreSet::~SemaphoreSet() throw ()
 {
-	if (_ownResources && semctl(_semId, 0, IPC_RMID) == -1)
+	if (ownResources() && semctl(_semId, 0, IPC_RMID) == -1)
 		perror("~SemaphoreSet(): Could not remove semaphore set");
 }
 

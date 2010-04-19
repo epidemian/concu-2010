@@ -38,8 +38,8 @@ int main(int argc, char* argv[])
 
 int writerProcess(pid_t childPid, const string& pathName)
 {
-	SharedMemory<int>    sharedInt   (pathName, INT_ID);
-	SharedMemory<Person> sharedPerson(pathName, PERSON_ID);
+	SharedMemory<int>    sharedInt   (pathName, INT_ID, true);
+	SharedMemory<Person> sharedPerson(pathName, PERSON_ID, true);
 
 	sharedInt.get() = 481516;
 	Person& person = sharedPerson.get(); // A reference to the shared person.
@@ -65,8 +65,8 @@ int writerProcess(pid_t childPid, const string& pathName)
 
 int readerProcess(const string& pathName)
 {
-	SharedMemory<int>    sharedInt   (pathName, INT_ID);
-	SharedMemory<Person> sharedPerson(pathName, PERSON_ID);
+	SharedMemory<int>    sharedInt   (pathName, INT_ID, true);
+	SharedMemory<Person> sharedPerson(pathName, PERSON_ID, true);
 	Person& person = sharedPerson.get();
 
 	// "Waits" for writer to write first values.

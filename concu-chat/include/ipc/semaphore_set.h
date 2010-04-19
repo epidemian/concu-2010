@@ -8,6 +8,7 @@
 #ifndef SEMAPHORE_SET_H_
 #define SEMAPHORE_SET_H_
 
+#include "resource.h"
 #include "utils.h"
 #include <sys/sem.h>
 
@@ -22,7 +23,7 @@ class SemaphoreProxy;
 /**
  * A set of semaphores.
  */
-class SemaphoreSet
+class SemaphoreSet: public Resource
 {
 public:
 
@@ -43,22 +44,22 @@ public:
 	 * @param id       An identifier for the semaphore set.
 	 * @param nSems    The number of semaphores in the set.
 	 * @param initVals The initial values for each semaphore in the set.
-	 * @param ownExternalResources Whether this SemaphoreSet "owns" the external
+	 * @param ownResources Whether this SemaphoreSet "owns" the external
 	 *                 system resources associated with it. If true, the system
 	 *                 resources will be eliminated on SemaphoreSet's
 	 *                 destruction.
 	 */
 	SemaphoreSet(const string& pathName, char id, size_t nSems, int initVals[],
-			bool ownExternalResources);
+			bool ownResources);
 	SemaphoreSet(const string& pathName, char id, const InitValues& initVals,
-			bool ownExternalResources);
+			bool ownResources);
 
 
 	/**
 	 * If ownWxternalResources was set to true in construction, destroys the
 	 * associated external resources associated with the semaphore set.
 	 */
-	~SemaphoreSet();
+	~SemaphoreSet() throw ();
 
 
 	/**
@@ -100,7 +101,6 @@ public:
 private:
 	int    _semId;
 	size_t _nSems;
-	bool   _ownResources;
 
 	void validateIndex(size_t semIndex);
 

@@ -8,6 +8,7 @@
 #ifndef IPC_FIFO_H_
 #define IPC_FIFO_H_
 
+#include "resource.h"
 #include "utils.h"
 #include "exception.h"
 
@@ -22,7 +23,7 @@ using std::string;
  * deleted once it is no longer being used.
  */
 
-class Fifo
+class Fifo: public Resource
 {
 public:
 	/**
@@ -30,12 +31,12 @@ public:
 	 *
 	 * @param pathName     A path to a non-existing file.
 	 */
-	explicit Fifo(const string& pathName);
+	explicit Fifo(const string& pathName, bool ownResource = true);
 
 	/**
 	 * Unlinks the associated file to the fifo from the file-system.
 	 */
-	virtual ~Fifo();
+	virtual ~Fifo() throw ();
 
 	/**
 	 * Returns the pathName of the fifo.
