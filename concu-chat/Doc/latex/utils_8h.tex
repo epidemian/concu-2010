@@ -1,0 +1,51 @@
+\hypertarget{utils_8h}{
+\section{include/utils.h File Reference}
+\label{utils_8h}\index{include/utils.h@{include/utils.h}}
+}
+{\tt \#include $<$stdexcept$>$}\par
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\#define \hyperlink{utils_8h_0eed1117909081286ff660bc9bffa0c4}{ARR\_\-SIZE}(arr)~(sizeof(arr) / sizeof(arr\mbox{[}0\mbox{]}))
+\item 
+\#define \hyperlink{utils_8h_105a8e29eedd49e4fde9875ac3614e94}{DECLARE\_\-NON\_\-COPIABLE}(className)
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+int \hyperlink{utils_8h_7c31d4c5ae213499f3fc136bc6d9bebb}{strToInt} (const char $\ast$str)  throw (std::invalid\_\-argument)
+\end{CompactItemize}
+
+
+\subsection{Define Documentation}
+\hypertarget{utils_8h_0eed1117909081286ff660bc9bffa0c4}{
+\index{utils.h@{utils.h}!ARR\_\-SIZE@{ARR\_\-SIZE}}
+\index{ARR\_\-SIZE@{ARR\_\-SIZE}!utils.h@{utils.h}}
+\subsubsection[{ARR\_\-SIZE}]{\setlength{\rightskip}{0pt plus 5cm}\#define ARR\_\-SIZE(arr)~(sizeof(arr) / sizeof(arr\mbox{[}0\mbox{]}))}}
+\label{utils_8h_0eed1117909081286ff660bc9bffa0c4}
+
+
+\hypertarget{utils_8h_105a8e29eedd49e4fde9875ac3614e94}{
+\index{utils.h@{utils.h}!DECLARE\_\-NON\_\-COPIABLE@{DECLARE\_\-NON\_\-COPIABLE}}
+\index{DECLARE\_\-NON\_\-COPIABLE@{DECLARE\_\-NON\_\-COPIABLE}!utils.h@{utils.h}}
+\subsubsection[{DECLARE\_\-NON\_\-COPIABLE}]{\setlength{\rightskip}{0pt plus 5cm}\#define DECLARE\_\-NON\_\-COPIABLE(className)}}
+\label{utils_8h_105a8e29eedd49e4fde9875ac3614e94}
+
+
+\textbf{Value:}
+
+\begin{Code}\begin{verbatim}private: \
+        className(className&); \
+        void operator = (className&);
+\end{verbatim}
+\end{Code}
+
+
+\subsection{Function Documentation}
+\hypertarget{utils_8h_7c31d4c5ae213499f3fc136bc6d9bebb}{
+\index{utils.h@{utils.h}!strToInt@{strToInt}}
+\index{strToInt@{strToInt}!utils.h@{utils.h}}
+\subsubsection[{strToInt}]{\setlength{\rightskip}{0pt plus 5cm}int strToInt (const char $\ast$ {\em str})  throw (std::invalid\_\-argument)}}
+\label{utils_8h_7c31d4c5ae213499f3fc136bc6d9bebb}
+
+

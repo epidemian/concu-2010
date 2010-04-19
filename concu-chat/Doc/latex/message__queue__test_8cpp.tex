@@ -1,0 +1,107 @@
+\hypertarget{message__queue__test_8cpp}{
+\section{tests/message\_\-queue\_\-test.cpp File Reference}
+\label{message__queue__test_8cpp}\index{tests/message\_\-queue\_\-test.cpp@{tests/message\_\-queue\_\-test.cpp}}
+}
+{\tt \#include $<$iostream$>$}\par
+{\tt \#include $<$string$>$}\par
+{\tt \#include $<$sys/types.h$>$}\par
+{\tt \#include $<$sys/wait.h$>$}\par
+{\tt \#include \char`\"{}ipc/message\_\-queue.h\char`\"{}}\par
+{\tt \#include \char`\"{}message.h\char`\"{}}\par
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+int \hyperlink{message__queue__test_8cpp_519ea237c74dc851a4dcdd0a3475115c}{test1} (int argc, char $\ast$$\ast$argv)
+\item 
+int \hyperlink{message__queue__test_8cpp_436011767d54b91ccf0906936f711220}{test2} (int argc, char $\ast$$\ast$argv)
+\item 
+int \hyperlink{message__queue__test_8cpp_0ff81a16f4459907d1e556c9268a8f37}{father} (pid\_\-t firSonPid, pid\_\-t secSonPid, const string \&pathName)
+\item 
+int \hyperlink{message__queue__test_8cpp_a9209dfaf91678ad1aa428c4b35a19e5}{son1} (const string \&pathName)
+\item 
+int \hyperlink{message__queue__test_8cpp_09fd5724372f7bbf8f6e42732cf369e5}{son2} (pid\_\-t brothersPid, const string \&pathName)
+\item 
+int \hyperlink{message__queue__test_8cpp_3c04138a5bfe5d72780bb7e82a18e627}{main} (int argc, char $\ast$$\ast$argv)
+\end{CompactItemize}
+\subsection*{Variables}
+\begin{CompactItemize}
+\item 
+const char \hyperlink{message__queue__test_8cpp_59ac33ecef9a632767606472805caade}{ID} = 'i'
+\end{CompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{message__queue__test_8cpp_0ff81a16f4459907d1e556c9268a8f37}{
+\index{message\_\-queue\_\-test.cpp@{message\_\-queue\_\-test.cpp}!father@{father}}
+\index{father@{father}!message_queue_test.cpp@{message\_\-queue\_\-test.cpp}}
+\subsubsection[{father}]{\setlength{\rightskip}{0pt plus 5cm}int father (pid\_\-t {\em firSonPid}, \/  pid\_\-t {\em secSonPid}, \/  const string \& {\em pathName})}}
+\label{message__queue__test_8cpp_0ff81a16f4459907d1e556c9268a8f37}
+
+
+
+
+Father sends a message saying hi to his first son.
+
+Father sends a message saying hi to his second son.
+
+We wait the sons.\hypertarget{message__queue__test_8cpp_3c04138a5bfe5d72780bb7e82a18e627}{
+\index{message\_\-queue\_\-test.cpp@{message\_\-queue\_\-test.cpp}!main@{main}}
+\index{main@{main}!message_queue_test.cpp@{message\_\-queue\_\-test.cpp}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (int {\em argc}, \/  char $\ast$$\ast$ {\em argv})}}
+\label{message__queue__test_8cpp_3c04138a5bfe5d72780bb7e82a18e627}
+
+
+\hypertarget{message__queue__test_8cpp_a9209dfaf91678ad1aa428c4b35a19e5}{
+\index{message\_\-queue\_\-test.cpp@{message\_\-queue\_\-test.cpp}!son1@{son1}}
+\index{son1@{son1}!message_queue_test.cpp@{message\_\-queue\_\-test.cpp}}
+\subsubsection[{son1}]{\setlength{\rightskip}{0pt plus 5cm}int son1 (const string \& {\em pathName})}}
+\label{message__queue__test_8cpp_a9209dfaf91678ad1aa428c4b35a19e5}
+
+
+
+
+Receives a message from his father.
+
+Receives a message from his brother.\hypertarget{message__queue__test_8cpp_09fd5724372f7bbf8f6e42732cf369e5}{
+\index{message\_\-queue\_\-test.cpp@{message\_\-queue\_\-test.cpp}!son2@{son2}}
+\index{son2@{son2}!message_queue_test.cpp@{message\_\-queue\_\-test.cpp}}
+\subsubsection[{son2}]{\setlength{\rightskip}{0pt plus 5cm}int son2 (pid\_\-t {\em brothersPid}, \/  const string \& {\em pathName})}}
+\label{message__queue__test_8cpp_09fd5724372f7bbf8f6e42732cf369e5}
+
+
+
+
+Receives a message from his father.
+
+Father sends a message saying hi to his second son.\hypertarget{message__queue__test_8cpp_519ea237c74dc851a4dcdd0a3475115c}{
+\index{message\_\-queue\_\-test.cpp@{message\_\-queue\_\-test.cpp}!test1@{test1}}
+\index{test1@{test1}!message_queue_test.cpp@{message\_\-queue\_\-test.cpp}}
+\subsubsection[{test1}]{\setlength{\rightskip}{0pt plus 5cm}int test1 (int {\em argc}, \/  char $\ast$$\ast$ {\em argv})}}
+\label{message__queue__test_8cpp_519ea237c74dc851a4dcdd0a3475115c}
+
+
+\hypertarget{message__queue__test_8cpp_436011767d54b91ccf0906936f711220}{
+\index{message\_\-queue\_\-test.cpp@{message\_\-queue\_\-test.cpp}!test2@{test2}}
+\index{test2@{test2}!message_queue_test.cpp@{message\_\-queue\_\-test.cpp}}
+\subsubsection[{test2}]{\setlength{\rightskip}{0pt plus 5cm}int test2 (int {\em argc}, \/  char $\ast$$\ast$ {\em argv})}}
+\label{message__queue__test_8cpp_436011767d54b91ccf0906936f711220}
+
+
+
+
+First son's code.
+
+Father's code.
+
+Second son's code.
+
+Father's code.
+
+\subsection{Variable Documentation}
+\hypertarget{message__queue__test_8cpp_59ac33ecef9a632767606472805caade}{
+\index{message\_\-queue\_\-test.cpp@{message\_\-queue\_\-test.cpp}!ID@{ID}}
+\index{ID@{ID}!message_queue_test.cpp@{message\_\-queue\_\-test.cpp}}
+\subsubsection[{ID}]{\setlength{\rightskip}{0pt plus 5cm}const char {\bf ID} = 'i'}}
+\label{message__queue__test_8cpp_59ac33ecef9a632767606472805caade}
+
+

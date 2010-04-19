@@ -1,0 +1,76 @@
+\hypertarget{semaphore__set_8cpp}{
+\section{src/ipc/semaphore\_\-set.cpp File Reference}
+\label{semaphore__set_8cpp}\index{src/ipc/semaphore\_\-set.cpp@{src/ipc/semaphore\_\-set.cpp}}
+}
+{\tt \#include \char`\"{}ipc/semaphore\_\-set.h\char`\"{}}\par
+{\tt \#include \char`\"{}ipc/ipc\_\-error.h\char`\"{}}\par
+{\tt \#include $<$errno.h$>$}\par
+{\tt \#include $<$sys/sem.h$>$}\par
+{\tt \#include $<$ctime$>$}\par
+{\tt \#include $<$cstdio$>$}\par
+\subsection*{Classes}
+\begin{CompactItemize}
+\item 
+union \hyperlink{unionsemun}{semun}
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+int \hyperlink{semaphore__set_8cpp_2c06ad3c1161e335254e379549f99122}{initSemSet} (const string \&pathName, char id, const \hyperlink{classSemaphoreSet_9b4df28695eed6584fe24549b9f8c446}{SemaphoreSet::SemValues} \&initVals)
+\item 
+void \hyperlink{semaphore__set_8cpp_a7e0ac7e2384358f4a2ab605ead510e3}{initNewSemSet} (int semId, const \hyperlink{classSemaphoreSet_9b4df28695eed6584fe24549b9f8c446}{SemaphoreSet::SemValues} \&initVals)
+\item 
+int \hyperlink{semaphore__set_8cpp_0e6860f3a31513ec9556f049e6bfa7ec}{waitForSemInitialization} (key\_\-t key, size\_\-t nSems)
+\item 
+int \hyperlink{semaphore__set_8cpp_d2f5d1718b19d751524c726847d244c5}{semOperation} (int semId, size\_\-t semIndex, int op, int flags=0)
+\end{CompactItemize}
+\subsection*{Variables}
+\begin{CompactItemize}
+\item 
+static const int \hyperlink{semaphore__set_8cpp_1417e4cf549e1ac7e25f65a0b75227fd}{SEM\_\-TIMEOUT} = 5
+\end{CompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{semaphore__set_8cpp_a7e0ac7e2384358f4a2ab605ead510e3}{
+\index{semaphore\_\-set.cpp@{semaphore\_\-set.cpp}!initNewSemSet@{initNewSemSet}}
+\index{initNewSemSet@{initNewSemSet}!semaphore_set.cpp@{semaphore\_\-set.cpp}}
+\subsubsection[{initNewSemSet}]{\setlength{\rightskip}{0pt plus 5cm}void initNewSemSet (int {\em semId}, \/  const {\bf SemaphoreSet::SemValues} \& {\em initVals})}}
+\label{semaphore__set_8cpp_a7e0ac7e2384358f4a2ab605ead510e3}
+
+
+\hypertarget{semaphore__set_8cpp_2c06ad3c1161e335254e379549f99122}{
+\index{semaphore\_\-set.cpp@{semaphore\_\-set.cpp}!initSemSet@{initSemSet}}
+\index{initSemSet@{initSemSet}!semaphore_set.cpp@{semaphore\_\-set.cpp}}
+\subsubsection[{initSemSet}]{\setlength{\rightskip}{0pt plus 5cm}int initSemSet (const string \& {\em pathName}, \/  char {\em id}, \/  const {\bf SemaphoreSet::SemValues} \& {\em initVals})}}
+\label{semaphore__set_8cpp_2c06ad3c1161e335254e379549f99122}
+
+
+Initializes a System V semaphore set, taking care of the race conditions there might occur.
+
+If the semaphore set was already created by an other program, the initial values vector is ignored.
+
+More-than-inspired by W. Richard Stevens' UNIX Network Programming 2nd edition, volume 2, lockvsem.c, page 295. \hypertarget{semaphore__set_8cpp_d2f5d1718b19d751524c726847d244c5}{
+\index{semaphore\_\-set.cpp@{semaphore\_\-set.cpp}!semOperation@{semOperation}}
+\index{semOperation@{semOperation}!semaphore_set.cpp@{semaphore\_\-set.cpp}}
+\subsubsection[{semOperation}]{\setlength{\rightskip}{0pt plus 5cm}int semOperation (int {\em semId}, \/  size\_\-t {\em semIndex}, \/  int {\em op}, \/  int {\em flags} = {\tt 0})}}
+\label{semaphore__set_8cpp_d2f5d1718b19d751524c726847d244c5}
+
+
+\hypertarget{semaphore__set_8cpp_0e6860f3a31513ec9556f049e6bfa7ec}{
+\index{semaphore\_\-set.cpp@{semaphore\_\-set.cpp}!waitForSemInitialization@{waitForSemInitialization}}
+\index{waitForSemInitialization@{waitForSemInitialization}!semaphore_set.cpp@{semaphore\_\-set.cpp}}
+\subsubsection[{waitForSemInitialization}]{\setlength{\rightskip}{0pt plus 5cm}int waitForSemInitialization (key\_\-t {\em key}, \/  size\_\-t {\em nSems})}}
+\label{semaphore__set_8cpp_0e6860f3a31513ec9556f049e6bfa7ec}
+
+
+
+
+\subsection{Variable Documentation}
+\hypertarget{semaphore__set_8cpp_1417e4cf549e1ac7e25f65a0b75227fd}{
+\index{semaphore\_\-set.cpp@{semaphore\_\-set.cpp}!SEM\_\-TIMEOUT@{SEM\_\-TIMEOUT}}
+\index{SEM\_\-TIMEOUT@{SEM\_\-TIMEOUT}!semaphore_set.cpp@{semaphore\_\-set.cpp}}
+\subsubsection[{SEM\_\-TIMEOUT}]{\setlength{\rightskip}{0pt plus 5cm}const int {\bf SEM\_\-TIMEOUT} = 5\hspace{0.3cm}{\tt  \mbox{[}static\mbox{]}}}}
+\label{semaphore__set_8cpp_1417e4cf549e1ac7e25f65a0b75227fd}
+
+

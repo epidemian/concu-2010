@@ -1,0 +1,83 @@
+\hypertarget{classException}{
+\section{Exception Class Reference}
+\label{classException}\index{Exception@{Exception}}
+}
+{\tt \#include $<$exception.h$>$}
+
+Inheritance diagram for Exception::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classException}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+\hyperlink{classException_dfdfbffc77f1a57f6b338817ddac3b5e}{Exception} (const string \&msj=\char`\"{}\char`\"{})
+\item 
+\hyperlink{classException_843d2598ec9818ebeeebee3cafecaf0e}{Exception} (const std::exception \&e)
+\item 
+virtual \hyperlink{classException_d1ba411de295ef2eeb02ba26284a829a}{$\sim$Exception} ()  throw ()
+\item 
+virtual const char $\ast$ \hyperlink{classException_380f0477d9ef319911e7a8167bd47f1f}{what} () const   throw ()
+\end{CompactItemize}
+\subsection*{Private Attributes}
+\begin{CompactItemize}
+\item 
+string \hyperlink{classException_48f934fa7a25381d1a9f8f7da7a98525}{\_\-what}
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+An exception with a stack trace!
+
+NOTE: Needs to be linked with the option -rdynamic under gcc in order to have a legible stack trace. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classException_dfdfbffc77f1a57f6b338817ddac3b5e}{
+\index{Exception@{Exception}!Exception@{Exception}}
+\index{Exception@{Exception}!Exception@{Exception}}
+\subsubsection[{Exception}]{\setlength{\rightskip}{0pt plus 5cm}Exception::Exception (const string \& {\em msj} = {\tt \char`\"{}\char`\"{}})\hspace{0.3cm}{\tt  \mbox{[}explicit\mbox{]}}}}
+\label{classException_dfdfbffc77f1a57f6b338817ddac3b5e}
+
+
+\hypertarget{classException_843d2598ec9818ebeeebee3cafecaf0e}{
+\index{Exception@{Exception}!Exception@{Exception}}
+\index{Exception@{Exception}!Exception@{Exception}}
+\subsubsection[{Exception}]{\setlength{\rightskip}{0pt plus 5cm}Exception::Exception (const std::exception \& {\em e})\hspace{0.3cm}{\tt  \mbox{[}explicit\mbox{]}}}}
+\label{classException_843d2598ec9818ebeeebee3cafecaf0e}
+
+
+\hypertarget{classException_d1ba411de295ef2eeb02ba26284a829a}{
+\index{Exception@{Exception}!$\sim$Exception@{$\sim$Exception}}
+\index{$\sim$Exception@{$\sim$Exception}!Exception@{Exception}}
+\subsubsection[{$\sim$Exception}]{\setlength{\rightskip}{0pt plus 5cm}virtual Exception::$\sim$Exception ()  throw ()\hspace{0.3cm}{\tt  \mbox{[}inline, virtual\mbox{]}}}}
+\label{classException_d1ba411de295ef2eeb02ba26284a829a}
+
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classException_380f0477d9ef319911e7a8167bd47f1f}{
+\index{Exception@{Exception}!what@{what}}
+\index{what@{what}!Exception@{Exception}}
+\subsubsection[{what}]{\setlength{\rightskip}{0pt plus 5cm}const char $\ast$ Exception::what () const  throw ()\hspace{0.3cm}{\tt  \mbox{[}virtual\mbox{]}}}}
+\label{classException_380f0477d9ef319911e7a8167bd47f1f}
+
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classException_48f934fa7a25381d1a9f8f7da7a98525}{
+\index{Exception@{Exception}!\_\-what@{\_\-what}}
+\index{\_\-what@{\_\-what}!Exception@{Exception}}
+\subsubsection[{\_\-what}]{\setlength{\rightskip}{0pt plus 5cm}string {\bf Exception::\_\-what}\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classException_48f934fa7a25381d1a9f8f7da7a98525}
+
+
+
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+include/\hyperlink{exception_8h}{exception.h}\item 
+src/\hyperlink{exception_8cpp}{exception.cpp}\end{CompactItemize}
