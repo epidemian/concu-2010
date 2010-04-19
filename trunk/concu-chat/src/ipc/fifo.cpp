@@ -24,7 +24,9 @@ bool isFifoFile(const string& pathName)
 }
 
 
-Fifo::Fifo(const string& pathName) : _pathName(pathName)
+Fifo::Fifo(const string& pathName, bool ownResource):
+		Resource(ownResource),
+		_pathName(pathName)
 {
 	bool mknodEror = mknod(pathName.c_str(), S_IFIFO | 0666, 0) == -1;
 
@@ -44,12 +46,15 @@ Fifo::Fifo(const string& pathName) : _pathName(pathName)
 }
 
 
-Fifo::~Fifo()
+Fifo::~Fifo() throw ()
 {
-	bool unlinkError = unlink(_pathName.c_str()) == -1;
+	if (ownResources())
+	{
+		bool unlinkError = unlink(_pathName.c_str()) == -1;
 
-	if (unlinkError && errno != ENOENT) // ENOENT = No such file.
-		perror("~Fifo(): Could not unlink the fifo's file");
+		if (unlinkError && errno != ENOENT) // ENOENT = No such file.
+			perror("~Fifo(): Could not unlink the fifo's file");
+	}
 }
 
 

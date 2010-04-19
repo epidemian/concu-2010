@@ -12,13 +12,14 @@
 
 class MutexProxy;
 
-class MutexSet
+class MutexSet: public Resource
 {
 public:
 	MutexSet(const string& pathName, char id, size_t nMutex,
-			bool ownExternalResources) :
+			bool ownResources):
+		Resource(ownResources),
 		_semSet(pathName, id, SemaphoreSet::InitValues(nMutex, 1),
-				ownExternalResources)
+				ownResources)
 	{ }
 
 	void lock   (size_t mutexIndex) { _semSet.wait          (mutexIndex); }
@@ -30,6 +31,12 @@ public:
 	 * @return A proxy to the mutexIndex'th mutex in the set.
 	 */
 	MutexProxy getMutex(size_t mutexIndex);
+
+	virtual bool ownResources() const
+	{ return _semSet.ownResources(); }
+
+	virtual void setOwnResources(bool value)
+	{ _semSet.setOwnResources(value); }
 
 private:
 	SemaphoreSet _semSet;
@@ -56,7 +63,7 @@ public:
 	bool tryLock() { return _proxy.tryWait(); }
 
 private:
-	SemaphoreProxy& _proxy;
+	SemaphoreProxy _proxy;
 
 	friend class MutexSet;
 	MutexProxy(SemaphoreProxy& proxy): _proxy(proxy) { }
@@ -64,7 +71,8 @@ private:
 
 inline MutexProxy MutexSet::getMutex(size_t mutexIndex)
 {
-	return MutexProxy(_semSet.getSemaphore(mutexIndex));
+	SemaphoreProxy sem = _semSet.getSemaphore(mutexIndex);
+	return MutexProxy(sem);
 }
 
 
