@@ -70,7 +70,7 @@ void RawMessageQueue::read(void* buffer, size_t size, long mtype)
 	// Receives the message.
 	int errorCode = msgrcv(_queueId,readBuff,size,mtype,0);
 	if (errorCode == -1)
-		throw IpcError("RawMessageQueue::write(): Could not read from the "
+		throw IpcError("RawMessageQueue::read(): Could not read from the "
 				"queue", errno);
 
 	memcpy(buffer, readBuff+sizeof(long), size);
