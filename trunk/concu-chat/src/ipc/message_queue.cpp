@@ -38,44 +38,52 @@ RawMessageQueue::RawMessageQueue(const string& pathName, char id){
 	}
 }
 
-void RawMessageQueue::write(const void* buffer, size_t size, long mtype){
-
+void RawMessageQueue::write(const void* buffer, size_t size, long mtype)
+{
 	// Builds the package to send the message.
-	char *finalBuff = (char*)malloc(sizeof(long) + size);
-	if (!finalBuff)
+	char *writeBuff = (char*)malloc(sizeof(long) + size);
+	if (!writeBuff)
 		throw IpcError("RawMessageQueue::write(): Could not build the package "
 				"to be send", errno);
 
-	*(long*)finalBuff = mtype;
+	*(long*)writeBuff = mtype;
 
-	memcpy(finalBuff+sizeof(long), buffer, size);
+	memcpy(writeBuff+sizeof(long), buffer, size);
 
 	// Sends the message.
-	int returnValue = msgsnd(_queueId,finalBuff,size,0);
-	if (returnValue == -1)
+	int errorCode = msgsnd(_queueId,writeBuff,size,0);
+	if (errorCode == -1)
 		throw IpcError("RawMessageQueue::write(): Could not write into the "
 				"queue", errno);
 
-	free(finalBuff);
+	free(writeBuff);
 }
 
 void RawMessageQueue::read(void* buffer, size_t size, long mtype)
 {
 	// Builds the package to receive the message.
-	char *finalBuff = (char*)malloc(sizeof(long) + size);
-	if (!finalBuff)
+	char *readBuff = (char*)malloc(sizeof(long) + size);
+	if (!readBuff)
 		throw IpcError("RawMessageQueue::read(): Could not build the package "
 				"to be received", errno);
 
 	// Receives the message.
-	msgrcv(_queueId,finalBuff,size,mtype,0);
+	int errorCode = msgrcv(_queueId,readBuff,size,mtype,0);
+	if (errorCode == -1)
+		throw IpcError("RawMessageQueue::write(): Could not read from the "
+				"queue", errno);
 
-	memcpy(buffer, finalBuff+sizeof(long), size);
+	memcpy(buffer, readBuff+sizeof(long), size);
 
-	free(finalBuff);
+	free(readBuff);
 }
 
 RawMessageQueue::~RawMessageQueue(){
 
-	if (_freeOnExit) msgctl(_queueId,IPC_RMID, NULL);
+	if (_freeOnExit)
+	{
+		int errorCode = msgctl(_queueId,IPC_RMID, NULL);
+		if (errorCode == -1)
+			perror("~RawMessageQueue(): Could not destroy message queue");
+	}
 }
