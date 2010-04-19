@@ -1,0 +1,107 @@
+\hypertarget{classFifoWriter}{
+\section{FifoWriter Class Reference}
+\label{classFifoWriter}\index{FifoWriter@{FifoWriter}}
+}
+{\tt \#include $<$fifo.h$>$}
+
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+\hyperlink{classFifoWriter_14175cfbc5cec8a4b0974b0b98973af5}{FifoWriter} (const \hyperlink{classFifo}{Fifo} \&fifo)
+\item 
+virtual \hyperlink{classFifoWriter_06e6742e763b0fff527c9144798a6bc7}{$\sim$FifoWriter} ()
+\item 
+size\_\-t \hyperlink{classFifoWriter_31bafc8be7fa9c9ef8c316b9fcf5dbd8}{write} (const void $\ast$buffer, size\_\-t size)
+\item 
+void \hyperlink{classFifoWriter_1edb004e8b962aa5704f3a5a277cc937}{writeFixedSize} (const void $\ast$buffer, size\_\-t size)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classFifoWriter_401c436c46a9320fa3405f56c2a8094d}{write} (const T \&obj)
+\end{CompactItemize}
+\subsection*{Private Attributes}
+\begin{CompactItemize}
+\item 
+int \hyperlink{classFifoWriter_42cafef03b8826bf3fe2d291d6ef86f4}{\_\-fileDescriptor}
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+A class responsible for writing on the fifo shared between two processes. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classFifoWriter_14175cfbc5cec8a4b0974b0b98973af5}{
+\index{FifoWriter@{FifoWriter}!FifoWriter@{FifoWriter}}
+\index{FifoWriter@{FifoWriter}!FifoWriter@{FifoWriter}}
+\subsubsection[{FifoWriter}]{\setlength{\rightskip}{0pt plus 5cm}FifoWriter::FifoWriter (const {\bf Fifo} \& {\em fifo})\hspace{0.3cm}{\tt  \mbox{[}explicit\mbox{]}}}}
+\label{classFifoWriter_14175cfbc5cec8a4b0974b0b98973af5}
+
+
+\hypertarget{classFifoWriter_06e6742e763b0fff527c9144798a6bc7}{
+\index{FifoWriter@{FifoWriter}!$\sim$FifoWriter@{$\sim$FifoWriter}}
+\index{$\sim$FifoWriter@{$\sim$FifoWriter}!FifoWriter@{FifoWriter}}
+\subsubsection[{$\sim$FifoWriter}]{\setlength{\rightskip}{0pt plus 5cm}FifoWriter::$\sim$FifoWriter ()\hspace{0.3cm}{\tt  \mbox{[}virtual\mbox{]}}}}
+\label{classFifoWriter_06e6742e763b0fff527c9144798a6bc7}
+
+
+Closes the file of the fifo. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classFifoWriter_401c436c46a9320fa3405f56c2a8094d}{
+\index{FifoWriter@{FifoWriter}!write@{write}}
+\index{write@{write}!FifoWriter@{FifoWriter}}
+\subsubsection[{write}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void FifoWriter::write (const T \& {\em obj})\hspace{0.3cm}{\tt  \mbox{[}inline\mbox{]}}}}
+\label{classFifoWriter_401c436c46a9320fa3405f56c2a8094d}
+
+
+Writes an object to the pipe. Note that the object must be of scalar type (or it's internal structure be all scalar types), as it will be written as bytes.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em obj}]The object to be written to the pipe. \end{description}
+\end{Desc}
+\hypertarget{classFifoWriter_31bafc8be7fa9c9ef8c316b9fcf5dbd8}{
+\index{FifoWriter@{FifoWriter}!write@{write}}
+\index{write@{write}!FifoWriter@{FifoWriter}}
+\subsubsection[{write}]{\setlength{\rightskip}{0pt plus 5cm}size\_\-t FifoWriter::write (const void $\ast$ {\em buffer}, \/  size\_\-t {\em size})}}
+\label{classFifoWriter_31bafc8be7fa9c9ef8c316b9fcf5dbd8}
+
+
+Writes to the fifo.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em buffer}]Data to be written on the fifo. \item[{\em size}]The size, in bytes, of the data. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The number of bytes written to the fifo. Might be less than size. \end{Desc}
+\hypertarget{classFifoWriter_1edb004e8b962aa5704f3a5a277cc937}{
+\index{FifoWriter@{FifoWriter}!writeFixedSize@{writeFixedSize}}
+\index{writeFixedSize@{writeFixedSize}!FifoWriter@{FifoWriter}}
+\subsubsection[{writeFixedSize}]{\setlength{\rightskip}{0pt plus 5cm}void FifoWriter::writeFixedSize (const void $\ast$ {\em buffer}, \/  size\_\-t {\em size})}}
+\label{classFifoWriter_1edb004e8b962aa5704f3a5a277cc937}
+
+
+Writes a given number of bytes to the fifo.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em buffer}]Data to be written on the fifo. \item[{\em size}]The size, in bytes, of the data. \end{description}
+\end{Desc}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classFifoWriter_42cafef03b8826bf3fe2d291d6ef86f4}{
+\index{FifoWriter@{FifoWriter}!\_\-fileDescriptor@{\_\-fileDescriptor}}
+\index{\_\-fileDescriptor@{\_\-fileDescriptor}!FifoWriter@{FifoWriter}}
+\subsubsection[{\_\-fileDescriptor}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf FifoWriter::\_\-fileDescriptor}\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classFifoWriter_42cafef03b8826bf3fe2d291d6ef86f4}
+
+
+
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+include/ipc/\hyperlink{fifo_8h}{fifo.h}\item 
+src/ipc/\hyperlink{fifo_8cpp}{fifo.cpp}\end{CompactItemize}

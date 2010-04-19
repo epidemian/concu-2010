@@ -1,0 +1,107 @@
+\hypertarget{classFifoReader}{
+\section{FifoReader Class Reference}
+\label{classFifoReader}\index{FifoReader@{FifoReader}}
+}
+{\tt \#include $<$fifo.h$>$}
+
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+\hyperlink{classFifoReader_6634431a038ffa4281c6eef7397cabae}{FifoReader} (const \hyperlink{classFifo}{Fifo} \&fifo)
+\item 
+virtual \hyperlink{classFifoReader_38ab41237521a8dcdb6ce8ef41ed0537}{$\sim$FifoReader} ()
+\item 
+size\_\-t \hyperlink{classFifoReader_cff266ab8fb625353fb8cdf866d91674}{read} (void $\ast$buffer, size\_\-t size)
+\item 
+void \hyperlink{classFifoReader_0731d94742fb3dddf17f8a2343b235fb}{readFixedSize} (void $\ast$buffer, size\_\-t size)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classFifoReader_21acedc956fdb98f23a2ba069cae3fe1}{read} (T \&obj)
+\end{CompactItemize}
+\subsection*{Private Attributes}
+\begin{CompactItemize}
+\item 
+int \hyperlink{classFifoReader_9836b5e989e4e977b331bdd43f481cd5}{\_\-fileDescriptor}
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+A class responsible for reading on the fifo shared between two processes. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classFifoReader_6634431a038ffa4281c6eef7397cabae}{
+\index{FifoReader@{FifoReader}!FifoReader@{FifoReader}}
+\index{FifoReader@{FifoReader}!FifoReader@{FifoReader}}
+\subsubsection[{FifoReader}]{\setlength{\rightskip}{0pt plus 5cm}FifoReader::FifoReader (const {\bf Fifo} \& {\em fifo})\hspace{0.3cm}{\tt  \mbox{[}explicit\mbox{]}}}}
+\label{classFifoReader_6634431a038ffa4281c6eef7397cabae}
+
+
+\hypertarget{classFifoReader_38ab41237521a8dcdb6ce8ef41ed0537}{
+\index{FifoReader@{FifoReader}!$\sim$FifoReader@{$\sim$FifoReader}}
+\index{$\sim$FifoReader@{$\sim$FifoReader}!FifoReader@{FifoReader}}
+\subsubsection[{$\sim$FifoReader}]{\setlength{\rightskip}{0pt plus 5cm}FifoReader::$\sim$FifoReader ()\hspace{0.3cm}{\tt  \mbox{[}virtual\mbox{]}}}}
+\label{classFifoReader_38ab41237521a8dcdb6ce8ef41ed0537}
+
+
+Closes the file of the fifo. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classFifoReader_21acedc956fdb98f23a2ba069cae3fe1}{
+\index{FifoReader@{FifoReader}!read@{read}}
+\index{read@{read}!FifoReader@{FifoReader}}
+\subsubsection[{read}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void FifoReader::read (T \& {\em obj})\hspace{0.3cm}{\tt  \mbox{[}inline\mbox{]}}}}
+\label{classFifoReader_21acedc956fdb98f23a2ba069cae3fe1}
+
+
+Reads an object from the pipe. Note that the object must be of scalar type (or it's internal structure be all scalar types), as it will be written as bytes.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em obj}]The object to be read from the pipe. \end{description}
+\end{Desc}
+\hypertarget{classFifoReader_cff266ab8fb625353fb8cdf866d91674}{
+\index{FifoReader@{FifoReader}!read@{read}}
+\index{read@{read}!FifoReader@{FifoReader}}
+\subsubsection[{read}]{\setlength{\rightskip}{0pt plus 5cm}size\_\-t FifoReader::read (void $\ast$ {\em buffer}, \/  size\_\-t {\em size})}}
+\label{classFifoReader_cff266ab8fb625353fb8cdf866d91674}
+
+
+Reads from the fifo.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em buffer}]Destination of the data. \item[{\em size}]The size, in bytes, of the data to be read. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The number of bytes read and stored into the buffer. Might be less than size. Zero indicates end of file. \end{Desc}
+\hypertarget{classFifoReader_0731d94742fb3dddf17f8a2343b235fb}{
+\index{FifoReader@{FifoReader}!readFixedSize@{readFixedSize}}
+\index{readFixedSize@{readFixedSize}!FifoReader@{FifoReader}}
+\subsubsection[{readFixedSize}]{\setlength{\rightskip}{0pt plus 5cm}void FifoReader::readFixedSize (void $\ast$ {\em buffer}, \/  size\_\-t {\em size})}}
+\label{classFifoReader_0731d94742fb3dddf17f8a2343b235fb}
+
+
+Reads a given number of bytes from the fifo. In case less bytes could be read, an exception is thrown.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em buffer}]Destination of the data. \item[{\em size}]The size, in bytes, of the data to be read. \end{description}
+\end{Desc}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classFifoReader_9836b5e989e4e977b331bdd43f481cd5}{
+\index{FifoReader@{FifoReader}!\_\-fileDescriptor@{\_\-fileDescriptor}}
+\index{\_\-fileDescriptor@{\_\-fileDescriptor}!FifoReader@{FifoReader}}
+\subsubsection[{\_\-fileDescriptor}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf FifoReader::\_\-fileDescriptor}\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classFifoReader_9836b5e989e4e977b331bdd43f481cd5}
+
+
+
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+include/ipc/\hyperlink{fifo_8h}{fifo.h}\item 
+src/ipc/\hyperlink{fifo_8cpp}{fifo.cpp}\end{CompactItemize}

@@ -1,0 +1,68 @@
+\hypertarget{shared__memory__test_8cpp}{
+\section{tests/shared\_\-memory\_\-test.cpp File Reference}
+\label{shared__memory__test_8cpp}\index{tests/shared\_\-memory\_\-test.cpp@{tests/shared\_\-memory\_\-test.cpp}}
+}
+{\tt \#include \char`\"{}ipc/shared\_\-memory.h\char`\"{}}\par
+{\tt \#include \char`\"{}person.h\char`\"{}}\par
+{\tt \#include $<$unistd.h$>$}\par
+{\tt \#include $<$sys/wait.h$>$}\par
+{\tt \#include $<$string$>$}\par
+{\tt \#include $<$cstdlib$>$}\par
+{\tt \#include $<$iostream$>$}\par
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+int \hyperlink{shared__memory__test_8cpp_61e6a688540c9301ea8056d81f5852c7}{writerProcess} (pid\_\-t childPid, const string \&pathName)
+\item 
+int \hyperlink{shared__memory__test_8cpp_48517b83bda734462bce3473e40b7f2f}{readerProcess} (const string \&pathName)
+\item 
+int \hyperlink{shared__memory__test_8cpp_0ddf1224851353fc92bfbff6f499fa97}{main} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+\end{CompactItemize}
+\subsection*{Variables}
+\begin{CompactItemize}
+\item 
+const char \hyperlink{shared__memory__test_8cpp_2575ca230f634badfd2ef46e8559e658}{INT\_\-ID} = 'i'
+\item 
+const char \hyperlink{shared__memory__test_8cpp_45b1d8c71b2506c1f9505b4e788e9381}{PERSON\_\-ID} = 'p'
+\end{CompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{shared__memory__test_8cpp_0ddf1224851353fc92bfbff6f499fa97}{
+\index{shared\_\-memory\_\-test.cpp@{shared\_\-memory\_\-test.cpp}!main@{main}}
+\index{main@{main}!shared_memory_test.cpp@{shared\_\-memory\_\-test.cpp}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (int {\em argc}, \/  char $\ast$ {\em argv}\mbox{[}$\,$\mbox{]})}}
+\label{shared__memory__test_8cpp_0ddf1224851353fc92bfbff6f499fa97}
+
+
+\hypertarget{shared__memory__test_8cpp_48517b83bda734462bce3473e40b7f2f}{
+\index{shared\_\-memory\_\-test.cpp@{shared\_\-memory\_\-test.cpp}!readerProcess@{readerProcess}}
+\index{readerProcess@{readerProcess}!shared_memory_test.cpp@{shared\_\-memory\_\-test.cpp}}
+\subsubsection[{readerProcess}]{\setlength{\rightskip}{0pt plus 5cm}int readerProcess (const string \& {\em pathName})}}
+\label{shared__memory__test_8cpp_48517b83bda734462bce3473e40b7f2f}
+
+
+\hypertarget{shared__memory__test_8cpp_61e6a688540c9301ea8056d81f5852c7}{
+\index{shared\_\-memory\_\-test.cpp@{shared\_\-memory\_\-test.cpp}!writerProcess@{writerProcess}}
+\index{writerProcess@{writerProcess}!shared_memory_test.cpp@{shared\_\-memory\_\-test.cpp}}
+\subsubsection[{writerProcess}]{\setlength{\rightskip}{0pt plus 5cm}int writerProcess (pid\_\-t {\em childPid}, \/  const string \& {\em pathName})}}
+\label{shared__memory__test_8cpp_61e6a688540c9301ea8056d81f5852c7}
+
+
+
+
+\subsection{Variable Documentation}
+\hypertarget{shared__memory__test_8cpp_2575ca230f634badfd2ef46e8559e658}{
+\index{shared\_\-memory\_\-test.cpp@{shared\_\-memory\_\-test.cpp}!INT\_\-ID@{INT\_\-ID}}
+\index{INT\_\-ID@{INT\_\-ID}!shared_memory_test.cpp@{shared\_\-memory\_\-test.cpp}}
+\subsubsection[{INT\_\-ID}]{\setlength{\rightskip}{0pt plus 5cm}const char {\bf INT\_\-ID} = 'i'}}
+\label{shared__memory__test_8cpp_2575ca230f634badfd2ef46e8559e658}
+
+
+\hypertarget{shared__memory__test_8cpp_45b1d8c71b2506c1f9505b4e788e9381}{
+\index{shared\_\-memory\_\-test.cpp@{shared\_\-memory\_\-test.cpp}!PERSON\_\-ID@{PERSON\_\-ID}}
+\index{PERSON\_\-ID@{PERSON\_\-ID}!shared_memory_test.cpp@{shared\_\-memory\_\-test.cpp}}
+\subsubsection[{PERSON\_\-ID}]{\setlength{\rightskip}{0pt plus 5cm}const char {\bf PERSON\_\-ID} = 'p'}}
+\label{shared__memory__test_8cpp_45b1d8c71b2506c1f9505b4e788e9381}
+
+

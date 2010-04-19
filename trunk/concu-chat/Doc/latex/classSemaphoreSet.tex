@@ -1,0 +1,158 @@
+\hypertarget{classSemaphoreSet}{
+\section{SemaphoreSet Class Reference}
+\label{classSemaphoreSet}\index{SemaphoreSet@{SemaphoreSet}}
+}
+{\tt \#include $<$semaphore\_\-set.h$>$}
+
+\subsection*{Public Types}
+\begin{CompactItemize}
+\item 
+typedef vector$<$ unsigned short $>$ \hyperlink{classSemaphoreSet_9b4df28695eed6584fe24549b9f8c446}{SemValues}
+\end{CompactItemize}
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+\hyperlink{classSemaphoreSet_e7e1a5ffbb4649ea33100304d7c3c94c}{SemaphoreSet} (const string \&pathName, char id, size\_\-t nSems, int initVals\mbox{[}$\,$\mbox{]}, bool ownExternalResources)
+\item 
+\hyperlink{classSemaphoreSet_f2442ffd5943a17f45d54b43e1aaeddc}{SemaphoreSet} (const string \&pathName, char id, const \hyperlink{classSemaphoreSet_9b4df28695eed6584fe24549b9f8c446}{SemValues} \&initVals, bool ownExternalResources)
+\item 
+\hyperlink{classSemaphoreSet_39f813371f0f7bcf1c826619b69ee818}{$\sim$SemaphoreSet} ()
+\item 
+void \hyperlink{classSemaphoreSet_e298eb7aad5d7d0e359e6450c5dd9a0e}{wait} (size\_\-t semIndex)
+\item 
+void \hyperlink{classSemaphoreSet_d4916e65fcf8c371854f5953c124b93f}{signal} (size\_\-t semIndex)
+\item 
+bool \hyperlink{classSemaphoreSet_3113cf6993941fb46821140793654b14}{tryWait} (size\_\-t semIndex)
+\item 
+\hyperlink{classSemaphoreProxy}{SemaphoreProxy} \hyperlink{classSemaphoreSet_7dc423792f197e57034c69a708194cd5}{getSemaphore} (size\_\-t semIndex)
+\end{CompactItemize}
+\subsection*{Private Member Functions}
+\begin{CompactItemize}
+\item 
+void \hyperlink{classSemaphoreSet_d0d136c5b0c87651ba33ed407c8df3f1}{validateIndex} (size\_\-t semIndex)
+\end{CompactItemize}
+\subsection*{Private Attributes}
+\begin{CompactItemize}
+\item 
+int \hyperlink{classSemaphoreSet_8895b1fe81c6e0d0c7e25a50e80656a3}{\_\-semId}
+\item 
+size\_\-t \hyperlink{classSemaphoreSet_24a0a5557ae28121a031e228e0c3219a}{\_\-nSems}
+\item 
+bool \hyperlink{classSemaphoreSet_4756100f297c4163d7a89c27c7cd3e92}{\_\-ownResources}
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+A set of semaphores. 
+
+\subsection{Member Typedef Documentation}
+\hypertarget{classSemaphoreSet_9b4df28695eed6584fe24549b9f8c446}{
+\index{SemaphoreSet@{SemaphoreSet}!SemValues@{SemValues}}
+\index{SemValues@{SemValues}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{SemValues}]{\setlength{\rightskip}{0pt plus 5cm}typedef vector$<$unsigned short$>$ {\bf SemaphoreSet::SemValues}}}
+\label{classSemaphoreSet_9b4df28695eed6584fe24549b9f8c446}
+
+
+Structure used to indicate the initial values of the semaphore set. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classSemaphoreSet_e7e1a5ffbb4649ea33100304d7c3c94c}{
+\index{SemaphoreSet@{SemaphoreSet}!SemaphoreSet@{SemaphoreSet}}
+\index{SemaphoreSet@{SemaphoreSet}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{SemaphoreSet}]{\setlength{\rightskip}{0pt plus 5cm}SemaphoreSet::SemaphoreSet (const string \& {\em pathName}, \/  char {\em id}, \/  size\_\-t {\em nSems}, \/  int {\em initVals}\mbox{[}$\,$\mbox{]}, \/  bool {\em ownExternalResources})}}
+\label{classSemaphoreSet_e7e1a5ffbb4649ea33100304d7c3c94c}
+
+
+Creates a semaphore set. If the process is the first one to create a semaphore set with the given path name and id, a new low-level semaphore set will be created and initialized with the given values. If another process has already created a semaphore set with the same path name and id, this semaphore set will be associated with the same low-level resources, and those will not be initialized (i.e: the initVals vector will be ignored.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em pathName}]A path to an existing file. \item[{\em id}]An identifier for the semaphore set. \item[{\em nSems}]The number of semaphores in the set. \item[{\em initVals}]The initial values for each semaphore in the set. \item[{\em ownExternalResources}]Whether this \hyperlink{classSemaphoreSet}{SemaphoreSet} \char`\"{}owns\char`\"{} the external system resources associated with it. If true, the system resources will be eliminated on SemaphoreSet's destruction. \end{description}
+\end{Desc}
+\hypertarget{classSemaphoreSet_f2442ffd5943a17f45d54b43e1aaeddc}{
+\index{SemaphoreSet@{SemaphoreSet}!SemaphoreSet@{SemaphoreSet}}
+\index{SemaphoreSet@{SemaphoreSet}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{SemaphoreSet}]{\setlength{\rightskip}{0pt plus 5cm}SemaphoreSet::SemaphoreSet (const string \& {\em pathName}, \/  char {\em id}, \/  const {\bf SemValues} \& {\em initVals}, \/  bool {\em ownExternalResources})}}
+\label{classSemaphoreSet_f2442ffd5943a17f45d54b43e1aaeddc}
+
+
+\hypertarget{classSemaphoreSet_39f813371f0f7bcf1c826619b69ee818}{
+\index{SemaphoreSet@{SemaphoreSet}!$\sim$SemaphoreSet@{$\sim$SemaphoreSet}}
+\index{$\sim$SemaphoreSet@{$\sim$SemaphoreSet}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{$\sim$SemaphoreSet}]{\setlength{\rightskip}{0pt plus 5cm}SemaphoreSet::$\sim$SemaphoreSet ()}}
+\label{classSemaphoreSet_39f813371f0f7bcf1c826619b69ee818}
+
+
+If ownWxternalResources was set to true in construction, destroys the associated external resources associated with the semaphore set. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classSemaphoreSet_7dc423792f197e57034c69a708194cd5}{
+\index{SemaphoreSet@{SemaphoreSet}!getSemaphore@{getSemaphore}}
+\index{getSemaphore@{getSemaphore}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{getSemaphore}]{\setlength{\rightskip}{0pt plus 5cm}{\bf SemaphoreProxy} SemaphoreSet::getSemaphore (size\_\-t {\em semIndex})}}
+\label{classSemaphoreSet_7dc423792f197e57034c69a708194cd5}
+
+
+\begin{Desc}
+\item[Returns:]A proxy to the semIndex'th semaphore in the set. \end{Desc}
+\hypertarget{classSemaphoreSet_d4916e65fcf8c371854f5953c124b93f}{
+\index{SemaphoreSet@{SemaphoreSet}!signal@{signal}}
+\index{signal@{signal}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{signal}]{\setlength{\rightskip}{0pt plus 5cm}void SemaphoreSet::signal (size\_\-t {\em semIndex})}}
+\label{classSemaphoreSet_d4916e65fcf8c371854f5953c124b93f}
+
+
+\hypertarget{classSemaphoreSet_3113cf6993941fb46821140793654b14}{
+\index{SemaphoreSet@{SemaphoreSet}!tryWait@{tryWait}}
+\index{tryWait@{tryWait}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{tryWait}]{\setlength{\rightskip}{0pt plus 5cm}bool SemaphoreSet::tryWait (size\_\-t {\em semIndex})}}
+\label{classSemaphoreSet_3113cf6993941fb46821140793654b14}
+
+
+\begin{Desc}
+\item[Returns:]Whether the semaphore count of the semIndex'th semaphore could be decremented by one (i.e: was different than zero). \end{Desc}
+\hypertarget{classSemaphoreSet_d0d136c5b0c87651ba33ed407c8df3f1}{
+\index{SemaphoreSet@{SemaphoreSet}!validateIndex@{validateIndex}}
+\index{validateIndex@{validateIndex}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{validateIndex}]{\setlength{\rightskip}{0pt plus 5cm}void SemaphoreSet::validateIndex (size\_\-t {\em semIndex})\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classSemaphoreSet_d0d136c5b0c87651ba33ed407c8df3f1}
+
+
+\hypertarget{classSemaphoreSet_e298eb7aad5d7d0e359e6450c5dd9a0e}{
+\index{SemaphoreSet@{SemaphoreSet}!wait@{wait}}
+\index{wait@{wait}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{wait}]{\setlength{\rightskip}{0pt plus 5cm}void SemaphoreSet::wait (size\_\-t {\em semIndex})}}
+\label{classSemaphoreSet_e298eb7aad5d7d0e359e6450c5dd9a0e}
+
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classSemaphoreSet_24a0a5557ae28121a031e228e0c3219a}{
+\index{SemaphoreSet@{SemaphoreSet}!\_\-nSems@{\_\-nSems}}
+\index{\_\-nSems@{\_\-nSems}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{\_\-nSems}]{\setlength{\rightskip}{0pt plus 5cm}size\_\-t {\bf SemaphoreSet::\_\-nSems}\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classSemaphoreSet_24a0a5557ae28121a031e228e0c3219a}
+
+
+\hypertarget{classSemaphoreSet_4756100f297c4163d7a89c27c7cd3e92}{
+\index{SemaphoreSet@{SemaphoreSet}!\_\-ownResources@{\_\-ownResources}}
+\index{\_\-ownResources@{\_\-ownResources}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{\_\-ownResources}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf SemaphoreSet::\_\-ownResources}\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classSemaphoreSet_4756100f297c4163d7a89c27c7cd3e92}
+
+
+\hypertarget{classSemaphoreSet_8895b1fe81c6e0d0c7e25a50e80656a3}{
+\index{SemaphoreSet@{SemaphoreSet}!\_\-semId@{\_\-semId}}
+\index{\_\-semId@{\_\-semId}!SemaphoreSet@{SemaphoreSet}}
+\subsubsection[{\_\-semId}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf SemaphoreSet::\_\-semId}\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classSemaphoreSet_8895b1fe81c6e0d0c7e25a50e80656a3}
+
+
+
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+include/ipc/\hyperlink{semaphore__set_8h}{semaphore\_\-set.h}\item 
+src/ipc/\hyperlink{semaphore__set_8cpp}{semaphore\_\-set.cpp}\end{CompactItemize}

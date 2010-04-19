@@ -1,0 +1,102 @@
+\hypertarget{classRawMessageQueue}{
+\section{RawMessageQueue Class Reference}
+\label{classRawMessageQueue}\index{RawMessageQueue@{RawMessageQueue}}
+}
+{\tt \#include $<$message\_\-queue.h$>$}
+
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+\hyperlink{classRawMessageQueue_38262143d59ad47f122d6cbd57030b28}{RawMessageQueue} (const string \&pathName, char id)
+\item 
+void \hyperlink{classRawMessageQueue_7fda81eaf94a970e82241d6efa2562d5}{write} (const void $\ast$buffer, size\_\-t size, long mtype)
+\item 
+void \hyperlink{classRawMessageQueue_0dbcbf9af9fa704119de2d2ef6f90371}{read} (void $\ast$buffer, size\_\-t size, long mtype)
+\item 
+virtual \hyperlink{classRawMessageQueue_741c6b10b9e2b1be969b59194ac0452c}{$\sim$RawMessageQueue} ()
+\end{CompactItemize}
+\subsection*{Private Attributes}
+\begin{CompactItemize}
+\item 
+int \hyperlink{classRawMessageQueue_457f069a4d7f9b7adcadee8af2ddb4cd}{\_\-queueId}
+\item 
+bool \hyperlink{classRawMessageQueue_2dc13c3e504b33527dbea9ceb06d640c}{\_\-freeOnExit}
+\end{CompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classRawMessageQueue_38262143d59ad47f122d6cbd57030b28}{
+\index{RawMessageQueue@{RawMessageQueue}!RawMessageQueue@{RawMessageQueue}}
+\index{RawMessageQueue@{RawMessageQueue}!RawMessageQueue@{RawMessageQueue}}
+\subsubsection[{RawMessageQueue}]{\setlength{\rightskip}{0pt plus 5cm}RawMessageQueue::RawMessageQueue (const string \& {\em pathName}, \/  char {\em id})\hspace{0.3cm}{\tt  \mbox{[}explicit\mbox{]}}}}
+\label{classRawMessageQueue_38262143d59ad47f122d6cbd57030b28}
+
+
+Connect to a message queue, or create it if it doesn't exist
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em pathName}]A path to an existing file. \item[{\em id}]A char to identify the shared memory object. \end{description}
+\end{Desc}
+\hypertarget{classRawMessageQueue_741c6b10b9e2b1be969b59194ac0452c}{
+\index{RawMessageQueue@{RawMessageQueue}!$\sim$RawMessageQueue@{$\sim$RawMessageQueue}}
+\index{$\sim$RawMessageQueue@{$\sim$RawMessageQueue}!RawMessageQueue@{RawMessageQueue}}
+\subsubsection[{$\sim$RawMessageQueue}]{\setlength{\rightskip}{0pt plus 5cm}RawMessageQueue::$\sim$RawMessageQueue ()\hspace{0.3cm}{\tt  \mbox{[}virtual\mbox{]}}}}
+\label{classRawMessageQueue_741c6b10b9e2b1be969b59194ac0452c}
+
+
+Immediately removes the message queue, awakening all waiting reader and writer processes (with an error return and errno set to EIDRM). The calling process must be the creator the message queue. Only one instance of \hyperlink{classRawMessageQueue}{RawMessageQueue} (created by the same arguments) has the member \_\-freeOnExit seted in true. If \_\-freeOnExit's value is true, the message queue is removed. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classRawMessageQueue_0dbcbf9af9fa704119de2d2ef6f90371}{
+\index{RawMessageQueue@{RawMessageQueue}!read@{read}}
+\index{read@{read}!RawMessageQueue@{RawMessageQueue}}
+\subsubsection[{read}]{\setlength{\rightskip}{0pt plus 5cm}void RawMessageQueue::read (void $\ast$ {\em buffer}, \/  size\_\-t {\em size}, \/  long {\em mtype})}}
+\label{classRawMessageQueue_0dbcbf9af9fa704119de2d2ef6f90371}
+
+
+Reads size bytes from the queue and stores them in the buffer.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em buffer}]Destination of the message. \item[{\em size}]The size, in bytes, of the message to be read. \item[{\em mtype}]Zero : Retrieves the next message on the queue, regardless of its mtype. Positive: Gets the next message with an mtype equal to the specified mtype. Negative: Retrieve the first message on the queue whose mtype field is less than or equal to the absolute value of the mtype argument. \end{description}
+\end{Desc}
+\hypertarget{classRawMessageQueue_7fda81eaf94a970e82241d6efa2562d5}{
+\index{RawMessageQueue@{RawMessageQueue}!write@{write}}
+\index{write@{write}!RawMessageQueue@{RawMessageQueue}}
+\subsubsection[{write}]{\setlength{\rightskip}{0pt plus 5cm}void RawMessageQueue::write (const void $\ast$ {\em buffer}, \/  size\_\-t {\em size}, \/  long {\em mtype})}}
+\label{classRawMessageQueue_7fda81eaf94a970e82241d6efa2562d5}
+
+
+Writes size bytes from the buffer in the queue. The id of the message is mtype. If another process wants to read this message, it has to use this mtype value.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em buffer}]\hyperlink{classMessage}{Message} to be written on the queue. \item[{\em size}]The size, in bytes, of the data to be read. \item[{\em mtype}]The id of the message. \end{description}
+\end{Desc}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classRawMessageQueue_2dc13c3e504b33527dbea9ceb06d640c}{
+\index{RawMessageQueue@{RawMessageQueue}!\_\-freeOnExit@{\_\-freeOnExit}}
+\index{\_\-freeOnExit@{\_\-freeOnExit}!RawMessageQueue@{RawMessageQueue}}
+\subsubsection[{\_\-freeOnExit}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf RawMessageQueue::\_\-freeOnExit}\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classRawMessageQueue_2dc13c3e504b33527dbea9ceb06d640c}
+
+
+\hypertarget{classRawMessageQueue_457f069a4d7f9b7adcadee8af2ddb4cd}{
+\index{RawMessageQueue@{RawMessageQueue}!\_\-queueId@{\_\-queueId}}
+\index{\_\-queueId@{\_\-queueId}!RawMessageQueue@{RawMessageQueue}}
+\subsubsection[{\_\-queueId}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf RawMessageQueue::\_\-queueId}\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classRawMessageQueue_457f069a4d7f9b7adcadee8af2ddb4cd}
+
+
+
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+include/ipc/\hyperlink{message__queue_8h}{message\_\-queue.h}\item 
+src/ipc/\hyperlink{message__queue_8cpp}{message\_\-queue.cpp}\end{CompactItemize}

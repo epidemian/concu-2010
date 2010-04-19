@@ -1,0 +1,100 @@
+\hypertarget{classRawSharedMemory}{
+\section{RawSharedMemory Class Reference}
+\label{classRawSharedMemory}\index{RawSharedMemory@{RawSharedMemory}}
+}
+{\tt \#include $<$shared\_\-memory.h$>$}
+
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+\hyperlink{classRawSharedMemory_718ffde99de132b4a9d2a0b6760c604c}{RawSharedMemory} (size\_\-t size, const string \&pathName, char id, bool freeOnExit=true)
+\item 
+\hyperlink{classRawSharedMemory_dd28221a9455cb3ead6798e131f02fb9}{$\sim$RawSharedMemory} ()
+\item 
+const void $\ast$ \hyperlink{classRawSharedMemory_69f70452c4f5d70329cf93ae41ce9614}{get} () const 
+\item 
+void $\ast$ \hyperlink{classRawSharedMemory_34c5400cb6f69492c9cb03294ba2323f}{get} ()
+\end{CompactItemize}
+\subsection*{Private Attributes}
+\begin{CompactItemize}
+\item 
+bool \hyperlink{classRawSharedMemory_a8c93446e3de31c2f6b683f0a3404358}{\_\-freeOnExit}
+\item 
+void $\ast$ \hyperlink{classRawSharedMemory_6edaf44782a9f1ddee877875a6cc786e}{\_\-data}
+\item 
+int \hyperlink{classRawSharedMemory_b950192a915183bb279f2855f6b0114c}{\_\-shmId}
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+A class responsible for a segment of shared-between-processes memory. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classRawSharedMemory_718ffde99de132b4a9d2a0b6760c604c}{
+\index{RawSharedMemory@{RawSharedMemory}!RawSharedMemory@{RawSharedMemory}}
+\index{RawSharedMemory@{RawSharedMemory}!RawSharedMemory@{RawSharedMemory}}
+\subsubsection[{RawSharedMemory}]{\setlength{\rightskip}{0pt plus 5cm}RawSharedMemory::RawSharedMemory (size\_\-t {\em size}, \/  const string \& {\em pathName}, \/  char {\em id}, \/  bool {\em freeOnExit} = {\tt true})}}
+\label{classRawSharedMemory_718ffde99de132b4a9d2a0b6760c604c}
+
+
+Creates a zero-initialized shared memory segment of a given size. The shared memory is attached to the calling process.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em size}]The size, in bytes, of the shared memory segment. \item[{\em pathName}]A path to an existing file. \item[{\em id}]A char to identify the shared memory object. \item[{\em freeOnExit}]Whether the physical shared memory segment should be deallocated when the \hyperlink{classSharedMemory}{SharedMemory} is destroyed. \end{description}
+\end{Desc}
+\hypertarget{classRawSharedMemory_dd28221a9455cb3ead6798e131f02fb9}{
+\index{RawSharedMemory@{RawSharedMemory}!$\sim$RawSharedMemory@{$\sim$RawSharedMemory}}
+\index{$\sim$RawSharedMemory@{$\sim$RawSharedMemory}!RawSharedMemory@{RawSharedMemory}}
+\subsubsection[{$\sim$RawSharedMemory}]{\setlength{\rightskip}{0pt plus 5cm}RawSharedMemory::$\sim$RawSharedMemory ()}}
+\label{classRawSharedMemory_dd28221a9455cb3ead6798e131f02fb9}
+
+
+Detaches the shared memory from the calling process and, in case freeOnExit is true, the physical shared memory is destroyed. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classRawSharedMemory_34c5400cb6f69492c9cb03294ba2323f}{
+\index{RawSharedMemory@{RawSharedMemory}!get@{get}}
+\index{get@{get}!RawSharedMemory@{RawSharedMemory}}
+\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ RawSharedMemory::get ()\hspace{0.3cm}{\tt  \mbox{[}inline\mbox{]}}}}
+\label{classRawSharedMemory_34c5400cb6f69492c9cb03294ba2323f}
+
+
+\hypertarget{classRawSharedMemory_69f70452c4f5d70329cf93ae41ce9614}{
+\index{RawSharedMemory@{RawSharedMemory}!get@{get}}
+\index{get@{get}!RawSharedMemory@{RawSharedMemory}}
+\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}const void$\ast$ RawSharedMemory::get () const\hspace{0.3cm}{\tt  \mbox{[}inline\mbox{]}}}}
+\label{classRawSharedMemory_69f70452c4f5d70329cf93ae41ce9614}
+
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classRawSharedMemory_6edaf44782a9f1ddee877875a6cc786e}{
+\index{RawSharedMemory@{RawSharedMemory}!\_\-data@{\_\-data}}
+\index{\_\-data@{\_\-data}!RawSharedMemory@{RawSharedMemory}}
+\subsubsection[{\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ {\bf RawSharedMemory::\_\-data}\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classRawSharedMemory_6edaf44782a9f1ddee877875a6cc786e}
+
+
+\hypertarget{classRawSharedMemory_a8c93446e3de31c2f6b683f0a3404358}{
+\index{RawSharedMemory@{RawSharedMemory}!\_\-freeOnExit@{\_\-freeOnExit}}
+\index{\_\-freeOnExit@{\_\-freeOnExit}!RawSharedMemory@{RawSharedMemory}}
+\subsubsection[{\_\-freeOnExit}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf RawSharedMemory::\_\-freeOnExit}\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classRawSharedMemory_a8c93446e3de31c2f6b683f0a3404358}
+
+
+\hypertarget{classRawSharedMemory_b950192a915183bb279f2855f6b0114c}{
+\index{RawSharedMemory@{RawSharedMemory}!\_\-shmId@{\_\-shmId}}
+\index{\_\-shmId@{\_\-shmId}!RawSharedMemory@{RawSharedMemory}}
+\subsubsection[{\_\-shmId}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf RawSharedMemory::\_\-shmId}\hspace{0.3cm}{\tt  \mbox{[}private\mbox{]}}}}
+\label{classRawSharedMemory_b950192a915183bb279f2855f6b0114c}
+
+
+
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+include/ipc/\hyperlink{shared__memory_8h}{shared\_\-memory.h}\item 
+src/ipc/\hyperlink{shared__memory_8cpp}{shared\_\-memory.cpp}\end{CompactItemize}
