@@ -30,11 +30,11 @@ static const int SEM_TIMEOUT = 5; // In seconds.
  * edition, volume 2, lockvsem.c, page 295.
 */
 int initSemSet(const string& pathName, char id,
-		const SemaphoreSet::SemValues& initVals)
+		const SemaphoreSet::InitValues& initVals)
 {
 
 	// Some helper functions declarations.
-	void initNewSemSet(int semId, const SemaphoreSet::SemValues& initVals);
+	void initNewSemSet(int semId, const SemaphoreSet::InitValues& initVals);
 	int  waitForSemInitialization(key_t key, size_t nSems);
 
 	// Creates key.
@@ -74,14 +74,14 @@ union semun
 };
 
 
-void initNewSemSet(int semId, const SemaphoreSet::SemValues& initVals)
+void initNewSemSet(int semId, const SemaphoreSet::InitValues& initVals)
 {
 	const size_t nSems = initVals.size();
 
 	// Initializes all values to zero first (in Linux this is not needed, but,
 	// in general, it is).
 	union semun arg;
-	SemaphoreSet::SemValues zeros(nSems, 0);
+	SemaphoreSet::InitValues zeros(nSems, 0);
 	arg.array = &zeros[0];
 
 	if (semctl(semId, 0, SETALL, arg) == -1)
@@ -156,14 +156,14 @@ int semOperation(int semId, size_t semIndex, int op, int flags = 0)
 
 SemaphoreSet::SemaphoreSet(const string& pathName, char id,
 		size_t nSems, int initVals[], bool ownExternalResources) :
-	_semId(initSemSet(pathName, id, SemValues(initVals, initVals + nSems))),
+	_semId(initSemSet(pathName, id, InitValues(initVals, initVals + nSems))),
 	_nSems(nSems),
 	_ownResources(ownExternalResources)
 { }
 
 
 SemaphoreSet::SemaphoreSet(const string& pathName, char id,
-		const SemValues& initVals, bool ownExternalResources) :
+		const InitValues& initVals, bool ownExternalResources) :
 	_semId(initSemSet(pathName, id, initVals)),
 	_nSems(initVals.size()),
 	_ownResources(ownExternalResources)

@@ -27,7 +27,7 @@ class SemaphoreSet
 public:
 
 	/** Structure used to indicate the initial values of the semaphore set. */
-	typedef vector<unsigned short> SemValues;
+	typedef vector<unsigned short> InitValues;
 
 	/**
 	 * Creates a semaphore set.
@@ -50,8 +50,9 @@ public:
 	 */
 	SemaphoreSet(const string& pathName, char id, size_t nSems, int initVals[],
 			bool ownExternalResources);
-	SemaphoreSet(const string& pathName, char id, const SemValues& initVals,
+	SemaphoreSet(const string& pathName, char id, const InitValues& initVals,
 			bool ownExternalResources);
+
 
 	/**
 	 * If ownWxternalResources was set to true in construction, destroys the
@@ -59,12 +60,35 @@ public:
 	 */
 	~SemaphoreSet();
 
-	void wait(size_t semIndex);
-	void signal(size_t semIndex);
 
 	/**
-	 * @return Whether the semaphore count of the semIndex'th semaphore could be
-	 * decremented by one (i.e: was different than zero).
+	 * If semIndex'th semaphore's value is greater than zero, decrements the
+	 * value by 1 and returns immediately.
+	 * If semIndex'th semaphore's value is zero, the calling process enters the
+	 * semaphore's waiting queue and waits until the semaphore is signal()ed
+	 * enough times.
+	 */
+	void wait(size_t semIndex);
+
+
+	/**
+	 * If there are none processes waiting for the semIndex'th semaphore on the
+	 * set, it's value is incremented by 1. Otherwise, the first process in the
+	 * waiting queue is waken up and the value of the semaphore remains zero.
+	 * Either way, this operation returns immediately.
+	 */
+	void signal(size_t semIndex);
+
+
+	/**
+	 * Tries to perform a wait() operation on the semIndex'th semaphore of the
+	 * set.
+	 * The wait() is performed only if it can be done immediately (i.e: the
+	 * semaphore's value is greater than zero). Otherwise, no wait() is
+	 * performed, and the method returns immediately too.
+	 *
+	 * @return Whether the wait() was performed (i.e: the semaphore count of the
+	 * semIndex'th semaphore could be decremented by one) or not
 	 */
 	bool tryWait(size_t semIndex);
 
@@ -90,8 +114,13 @@ class SemaphoreProxy
 public:
 	/** Default copy constructor and assignment operator */
 
+	/** @see SemaphoreSet::wait() */
 	void wait() { _set.wait(_index); }
+
+	/** @see SemaphoreSet::signal() */
 	void signal() { _set.signal(_index); }
+
+	/** @see SemaphoreSet::tryWait() */
 	bool tryWait() { return _set.tryWait(_index); }
 
 private:
