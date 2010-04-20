@@ -38,12 +38,12 @@ RawMessageQueue::RawMessageQueue(const string& pathName, char id){
 	}
 }
 
-void RawMessageQueue::write(const void* buffer, size_t size, long mtype)
+void RawMessageQueue::send(const void* buffer, size_t size, long mtype)
 {
 	// Builds the package to send the message.
 	char *writeBuff = (char*)malloc(sizeof(long) + size);
 	if (!writeBuff)
-		throw IpcError("RawMessageQueue::write(): Could not build the package "
+		throw IpcError("RawMessageQueue::send(): Could not build the package "
 				"to be send", errno);
 
 	*(long*)writeBuff = mtype;
@@ -53,24 +53,24 @@ void RawMessageQueue::write(const void* buffer, size_t size, long mtype)
 	// Sends the message.
 	int errorCode = msgsnd(_queueId,writeBuff,size,0);
 	if (errorCode == -1)
-		throw IpcError("RawMessageQueue::write(): Could not write into the "
+		throw IpcError("RawMessageQueue::send(): Could not write into the "
 				"queue", errno);
 
 	free(writeBuff);
 }
 
-void RawMessageQueue::read(void* buffer, size_t size, long mtype)
+void RawMessageQueue::receive(void* buffer, size_t size, long mtype)
 {
 	// Builds the package to receive the message.
 	char *readBuff = (char*)malloc(sizeof(long) + size);
 	if (!readBuff)
-		throw IpcError("RawMessageQueue::read(): Could not build the package "
+		throw IpcError("RawMessageQueue::receive(): Could not build the package "
 				"to be received", errno);
 
 	// Receives the message.
 	int errorCode = msgrcv(_queueId,readBuff,size,mtype,0);
 	if (errorCode == -1)
-		throw IpcError("RawMessageQueue::read(): Could not read from the "
+		throw IpcError("RawMessageQueue::receive(): Could not read from the "
 				"queue", errno);
 
 	memcpy(buffer, readBuff+sizeof(long), size);
@@ -86,4 +86,47 @@ RawMessageQueue::~RawMessageQueue(){
 		if (errorCode == -1)
 			perror("~RawMessageQueue(): Could not destroy message queue");
 	}
+}
+
+void MessageQueue::send(const std::string& message, long mtype)
+{
+	/**
+	 * Sends the string.
+	 * The second parameter has a "+1" expression because  the size method
+	 * returns only the number of characters in the string, not including any
+	 * null-termination.
+	 */
+	RawMessageQueue::send(message.c_str(), message.size()+1, mtype);
+}
+
+const std::string MessageQueue::receive(long mtype)
+{
+	int bufferSize = 1024;
+	bool receiveOk = false;
+	std::string message;
+
+	while (!receiveOk)
+	{
+		char* readBuff = (char*)malloc(bufferSize);
+
+		int errorCode = msgrcv(_queueId,readBuff,bufferSize-1,mtype,0);
+		if (errorCode == -1)
+			// We don't receive everything that we were supposed to receive.
+			if (errno == E2BIG)
+				bufferSize *= 2;
+			// Something wrong happended.
+			else
+				throw IpcError("RawMessageQueue::receive(): Could not read from"
+						" the queue", errno);
+		// Everything goes ok!
+		else
+		{
+			message.append(readBuff + sizeof(long));
+			receiveOk = true;
+		}
+
+		free(readBuff);
+	}
+
+	return message;
 }
