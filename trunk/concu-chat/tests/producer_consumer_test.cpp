@@ -214,7 +214,7 @@ bool launchProcesses(const string& pathName, size_t nProducers,
 		switch (pid)
 		{
 		case -1 :
-			throw Exception(string("fork()") + strerror(errno));
+			throw Exception(string("fork():") + strerror(errno));
 		case 0  :
 			// Child.
 			childRet = i < nProducers ? producerProcess(pathName, i)
