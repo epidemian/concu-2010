@@ -13,7 +13,6 @@
 #include <cstdio>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream>
 
 RawMessageQueue::RawMessageQueue(const string& pathName, char id){
 
@@ -21,21 +20,28 @@ RawMessageQueue::RawMessageQueue(const string& pathName, char id){
 
 	// Creates key.
 	key_t key = ftok(pathName.c_str(), id);
-		if (key == (key_t)-1)
-			throw IpcError("RawMessageQueue(): Could not create key", errno);
+	if (key == (key_t)-1)
+		throw IpcError("RawMessageQueue(): Could not create key", errno);
 
-	// Try to connect to the message queue.
-	_queueId = msgget(key, 0644 | IPC_EXCL);
+	// Try to create the message queue.
+	_queueId = msgget(key, 0644 | IPC_CREAT | IPC_EXCL);
 	if (_queueId == -1)
 	{
-		// The queue doesn't exist. So we try to create one.
-		_queueId = msgget(key, 0644 | IPC_CREAT);
-		if (_queueId == -1)
-			throw IpcError("RawMessageQueue(): Could not create or connet to "
-					"the message queue", errno);
+		// The queue has already been created. We try to connect.
+		if (errno == EEXIST)
+		{
+			_queueId = msgget(key, 0644 | IPC_CREAT);
+			if (_queueId == -1)
+				throw IpcError("RawMessageQueue(): Could not create or connet"
+						" to the message queue", errno);
+		}
+		else
+			throw IpcError("RawMessageQueue(): Could not create or connet"
+											" to the message queue", errno);
+	}
+	else
 		// The process that create the queue is the one that has to erase it.
 		_freeOnExit = true;
-	}
 }
 
 void RawMessageQueue::send(const void* buffer, size_t size, long mtype)
