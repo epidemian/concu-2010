@@ -63,9 +63,9 @@ public:
 
 
 	/**
-	 * If semIndex'th semaphore's value is greater than zero, decrements the
+	 * If semIndex-th semaphore's value is greater than zero, decrements the
 	 * value by 1 and returns immediately.
-	 * If semIndex'th semaphore's value is zero, the calling process enters the
+	 * If semIndex-th semaphore's value is zero, the calling process enters the
 	 * semaphore's waiting queue and waits until the semaphore is signal()ed
 	 * enough times.
 	 */
@@ -73,7 +73,7 @@ public:
 
 
 	/**
-	 * If there are none processes waiting for the semIndex'th semaphore on the
+	 * If there are none processes waiting for the semIndex-th semaphore on the
 	 * set, it's value is incremented by 1. Otherwise, the first process in the
 	 * waiting queue is waken up and the value of the semaphore remains zero.
 	 * Either way, this operation returns immediately.
@@ -82,21 +82,27 @@ public:
 
 
 	/**
-	 * Tries to perform a wait() operation on the semIndex'th semaphore of the
+	 * Tries to perform a wait() operation on the semIndex-th semaphore of the
 	 * set.
 	 * The wait() is performed only if it can be done immediately (i.e: the
 	 * semaphore's value is greater than zero). Otherwise, no wait() is
 	 * performed, and the method returns immediately too.
 	 *
 	 * @return Whether the wait() was performed (i.e: the semaphore count of the
-	 * semIndex'th semaphore could be decremented by one) or not
+	 * semIndex-th semaphore could be decremented by one) or not
 	 */
 	bool tryWait(size_t semIndex);
 
+
 	/**
-	 * @return A proxy to the semIndex'th semaphore in the set.
+	 * @return A proxy to the semIndex-th semaphore in the set.
 	 */
 	SemaphoreProxy getSemaphore(size_t semIndex);
+
+	virtual void print(ostream& stream) const;
+
+protected:
+	virtual void doDispose() throw ();
 
 private:
 	int    _semId;

@@ -38,6 +38,17 @@ public:
 	virtual void setOwnResources(bool value)
 	{ _semSet.setOwnResources(value); }
 
+	virtual void print(ostream& stream) const
+	{
+		stream << "mutex set wrapping ";
+		_semSet.print(stream);
+	}
+
+protected:
+
+	virtual void doDispose() throw ()
+	{ /* Nothing. _semSet is the real resource here. */ }
+
 private:
 	SemaphoreSet _semSet;
 
@@ -46,7 +57,7 @@ private:
 
 
 /**
- * A class with two X's in it's name... must be a very sexy class!
+ * A class with two X's in it's name, must be a very sexy class!
  */
 class MutexProxy
 {

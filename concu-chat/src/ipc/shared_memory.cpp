@@ -39,6 +39,16 @@ RawSharedMemory::RawSharedMemory(size_t size, const string& pathName, char id,
 
 RawSharedMemory::~RawSharedMemory() throw ()
 {
+	doDispose();
+}
+
+void RawSharedMemory::print(ostream& stream) const
+{
+	stream << "raw shared memory (id = " << _shmId << ")";
+}
+
+void RawSharedMemory::doDispose() throw ()
+{
 	int errorCode = shmdt(_data);
 	if (errorCode == -1)
 		// Throwing exceptions on destruction is not recommended.
@@ -60,3 +70,4 @@ RawSharedMemory::~RawSharedMemory() throw ()
 			perror("~SharedMemory(): Could not destroy shared memory");
 	}
 }
+
