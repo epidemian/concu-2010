@@ -45,6 +45,11 @@ public:
 	const void* get() const { return _data; }
 		  void* get()       { return _data; }
 
+	virtual void print(ostream& stream) const;
+
+protected:
+	virtual void doDispose() throw ();
+
 private:
 	void* _data;
 	int   _shmId;
@@ -103,6 +108,16 @@ public:
 
 	virtual void setOwnResources(bool value)
 	{ _sharedMem.setOwnResources(value); }
+
+	virtual void print(ostream& stream) const
+	{
+		stream << "shared memory wrapping ";
+		_sharedMem.print(stream);
+	}
+
+protected:
+	virtual void doDispose() throw ()
+	{ /* Nothing. _sharedMem is the real resource here. */ }
 
 private:
 	RawSharedMemory _sharedMem;

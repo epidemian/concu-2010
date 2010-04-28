@@ -43,6 +43,11 @@ public:
 	 */
 	const string getPathName() const { return this->_pathName; }
 
+	virtual void print(ostream& stream) const;
+
+	protected:
+		virtual void doDispose() throw ();
+
 private:
 	const string _pathName;
 

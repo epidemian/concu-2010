@@ -172,8 +172,7 @@ SemaphoreSet::SemaphoreSet(const string& pathName, char id,
 
 SemaphoreSet::~SemaphoreSet() throw ()
 {
-	if (ownResources() && semctl(_semId, 0, IPC_RMID) == -1)
-		perror("~SemaphoreSet(): Could not remove semaphore set");
+	doDispose();
 }
 
 void SemaphoreSet::wait(size_t semIndex)
@@ -219,3 +218,18 @@ SemaphoreProxy SemaphoreSet::getSemaphore(size_t semIndex)
 	validateIndex(semIndex);
 	return SemaphoreProxy(*this, semIndex);
 }
+
+void SemaphoreSet::print(ostream& stream) const
+{
+	stream << "semaphore set (id = " << _semId << ", nsems = " << _nSems
+	       << ")";
+}
+
+
+void SemaphoreSet::doDispose() throw ()
+{
+	if (ownResources() && semctl(_semId, 0, IPC_RMID) == -1)
+		perror("~SemaphoreSet(): Could not remove semaphore set");
+}
+
+

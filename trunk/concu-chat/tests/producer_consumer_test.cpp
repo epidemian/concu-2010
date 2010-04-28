@@ -43,9 +43,6 @@ struct Item
 	char description[DESC_SIZE];
 };
 
-/** A global variable for exiting loops. */
-sig_atomic_t exitLoop;
-
 struct Buffer
 {
 	Buffer(): _size(0) { }
@@ -70,19 +67,19 @@ private:
 };
 
 
-int producerProcess(const string& pathName, int producerNo);
-int consumerProcess(const string& pathName, int consumerNo);
+void producerProcess(const string& pathName, int producerNo);
+void consumerProcess(const string& pathName, int consumerNo);
 void initializeSharedReources(const string& pathName);
 void finalizeSharedReources(const string& pathName);
-bool launchProcesses(const string& pathName, size_t nProducers,
-		size_t nConsumers, vector<pid_t>& childPids, int& childRet);
+vector<pid_t> launchProcesses(const string& pathName, size_t nProducers,
+		size_t nConsumers);
 void waitForChildren(vector<pid_t>& childPids);
-void initializeSignalHandlers();
+void initializeParentSignalHandlers();
+void initializeChildSignalHandlers();
 
 int main(int argc, char* argv[])
 {
-	exitLoop = false;
-	initializeSignalHandlers();
+	initializeParentSignalHandlers();
 
 	cout << "Semaphore Test\n\n";
 
@@ -91,8 +88,8 @@ int main(int argc, char* argv[])
 	size_t nProducers, nConsumers;
 	switch(argc)
 	{
-	case 3 :
-		nProducers = strToInt(argv[2]);
+	case 3:
+		nProducers = strToInt(argv[1]);
 		nConsumers = strToInt(argv[2]);
 		break;
 	case 1 :
@@ -107,27 +104,19 @@ int main(int argc, char* argv[])
 	cout << "Using " << nProducers << " producers and "
 	     << nConsumers << " consumers\n"
 	     << "Parent pid: " << getpid() << "\n"
-	     << "Starting in 2 seconds\n";
-	sleep(2);
+	     << "Starting in 5 seconds (^C to start now and ^C to finish once it "
+	     << "started)\n";
+
+	sleep(5);
 
 	try {
 		initializeSharedReources(pathName);
 
-		vector<pid_t> childPids;
-
-		int childRet;
-		if (launchProcesses(pathName, nProducers, nConsumers, childPids,
-				childRet))
-		{
-			// Here die the children.
-			return childRet;
-		}
-		else {
-			// This is the parent of all children.
-			waitForChildren(childPids);
-			finalizeSharedReources(pathName);
-			return 0;
-		}
+		vector<pid_t> childPids =
+				launchProcesses(pathName, nProducers, nConsumers);
+		waitForChildren(childPids);
+		finalizeSharedReources(pathName);
+		return 0;
 	}
 	catch(...)
 	{
@@ -135,25 +124,40 @@ int main(int argc, char* argv[])
 	}
 }
 
-void whateverHandler(int signum)
+
+void parentInterruptionHandler(int signum)
 {
-	cout << "Process " << getpid() <<  " received signal " << signum << "\n";
-	exitLoop = true;
+	cout << "Parent process (pid " << getpid() << ") received signal "
+	     << signum << "! I will keep on waiting :)\n";
 }
 
 
-void interruptionHandler(int signum)
-{
-	cout << "Process " << getpid() << " received signal " << signum
-		 << "!\n";
-	exitLoop = true;
-}
-
-
-void initializeSignalHandlers()
+void initializeParentSignalHandlers()
 {
 	struct sigaction sa;
-	sa.sa_handler = interruptionHandler;
+	sa.sa_handler = parentInterruptionHandler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_RESTART; // waitpid() restarts.
+
+	sigaction(SIGINT, &sa, 0);
+	sigaction(SIGTERM, &sa, 0);
+}
+
+
+void childInterruptionHandler(int signum)
+{
+	cout << "Child process (pid " << getpid() << ") received signal " << signum
+		 << "! Exiting now...\n";
+	// The resources will be collected by RecourceCollector =)
+	exit(EXIT_SUCCESS);
+}
+
+
+void initializeChildSignalHandlers()
+{
+	struct sigaction sa;
+	// Child terminates it's execution on interruptions.
+	sa.sa_handler = childInterruptionHandler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 
@@ -171,42 +175,54 @@ SemaphoreSet::InitValues getSemaphoreInitValues()
 }
 
 
+struct ProducerConsumerResources
+{
+	SharedMemory<Buffer> buffer;
+	SemaphoreSet semaphores;
+	MutexSet mutexes;
+
+
+	ProducerConsumerResources(const string& pathName, bool ownResources):
+		buffer(pathName, SHARED_MEM_ID, ownResources),
+		semaphores(pathName, SEMAPHORE_ID, getSemaphoreInitValues(),
+				ownResources),
+		mutexes(pathName, MUTEX_ID, 1, ownResources)
+	{ }
+
+	void setOwnResources(bool value)
+	{
+		buffer.setOwnResources(value);
+		semaphores.setOwnResources(value);
+		mutexes.setOwnResources(value);
+	}
+};
+
+
 void initializeSharedReources(const string& pathName)
 {
 	// Creates shared memory, semaphores and mutex.
-	SharedMemory<Buffer> buffer(pathName, SHARED_MEM_ID, true);
-	buffer.get() = Buffer(); // The buffer gets constructed with 0 items.
-
-	// It's not completely necessary to initialize semaphores, but it's cool
-	// that, as this ensures that this is the process that will initialize them,
-	// the others may use different initialization values (which is wrong) and
-	// they will be ignored.
-	SemaphoreSet semaphores(pathName, SEMAPHORE_ID, getSemaphoreInitValues(),
-			true);
-	MutexSet mutex(pathName, MUTEX_ID, 1, true);
+	ProducerConsumerResources res(pathName, true);
+	res.buffer.get() = Buffer(); // The buffer gets constructed with 0 items.
 
 	// If a resource could not be created and raised an exception, the other
 	// resources already created would have been freed.
 	// But now change the ownership:
-	buffer.setOwnResources(false);
-	semaphores.setOwnResources(false);
-	mutex.setOwnResources(false);
+	res.setOwnResources(false);
 
 	// Now when the objects destroy, they will not deallocate the resources.
 }
 
+
 void finalizeSharedReources(const string& pathName)
 {
-	SharedMemory<Buffer> buffer(pathName, SHARED_MEM_ID, true);
-	SemaphoreSet semaphores(pathName, SEMAPHORE_ID, getSemaphoreInitValues(),
-			true);
-	MutexSet mutex(pathName, MUTEX_ID, 1, true);
+	ProducerConsumerResources res(pathName, true);
 }
 
-bool launchProcesses(const string& pathName, size_t nProducers,
-		size_t nConsumers, vector<pid_t>& childPids, int& childRet)
+
+vector<pid_t> launchProcesses(const string& pathName, size_t nProducers,
+		size_t nConsumers)
 {
-	childPids.clear();
+	vector<pid_t> childrenPids;
 
 	for (size_t i = 0, n = nProducers + nConsumers; i < n; ++i)
 	{
@@ -217,17 +233,21 @@ bool launchProcesses(const string& pathName, size_t nProducers,
 			throw Exception(string("fork():") + strerror(errno));
 		case 0  :
 			// Child.
-			childRet = i < nProducers ? producerProcess(pathName, i)
-					: consumerProcess(pathName, i - nProducers);
-			return true;
+			initializeChildSignalHandlers();
+			if (i < nProducers) producerProcess(pathName, i);
+			else consumerProcess(pathName, i - nProducers);
+			// Children never reaches here, by just to be sure they end and
+			// don't continue with the loop...
+			throw
+				Exception("Child process continued unexpectedly");
 		default :
 			// Parent.
-			childPids.push_back(pid);
+			childrenPids.push_back(pid);
 			break;
 		}
 	}
 	// Only parent reaches here.
-	return false;
+	return childrenPids;
 }
 
 
@@ -236,29 +256,27 @@ void waitForChildren(vector<pid_t>& childPids)
 	for (size_t i = 0; i < childPids.size(); ++i)
 	{
 		if (waitpid(childPids[i], NULL, 0) == -1)
-			throw Exception(string("waitpid()") + strerror(errno));
+			throw Exception(string("waitpid(): ") + strerror(errno));
 	}
 }
 
 Item produce(int producerNo);
 void consume(Item& item, int consumerNo);
 
-int producerProcess(const string& pathName, int producerNo)
+void producerProcess(const string& pathName, int producerNo)
 {
-	cout << "Producer " << producerNo << " started\n";
+	cout << "Producer " << producerNo << " started in process " << getpid()
+	     << "\n";
 
 	// Resource initialization.
-	SharedMemory<Buffer> sharedBuf(pathName, SHARED_MEM_ID, false);
-	SemaphoreSet semaphores(pathName, SEMAPHORE_ID, getSemaphoreInitValues(),
-			false);
-	MutexSet mutexSet(pathName, MUTEX_ID, 1, false);
+	ProducerConsumerResources res(pathName, false);
 
-	Buffer& buffer = sharedBuf.get();
-	SemaphoreProxy itemsReady = semaphores.getSemaphore(ITEMS_READY_IND);
-	SemaphoreProxy emptyPlaces = semaphores.getSemaphore(EMPTY_PLACES_IND);
-	MutexProxy mutex = mutexSet.getMutex(0);
+	Buffer& buffer             = res.buffer.get();
+	SemaphoreProxy itemsReady  = res.semaphores.getSemaphore(ITEMS_READY_IND);
+	SemaphoreProxy emptyPlaces = res.semaphores.getSemaphore(EMPTY_PLACES_IND);
+	MutexProxy mutex           = res.mutexes.getMutex(0);
 
-	while (!exitLoop)
+	while (true)
 	{
 		Item item = produce(producerNo);
 		emptyPlaces.wait();
@@ -270,28 +288,23 @@ int producerProcess(const string& pathName, int producerNo)
 
 		itemsReady.signal();
 	}
-	cout << "Producer " << producerNo << " (process " << getpid()
-	     << ") is exiting gracefully\n";
-	return 0;
 }
 
 
-int consumerProcess(const string& pathName, int consumerNo)
+void consumerProcess(const string& pathName, int consumerNo)
 {
-	cout << "Consumer " << consumerNo << " started\n";
+	cout << "Consumer " << consumerNo << " started in process " << getpid()
+	     << "\n";
 
 	// Resource initialization.
-	SharedMemory<Buffer> sharedBuf(pathName, SHARED_MEM_ID, false);
-	SemaphoreSet semaphores(pathName, SEMAPHORE_ID, getSemaphoreInitValues(),
-			false);
-	MutexSet mutexSet(pathName, MUTEX_ID, 1, false);
+	ProducerConsumerResources res(pathName, false);
 
-	Buffer& buffer = sharedBuf.get();
-	SemaphoreProxy itemsReady = semaphores.getSemaphore(ITEMS_READY_IND);
-	SemaphoreProxy emptyPlaces = semaphores.getSemaphore(EMPTY_PLACES_IND);
-	MutexProxy mutex = mutexSet.getMutex(0);
+	Buffer& buffer             = res.buffer.get();
+	SemaphoreProxy itemsReady  = res.semaphores.getSemaphore(ITEMS_READY_IND);
+	SemaphoreProxy emptyPlaces = res.semaphores.getSemaphore(EMPTY_PLACES_IND);
+	MutexProxy mutex           = res.mutexes.getMutex(0);
 
-	while (!exitLoop)
+	while (true)
 	{
 		itemsReady.wait();
 
@@ -303,9 +316,6 @@ int consumerProcess(const string& pathName, int consumerNo)
 		emptyPlaces.signal();
 		consume(item, consumerNo);
 	}
-	cout << "Consumer " << consumerNo << " (process " << getpid()
-	     << ") is exiting gracefully\n";
-	return 0;
 }
 
 Item produce(int producerNo)

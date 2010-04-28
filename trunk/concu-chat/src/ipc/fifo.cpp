@@ -48,6 +48,16 @@ Fifo::Fifo(const string& pathName, bool ownResource):
 
 Fifo::~Fifo() throw ()
 {
+	doDispose();
+}
+
+void Fifo::print(ostream& stream) const
+{
+	stream << "fifo (path " << getPathName() << ")";
+}
+
+void Fifo::doDispose() throw ()
+{
 	if (ownResources())
 	{
 		bool unlinkError = unlink(_pathName.c_str()) == -1;
