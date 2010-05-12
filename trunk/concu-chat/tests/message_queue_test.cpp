@@ -19,9 +19,9 @@ const char ID = 'i';
 int test1(int argc, char **argv);
 int test2(int argc, char **argv);
 
-int father(pid_t firSonPid, pid_t secSonPid, const string& pathName);
-int son1(const string& pathName);
-int son2(pid_t brothersPid, const string& pathName);
+int parent(pid_t firSonPid, pid_t secSonPid, const string& pathName);
+int child1(const string& pathName);
+int child2(pid_t brothersPid, const string& pathName);
 
 int main(int argc, char **argv)
 {
@@ -64,7 +64,7 @@ int test2(int argc, char **argv)
 		/**
 		 * First son's code.
 		 */
-		return son1(pathName);
+		return child1(pathName);
 	}
 	else
 	{
@@ -80,19 +80,19 @@ int test2(int argc, char **argv)
 			/**
 			 * Second son's code.
 			 */
-			return son2(brothersPid,pathName);
+			return child2(brothersPid,pathName);
 		}
 		else
 		{
 			/**
 			 * Father's code.
 			 */
-			return father(brothersPid,pid,pathName);
+			return parent(brothersPid,pid,pathName);
 		}
 	}
 }
 
-int father(pid_t firSonPid, pid_t secSonPid, const string& pathName)
+int parent(pid_t firSonPid, pid_t secSonPid, const string& pathName)
 {
 	/*
 	 * std::cout << "I'm the father. My process id is: " << getpid() << "\n";
@@ -126,7 +126,7 @@ int father(pid_t firSonPid, pid_t secSonPid, const string& pathName)
 	return 0;
 }
 
-int son1(const string& pathName)
+int child1(const string& pathName)
 {
 	/*
 	 * std::cout << "I'm the first son. My process id is: " << getpid() << "\n";
@@ -150,7 +150,7 @@ int son1(const string& pathName)
 	return 0;
 }
 
-int son2(pid_t brothersPid, const string& pathName)
+int child2(pid_t brothersPid, const string& pathName)
 {
 	/*
 	 * std::cout << "I'm the second son. My process id is: " << getpid() << "\n";

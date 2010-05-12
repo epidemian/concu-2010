@@ -120,7 +120,7 @@ const std::string MessageQueue::receive(long mtype)
 			// We don't receive everything that we were supposed to receive.
 			if (errno == E2BIG)
 				bufferSize *= 2;
-			// Something wrong happended.
+			// Something wrong happened.
 			else
 				throw IpcError("RawMessageQueue::receive(): Could not read from"
 						" the queue", errno);
