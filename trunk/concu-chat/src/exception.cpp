@@ -46,7 +46,7 @@ string demangleStackString(const string& str)
 		free(demangledName);
 	}
 	else {
-		// Did'n find the mangled name. Returns the whole line.
+		// Didn't find the mangled name. Returns the whole line.
 		ret = str;
 	}
 
