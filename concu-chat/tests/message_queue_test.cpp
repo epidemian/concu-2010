@@ -27,9 +27,8 @@ int main(int argc, char **argv)
 {
 	std::cout << "Message Queue Testing";
 
-
-	std::cout << "\n\nMessage Queue Test 1 begins\n\n";
-	test1(argc,argv);
+//	std::cout << "\n\nMessage Queue Test 1 begins\n\n";
+//	test1(argc,argv);
 
 	std::cout << "\n\nMessage Queue Test 2 begins\n\n";
 	test2(argc,argv);
@@ -42,11 +41,11 @@ int test1(int argc, char **argv)
 
 	std::string m1("This is our first message!");
 	std::cout << "We send a message: " << m1 << "\n";
-	queue.send(m1,getpid());
+	queue.sendString(m1,getpid());
 
 	sleep(2);
 
-	std::string m2 = queue.receive(getpid());
+	std::string m2 = queue.receiveString(getpid());
 	std::cout << "We receive a message: '" << m2 << "'\n";
 
 	return 0;
@@ -60,35 +59,35 @@ int test2(int argc, char **argv)
 
 	if (pid == 0)
 	{
-		sleep(2);
-		/**
-		 * First son's code.
-		 */
-		return child1(pathName);
+			sleep(2);
+			/**
+			 * First son's code.
+			 */
+			return child1(pathName);
 	}
 	else
 	{
-		/**
-		 * Father's code.
-		 */
-		pid_t brothersPid = pid;
-		pid = fork();
-
-		if (pid == 0)
-		{
-			sleep(2);
-			/**
-			 * Second son's code.
-			 */
-			return child2(brothersPid,pathName);
-		}
-		else
-		{
 			/**
 			 * Father's code.
 			 */
-			return parent(brothersPid,pid,pathName);
-		}
+			pid_t brothersPid = pid;
+			pid = fork();
+
+			if (pid == 0)
+			{
+					sleep(2);
+					/**
+					 * Second son's code.
+					 */
+					return child2(brothersPid,pathName);
+			}
+			else
+			{
+					/**
+					 * Father's code.
+					 */
+					return parent(brothersPid,pid,pathName);
+			}
 	}
 }
 
@@ -107,7 +106,7 @@ int parent(pid_t firSonPid, pid_t secSonPid, const string& pathName)
 	 */
 	std::string m_son1("Hi first son!");
 	std::cout << "Father sends a message to his first son: " << m_son1 << "\n";
-	queue.send(m_son1,firSonPid);
+	queue.sendString(m_son1,firSonPid);
 
 
 	/**
@@ -115,7 +114,7 @@ int parent(pid_t firSonPid, pid_t secSonPid, const string& pathName)
 	 */
 	std::string m_son2("Hi second son!");
 	std::cout << "Father sends a message to his second son: " << m_son2 << "\n";
-	queue.send(m_son2,secSonPid);
+	queue.sendString(m_son2,secSonPid);
 
 	/**
 	 * We wait the sons.
@@ -133,18 +132,18 @@ int child1(const string& pathName)
 	 * std::cout << "My father process id is: " << getppid() << "\n";
 	 */
 
-	MessageQueue queue(pathName,ID);
+	MessageQueue queue(pathName,ID,false);
 
 	/**
 	 * Receives a message from his father.
 	 */
-	std::string m_father = queue.receive(getpid());
+	std::string m_father = queue.receiveString(getpid());
 	std::cout << "Son1 received a message: " << m_father << "\n";
 
 	/**
 	 * Receives a message from his brother.
 	 */
-	std::string m_brother = queue.receive(getpid());
+	std::string m_brother = queue.receiveString(getpid());
 	std::cout << "Son1 received a message: " << m_brother << "\n";
 
 	return 0;
@@ -157,12 +156,12 @@ int child2(pid_t brothersPid, const string& pathName)
 	 * std::cout << "My father process id is: " << getppid() << "\n";
 	 */
 
-	MessageQueue queue(pathName,ID);
+	MessageQueue queue(pathName,ID,false);
 
 	/**
 	 * Receives a message from his father.
 	 */
-	std::string m_father = queue.receive(getpid());
+	std::string m_father = queue.receiveString(getpid());
 	std::cout << "Son2 receives a message: " << m_father << "\n";
 
 
@@ -171,8 +170,8 @@ int child2(pid_t brothersPid, const string& pathName)
 	 */
 	std::string m_brother("Hi brothe!");
 	std::cout << "Son2 sends a message to his brother: " << m_brother << "\n";
-	queue.send(m_brother,long(brothersPid));
-
+	queue.sendString(m_brother,long(brothersPid));
 
 	return 0;
 }
+

@@ -9,12 +9,16 @@
 #define MESSAGE_QUEUE_H_
 
 #include "utils.h"
+#include "core/byte_array.h"
+#include "resource.h"
 
 #include <string>
 
+#define QUEUE_INITAL_BUFFER_SIZE 32
+
 using std::string;
 
-class RawMessageQueue
+class RawMessageQueue : public Resource
 {
 public:
 
@@ -24,7 +28,8 @@ public:
 	 * @param pathName     A path to an existing file.
 	 * @param id       A char to identify the shared memory object.
 	 */
-	explicit RawMessageQueue(const string& pathName, char id);
+	explicit RawMessageQueue(const string& pathName, char id,
+			bool ownResource = true);
 
 	/**
 	 * Sends size bytes from the buffer to the queue. The id of the message
@@ -35,7 +40,7 @@ public:
 	 * @param size		The size, in bytes, of the data to be read.
 	 * @param mtype		The id of the message.
 	 */
-	void send(const void* buffer, size_t size, long mtype);
+	void sendFixedSize(const void* buffer, size_t size, long mtype);
 
 	/**
 	 * Receives size bytes from the queue and stores them in the buffer.
@@ -50,7 +55,7 @@ public:
 	 * 							  mtype field is less than or equal to the
 	 * 							  absolute value of the mtype argument.
 	 */
-	void receive(void* buffer, size_t size, long mtype);
+	void receiveFixedSize(void* buffer, size_t size, long mtype);
 
 	/**
 	 *  Immediately removes the message queue, awakening all waiting reader and
@@ -60,11 +65,16 @@ public:
 	 *  _freeOnExit seted in true. If _freeOnExit's value is true, the message
 	 *  queue is removed.
 	 */
-	virtual ~RawMessageQueue();
+	virtual ~RawMessageQueue() throw();
 
 protected:
 	int _queueId;
 	bool  _freeOnExit;
+
+	size_t tryReceive(void* buffer, size_t size, long mtype);
+
+	virtual void doDispose() throw ();
+	virtual void print(ostream& stream) const;
 
 	// Non copiable.
 	DECLARE_NON_COPIABLE(RawMessageQueue)
@@ -83,8 +93,8 @@ public:
 	 * @param pathName     A path to an existing file.
 	 * @param id       A char to identify the shared memory object.
 	 */
-	explicit MessageQueue(const string& pathName, char id):
-		RawMessageQueue(pathName,id)
+	explicit MessageQueue(const string& pathName, char id,
+			bool ownResource = true): RawMessageQueue(pathName,id,ownResource)
 	{ }
 
 	/**
@@ -98,7 +108,7 @@ public:
 	template <typename T>
 	void send(const T& obj, long mtype)
 	{
-		RawMessageQueue::send(&obj,sizeof(T),mtype);
+		RawMessageQueue::sendFixedSize(&obj,sizeof(T),mtype);
 	}
 
 	/**
@@ -113,31 +123,47 @@ public:
 	T receive(long mtype)
 	{
 		T obj;
-		RawMessageQueue::receive(&obj,sizeof(T),mtype);
+		RawMessageQueue::receiveFixedSize(&obj,sizeof(T),mtype);
 		return obj;
 	}
 
 	/**
-	 * Send a string message through the queue.
+	 * Send a byte array message through the queue.
 	 *
 	 * @param message	The message to be send to the queue.
 	 * @param mtype		The id of the message.
 	 */
-	void send(const std::string& message, long mtype);
+	void sendByteArray(const ByteArray& message, long mtype);
+
+	/**
+	 * Receives a byte array message from the queue.
+	 *
+	 * @param message Byte array where the message will be stored.
+	 * @param mtype	  The id of the message.
+	 */
+	const ByteArray receiveByteArray(long mtype);
+
+	/*
+	 * Send a string message through the queue.
+	 *
+	 * @param message       The message to be send to the queue.
+	 * @param mtype         The id of the message.
+	 */
+	void sendString(const std::string& message, long mtype);
 
 	/**
 	 * Receives a string message from the queue.
 	 *
-	 * @param mtype	The id of the message.
-	 * @return 		The string message read from the queue.
+	 * @param mtype The id of the message.
+	 * @return              The string message read from the queue.
 	 */
-	const std::string receive(long mtype);
+	const std::string receiveString(long mtype);
 
 	/**
 	 * Removes the message queue. The calling process must be the creator the
 	 * message queue
 	 */
-	virtual ~MessageQueue()
+	virtual ~MessageQueue() throw()
 	{ }
 };
 

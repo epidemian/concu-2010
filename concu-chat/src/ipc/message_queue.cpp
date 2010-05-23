@@ -14,7 +14,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-RawMessageQueue::RawMessageQueue(const string& pathName, char id){
+RawMessageQueue::RawMessageQueue(const string& pathName, char id,
+		bool ownResource)
+	:Resource(ownResource)
+{
 
 	_freeOnExit = false;
 
@@ -44,13 +47,13 @@ RawMessageQueue::RawMessageQueue(const string& pathName, char id){
 		_freeOnExit = true;
 }
 
-void RawMessageQueue::send(const void* buffer, size_t size, long mtype)
+void RawMessageQueue::sendFixedSize(const void* buffer, size_t size, long mtype)
 {
-	// Builds the package to send the message.
+    // Builds the package to send the message.
 	char *writeBuff = (char*)malloc(sizeof(long) + size);
 	if (!writeBuff)
-		throw IpcError("RawMessageQueue::send(): Could not build the package "
-				"to be send", errno);
+		  throw IpcError("RawMessageQueue::send(): Could not build the package "
+						  "to be send", errno);
 
 	*(long*)writeBuff = mtype;
 
@@ -59,34 +62,50 @@ void RawMessageQueue::send(const void* buffer, size_t size, long mtype)
 	// Sends the message.
 	int errorCode = msgsnd(_queueId,writeBuff,size,0);
 	if (errorCode == -1)
-		throw IpcError("RawMessageQueue::send(): Could not write into the "
-				"queue", errno);
+		  throw IpcError("RawMessageQueue::send(): Could not write into the "
+						  "queue", errno);
 
 	free(writeBuff);
 }
 
-void RawMessageQueue::receive(void* buffer, size_t size, long mtype)
+void RawMessageQueue::receiveFixedSize(void* buffer, size_t size, long mtype)
+{
+	this->tryReceive(buffer,size,mtype);
+}
+
+size_t RawMessageQueue::tryReceive(void* buffer, size_t size, long mtype)
 {
 	// Builds the package to receive the message.
 	char *readBuff = (char*)malloc(sizeof(long) + size);
 	if (!readBuff)
-		throw IpcError("RawMessageQueue::receive(): Could not build the package "
-				"to be received", errno);
+		throw IpcError("RawMessageQueue::receive(): Could not build the "
+				"package to be received", errno);
 
 	// Receives the message.
-	int errorCode = msgrcv(_queueId,readBuff,size,mtype,0);
-	if (errorCode == -1)
-		throw IpcError("RawMessageQueue::receive(): Could not read from the "
-				"queue", errno);
+	ssize_t returnValue = msgrcv(_queueId,readBuff,size,mtype,0);
+	// E2BIG: We don't receive everything that we were supposed to receive.
+	// Something wrong happened.
+	if (returnValue == -1 && errno != E2BIG)
+	{
+		free(readBuff);
+		throw IpcError("RawMessageQueue::receive(): Could not read from"
+					   " the queue", errno);
+	}
 
-	memcpy(buffer, readBuff+sizeof(long), size);
+	memcpy(buffer, readBuff + sizeof(long), size);
 
 	free(readBuff);
+	return returnValue;
 }
 
-RawMessageQueue::~RawMessageQueue(){
+RawMessageQueue::~RawMessageQueue() throw()
+{
+	doDispose();
+}
 
-	if (_freeOnExit)
+void RawMessageQueue::doDispose() throw ()
+{
+	if (ownResources())
 	{
 		int errorCode = msgctl(_queueId,IPC_RMID, NULL);
 		if (errorCode == -1)
@@ -94,40 +113,35 @@ RawMessageQueue::~RawMessageQueue(){
 	}
 }
 
-void MessageQueue::send(const std::string& message, long mtype)
+void RawMessageQueue::print(ostream& stream) const
 {
-	/**
-	 * Sends the string.
-	 * The second parameter has a "+1" expression because  the size method
-	 * returns only the number of characters in the string, not including any
-	 * null-termination.
-	 */
-	RawMessageQueue::send(message.c_str(), message.size()+1, mtype);
+	stream << "message queue";
 }
 
-const std::string MessageQueue::receive(long mtype)
+void MessageQueue::sendByteArray(const ByteArray& message, long mtype)
 {
-	int bufferSize = 1024;
+	RawMessageQueue::sendFixedSize(message.data(), message.size(), mtype);
+}
+
+const ByteArray MessageQueue::receiveByteArray(long mtype)
+{
+	int bufferSize = QUEUE_INITAL_BUFFER_SIZE;
 	bool receiveOk = false;
-	std::string message;
+	ByteArray message;
 
 	while (!receiveOk)
 	{
 		char* readBuff = (char*)malloc(bufferSize);
+		ssize_t returnValue = tryReceive(readBuff,bufferSize,mtype);
 
-		int errorCode = msgrcv(_queueId,readBuff,bufferSize-1,mtype,0);
-		if (errorCode == -1)
-			// We don't receive everything that we were supposed to receive.
-			if (errno == E2BIG)
-				bufferSize *= 2;
-			// Something wrong happened.
-			else
-				throw IpcError("RawMessageQueue::receive(): Could not read from"
-						" the queue", errno);
+		if (returnValue == -1)
+		{
+			bufferSize *= 2;
+		}
 		// Everything goes ok!
 		else
 		{
-			message.append(readBuff + sizeof(long));
+			message = toByteArray(readBuff,returnValue);
 			receiveOk = true;
 		}
 
@@ -136,3 +150,21 @@ const std::string MessageQueue::receive(long mtype)
 
 	return message;
 }
+
+void MessageQueue::sendString(const std::string& message, long mtype)
+{
+	/**
+	 * Sends the string.
+	 * The second parameter has a "+1" expression because  the size method
+	 * returns only the number of characters in the string, not including any
+	 * null-termination.
+	 */
+	RawMessageQueue::sendFixedSize(message.c_str(), message.size()+1, mtype);
+}
+
+const std::string MessageQueue::receiveString(long mtype)
+{
+	ByteArray data = this->receiveByteArray(mtype);
+	return getStringFromByteArray(data,0,data.size());
+}
+
