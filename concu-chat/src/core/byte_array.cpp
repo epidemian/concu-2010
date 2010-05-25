@@ -43,16 +43,8 @@ void addStringToByteArray(ByteArray& byteArray, const std::string arrayData)
 const std::string getStringFromByteArray(ByteArray& byteArray,
 		size_t startIndex, size_t size)
 {
-	char* buffer = (char*)malloc(size);
-
-	getFromByteArray(byteArray,startIndex,buffer,size);
-
-	std::string arrayData;
-	arrayData.append(buffer);
-
-	free (buffer);
-
-	return arrayData;
+	return std::string(byteArray.begin() + startIndex, byteArray.begin()
+			+ startIndex + size);
 }
 
 
