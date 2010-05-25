@@ -33,10 +33,10 @@ language = C++
 
 # Common source file directories. Make will search recursively into theese for
 # source files to build.  
-common_src_dirs = src
+common_src_dirs = src/common
 
 # Common header directories. Will be included with -I option.
-include_dirs = include
+include_dirs = include/common include/server include/client
 
 # Program-specific source directories. 
 # Variable names must be <program name>_src_dirs
