@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <string>
+#include "core/serializable.h"
 
 using std::vector;
 using std::string;

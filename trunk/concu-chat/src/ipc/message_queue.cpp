@@ -132,7 +132,16 @@ const ByteArray MessageQueue::receiveByteArray(long mtype)
 	while (!receiveOk)
 	{
 		char* readBuff = (char*)malloc(bufferSize);
-		ssize_t returnValue = tryReceive(readBuff,bufferSize,mtype);
+
+		ssize_t returnValue;
+
+		try{
+			returnValue = tryReceive(readBuff,bufferSize,mtype);
+		}
+		catch(...){
+			free(readBuff);
+			throw;
+		}
 
 		if (returnValue == -1)
 		{
