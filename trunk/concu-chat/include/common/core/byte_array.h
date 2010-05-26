@@ -25,5 +25,6 @@ const std::string getStringFromByteArray(const ByteArray& byteArray,
 		size_t startIndex, size_t size);
 
 ByteArray stringToByteArray(const std::string& str);
+const std::string byteArrayToString(const ByteArray& bytes);
 
 #endif /* BYTE_ARRAY_H_ */
