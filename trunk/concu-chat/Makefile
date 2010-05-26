@@ -13,6 +13,8 @@
 ##### BASIC CONFIGURATION ######################################################
 
 # Programs' names.
+client = client
+server = server
 shmtest = shared-memory-test
 fifotest = fifo-test
 exceptiontest = exceptions-test
@@ -21,12 +23,14 @@ semaphoretest = semaphore-test
 producertest = producer-consumer-test
 
 # Programs to build.
-programs = $(shmtest)\
-	$(fifotest)\
-	$(exceptiontest)\
-	$(messagetest)\
-	$(semaphoretest)\
-	$(producertest)
+programs = $(server)\
+ $(client)\
+ $(shmtest)\
+ $(fifotest)\
+ $(exceptiontest)\
+ $(messagetest)\
+ $(semaphoretest)\
+ $(producertest)
 
 # Language: C or C++
 language = C++
@@ -40,11 +44,8 @@ include_dirs = include/common include/server include/client
 
 # Program-specific source directories. 
 # Variable names must be <program name>_src_dirs
-$(shmtest)_src_dirs       = 
-$(fifotest)_src_dirs      = 
-$(exceptiontest)_src_dirs = 
-$(messagetest)_src_dirs   = 
-$(semaphoretest)_src_dirs =
+$(client)_src_dirs = src/client
+$(server)_src_dirs = src/server
 
 $(shmtest)_src_files       = tests/shared_memory_test.cpp
 $(fifotest)_src_files      = tests/fifo_test.cpp
@@ -54,8 +55,8 @@ $(semaphoretest)_src_files = tests/semaphore_test.cpp
 $(producertest)_src_files  = tests/producer_consumer_test.cpp
 
 # Program-scpecific LDFLAGS. (CFLAGS are global... sorry)
-$(hola)_ldflags =
-$(adios)_ldflags =
+$(client)_ldflags =
+$(server)_ldflags =
 
 # Uncomment to make a static compilation (all linked libraries are included into
 # the program executable). 

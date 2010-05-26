@@ -14,11 +14,11 @@ class Serializable{
 
 public:
 	virtual ByteArray serialize() = 0;
-	virtual void deserialize(const ByteArray& bytes, size_t startIndex,
+	virtual void deserializeFromIndex(const ByteArray& bytes, size_t startIndex,
 			size_t size) = 0;
 	void deserialize(const ByteArray& bytes)
 	{
-		deserialize(bytes,0,bytes.size());
+		deserializeFromIndex(bytes,0,bytes.size());
 	}
 };
 
