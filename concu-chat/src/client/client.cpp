@@ -70,28 +70,41 @@ void Client::runUserInputProcess()
 void Client::runMainProcess()
 {
 	MessageQueue queue(_queueFileName, CommonConstants::QUEUE_ID, true);
-
 	bool exit = false;
+
+	// TODO Registrarse en el server.
+
 	while (!exit)
 	{
 		Message message;
 		message.deserialize(queue.receiveByteArray());
-		processMessage(message);
+		processMessage(message,exit);
 	}
 }
 
 void Client::createQueueFile()
 {
 	if (mknod(_queueFileName.c_str(), 0666, 0) == -1)
-		throw Exception("Cound not create file " + _queueFileName);
+		throw Exception("could not create file " + _queueFileName);
 }
 
-void Client::processMessage(const Message& message)
+void Client::processMessage(const Message& message, bool& exitNow)
 {
 	ByteArray data = message.getData();
 	switch (message.getType())
 	{
-
+	case Message::TYPE_USER_INPUT:
+		processUserInputMessage(data);
+		break;
+	case Message::TYPE_USER_EXIT:
+		exitNow = false;
+		break;
 	}
+}
+
+void Client::processUserInputMessage(const ByteArray& data)
+{
+	string msg = byteArrayToString(data);
+	msg.size();
 }
 

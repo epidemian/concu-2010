@@ -47,6 +47,11 @@ const std::string getStringFromByteArray(const ByteArray& byteArray,
 			+ startIndex + size);
 }
 
+const std::string byteArrayToString(const ByteArray& bytes)
+{
+	return getStringFromByteArray(bytes,0,bytes.size());
+}
+
 ByteArray stringToByteArray(const std::string& str)
 {
 	ByteArray result;

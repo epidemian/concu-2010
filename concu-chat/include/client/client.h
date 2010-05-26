@@ -30,7 +30,9 @@ private:
 	void runMainProcess();
 
 	void createQueueFile();
-	void processMessage(const Message& message);
+	void processMessage(const Message& message, bool& exitNow);
+
+	void processUserInputMessage(const ByteArray& data);
 };
 
 #endif /* CLIENT_H_ */

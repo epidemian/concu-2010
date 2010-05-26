@@ -10,16 +10,13 @@
 
 #include "byte_array.h"
 
-class Serializable{
-
+class Serializable
+{
 public:
 	virtual ByteArray serialize() = 0;
 	virtual void deserializeFromIndex(const ByteArray& bytes, size_t startIndex,
 			size_t size) = 0;
-	void deserialize(const ByteArray& bytes)
-	{
-		deserializeFromIndex(bytes,0,bytes.size());
-	}
+	void deserialize(const ByteArray& bytes);
 };
 
 #endif /* SERIALIZABLE_H_ */
