@@ -40,7 +40,7 @@ public:
 	 * @param size		The size, in bytes, of the data to be read.
 	 * @param mtype		The id of the message.
 	 */
-	void sendFixedSize(const void* buffer, size_t size, long mtype);
+	void sendFixedSize(const void* buffer, size_t size, long mtype = 0);
 
 	/**
 	 * Receives size bytes from the queue and stores them in the buffer.
@@ -55,7 +55,7 @@ public:
 	 * 							  mtype field is less than or equal to the
 	 * 							  absolute value of the mtype argument.
 	 */
-	void receiveFixedSize(void* buffer, size_t size, long mtype);
+	void receiveFixedSize(void* buffer, size_t size, long mtype = 0);
 
 	/**
 	 *  Immediately removes the message queue, awakening all waiting reader and
@@ -71,7 +71,7 @@ protected:
 	int _queueId;
 	bool  _freeOnExit;
 
-	size_t tryReceive(void* buffer, size_t size, long mtype);
+	size_t tryReceive(void* buffer, size_t size, long mtype = 0);
 
 	virtual void doDispose() throw ();
 	virtual void print(ostream& stream) const;
@@ -106,7 +106,7 @@ public:
 	 * @param mtype	The id of the message.
 	 */
 	template <typename T>
-	void send(const T& obj, long mtype)
+	void send(const T& obj, long mtype = 0)
 	{
 		RawMessageQueue::sendFixedSize(&obj,sizeof(T),mtype);
 	}
@@ -120,7 +120,7 @@ public:
 	 * @return 		The 'T' object read from the queue.
 	 */
 	template <typename T>
-	T receive(long mtype)
+	T receive(long mtype = 0)
 	{
 		T obj;
 		RawMessageQueue::receiveFixedSize(&obj,sizeof(T),mtype);
@@ -133,7 +133,7 @@ public:
 	 * @param message	The message to be send to the queue.
 	 * @param mtype		The id of the message.
 	 */
-	void sendByteArray(const ByteArray& message, long mtype);
+	void sendByteArray(const ByteArray& message, long mtype = 0);
 
 	/**
 	 * Receives a byte array message from the queue.
@@ -141,7 +141,7 @@ public:
 	 * @param message Byte array where the message will be stored.
 	 * @param mtype	  The id of the message.
 	 */
-	const ByteArray receiveByteArray(long mtype);
+	const ByteArray receiveByteArray(long mtype = 0);
 
 	/*
 	 * Send a string message through the queue.
@@ -149,7 +149,7 @@ public:
 	 * @param message       The message to be send to the queue.
 	 * @param mtype         The id of the message.
 	 */
-	void sendString(const std::string& message, long mtype);
+	void sendString(const std::string& message, long mtype = 0);
 
 	/**
 	 * Receives a string message from the queue.
@@ -157,7 +157,7 @@ public:
 	 * @param mtype The id of the message.
 	 * @return              The string message read from the queue.
 	 */
-	const std::string receiveString(long mtype);
+	const std::string receiveString(long mtype = 0);
 
 	/**
 	 * Removes the message queue. The calling process must be the creator the

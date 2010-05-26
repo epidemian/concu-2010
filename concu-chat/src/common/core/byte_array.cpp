@@ -24,7 +24,7 @@ void addToByteArray(ByteArray& byteArray, const void* arrayData, size_t size)
 		byteArray.push_back(buffer[i]);
 }
 
-bool getFromByteArray(ByteArray& byteArray, size_t startIndex, void* arrayData,
+bool getFromByteArray(const ByteArray& byteArray, size_t startIndex, void* arrayData,
 		size_t size)
 {
 	if (byteArray.size() < size + startIndex - 1)
@@ -40,11 +40,16 @@ void addStringToByteArray(ByteArray& byteArray, const std::string arrayData)
 	addToByteArray(byteArray,arrayData.c_str(), arrayData.size()+1);
 }
 
-const std::string getStringFromByteArray(ByteArray& byteArray,
+const std::string getStringFromByteArray(const ByteArray& byteArray,
 		size_t startIndex, size_t size)
 {
 	return std::string(byteArray.begin() + startIndex, byteArray.begin()
 			+ startIndex + size);
 }
 
-
+ByteArray stringToByteArray(const std::string& str)
+{
+	ByteArray result;
+	addStringToByteArray(result, str);
+	return result;
+}

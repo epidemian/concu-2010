@@ -16,12 +16,14 @@ typedef std::vector<char> ByteArray;
 ByteArray toByteArray(const void* arrayData, size_t size);
 
 void addToByteArray(ByteArray& byteArray, const void* arrayData, size_t size);
-bool getFromByteArray(ByteArray& byteArray, size_t startIndex, void* arrayData,
+bool getFromByteArray(const ByteArray& byteArray, size_t startIndex, void* arrayData,
 		size_t size);
 
 
 void addStringToByteArray(ByteArray& byteArray, const std::string arrayData);
-const std::string getStringFromByteArray(ByteArray& byteArray,
+const std::string getStringFromByteArray(const ByteArray& byteArray,
 		size_t startIndex, size_t size);
+
+ByteArray stringToByteArray(const std::string& str);
 
 #endif /* BYTE_ARRAY_H_ */
