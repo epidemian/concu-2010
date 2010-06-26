@@ -35,6 +35,8 @@ public:
 	void writeInt(int);
 	void writeString(const std::string&);
 
+	ByteArray getByteArray();
+
 private:
 	ByteArray _bytes;
 };
