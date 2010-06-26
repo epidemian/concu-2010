@@ -23,7 +23,6 @@ void PeerTable::addPeer(const PeerTableEntry& peer)
 	_peers.push_back(peer);
 }
 
-
 void PeerTable::removePeer(const PeerTableEntry& peer)
 {
 	PeerVector::iterator it = std::find(_peers.begin(), _peers.end(), peer);
@@ -32,17 +31,32 @@ void PeerTable::removePeer(const PeerTableEntry& peer)
 	_peers.erase(it);
 }
 
-
-ByteArray PeerTableEntry::serialize()
+ByteArray PeerTable::serialize()
 {
-	ByteArray bytes;
-	addStringToByteArray(bytes,_name);
-	addStringToByteArray(bytes,_id);
-	return bytes;
+	ByteArrayWriter writer;
+	// The first element in the byte array is the size of the peer table.
+	writer.writeInt(_peers.size());
+	for (int i = 0; i < _peers.size(); i++)
+	{
+		PeerTableEntry entry = _peers[i];
+		writer.writeString(entry.getName());
+		writer.writeString(entry.getId());
+	}
+
+	return writer.getByteArray();
 }
 
-void PeerTableEntry::deserialize(const ByteArray& bytes)
+void PeerTable::deserialize(const ByteArray& bytes)
 {
+	ByteArrayReader reader(bytes);
+	int size = reader.readInt();
 
+	for (int i = 0; i < size; i++)
+	{
+		std::string name = reader.readString();
+		std::string id = reader.readString();
 
+		PeerTableEntry entry(name, id);
+		_peers.push_back(entry);
+	}
 }

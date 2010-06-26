@@ -15,7 +15,7 @@
 using std::vector;
 using std::string;
 
-class PeerTableEntry : public Serializable
+class PeerTableEntry
 {
 public:
 	PeerTableEntry(const string& name, const string& id):
@@ -30,15 +30,12 @@ public:
 		return _name == p._name && _id == p._id;
 	}
 
-	ByteArray serialize();
-	void deserialize(const ByteArray& bytes);
-
 private:
 	string _name;
 	string _id;
 };
 
-class PeerTable
+class PeerTable : public Serializable
 {
 public:
 	PeerTable()
@@ -46,6 +43,9 @@ public:
 
 	void addPeer(const PeerTableEntry& peer);
 	void removePeer(const PeerTableEntry& peer);
+
+	ByteArray serialize();
+	void deserialize(const ByteArray& bytes);
 
 private:
 	typedef vector<PeerTableEntry> PeerVector;
