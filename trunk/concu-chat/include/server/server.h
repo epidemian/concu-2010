@@ -6,6 +6,7 @@
  */
 
 #include "model/message.h"
+#include "model/peer_table.h"
 
 #ifndef SERVER_H_
 #define SERVER_H_
@@ -22,10 +23,14 @@ public:
 
 private:
 	string _queueFileName;
+	PeerTable _peerTable;
 
 	void processMessage(const Message& message);
 	void createQueueFile();
 	void destroyQueueFile();
+
+	// TODO parametros?
+	void addPeer();
 };
 
 

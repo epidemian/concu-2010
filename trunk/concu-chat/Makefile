@@ -21,6 +21,7 @@ exceptiontest = exceptions-test
 messagetest = message-queue-test
 semaphoretest = semaphore-test
 producertest = producer-consumer-test
+bytearraytest = byte-array-test
 
 # Programs to build.
 programs = $(server)\
@@ -30,7 +31,8 @@ programs = $(server)\
  $(exceptiontest)\
  $(messagetest)\
  $(semaphoretest)\
- $(producertest)
+ $(producertest)\
+ $(bytearraytest)\
 
 # Language: C or C++
 language = C++
@@ -47,12 +49,13 @@ include_dirs = include/common include/server include/client
 $(client)_src_dirs = src/client
 $(server)_src_dirs = src/server
 
-$(shmtest)_src_files       = tests/shared_memory_test.cpp
-$(fifotest)_src_files      = tests/fifo_test.cpp
-$(exceptiontest)_src_files = tests/exceptions_test.cpp
-$(messagetest)_src_files   = tests/message_queue_test.cpp
-$(semaphoretest)_src_files = tests/semaphore_test.cpp
-$(producertest)_src_files  = tests/producer_consumer_test.cpp
+$(shmtest)_src_files        = tests/shared_memory_test.cpp
+$(fifotest)_src_files       = tests/fifo_test.cpp
+$(exceptiontest)_src_files  = tests/exceptions_test.cpp
+$(messagetest)_src_files    = tests/message_queue_test.cpp
+$(semaphoretest)_src_files  = tests/semaphore_test.cpp
+$(producertest)_src_files   = tests/producer_consumer_test.cpp
+$(bytearraytest)_src_files  = tests/byte_array_test.cpp
 
 # Program-scpecific LDFLAGS. (CFLAGS are global... sorry)
 $(client)_ldflags =

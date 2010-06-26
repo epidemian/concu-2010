@@ -27,4 +27,29 @@ const std::string getStringFromByteArray(const ByteArray& byteArray,
 ByteArray stringToByteArray(const std::string& str);
 const std::string byteArrayToString(const ByteArray& bytes);
 
+class ByteArrayWriter
+{
+public:
+	ByteArrayWriter();
+
+	void writeInt(int);
+	void writeString(const std::string&);
+
+private:
+	ByteArray _bytes;
+};
+
+class ByteArrayReader
+{
+public:
+	ByteArrayReader(const ByteArray&);
+
+	int readInt();
+	std::string readString();
+
+private:
+	const ByteArray& _bytes;
+	int _index;
+};
+
 #endif /* BYTE_ARRAY_H_ */

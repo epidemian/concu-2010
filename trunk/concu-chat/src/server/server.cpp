@@ -20,7 +20,7 @@
 
 using std::ostringstream;
 
-Server::Server()
+Server::Server(int argc, char** argv)
 {
 	ostringstream oss;
 	oss << "queues/server" << getpid() << ".queue";
@@ -32,7 +32,7 @@ Server::~Server()
 
 }
 
-int Server::Server(int argc, char** argv)
+int Server::run()
 {
 	createQueueFile();
 
@@ -48,6 +48,8 @@ int Server::Server(int argc, char** argv)
 	}
 
 	destroyQueueFile();
+
+	return 0;
 }
 
 void Server::createQueueFile()
@@ -71,4 +73,9 @@ void Server::processMessage(const Message& message)
 	{
 
 	}
+}
+
+void Server::addPeer()
+{
+
 }
