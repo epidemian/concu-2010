@@ -35,7 +35,7 @@ ByteArray PeerTable::serialize()
 {
 	ByteArrayWriter writer;
 	// The first element in the byte array is the size of the peer table.
-	writer.writeInt(_peers.size());
+	writer.write(_peers.size());
 	for (int i = 0; i < _peers.size(); i++)
 	{
 		PeerTableEntry entry = _peers[i];
@@ -49,7 +49,7 @@ ByteArray PeerTable::serialize()
 void PeerTable::deserialize(const ByteArray& bytes)
 {
 	ByteArrayReader reader(bytes);
-	int size = reader.readInt();
+	int size = reader.read<int>();
 
 	for (int i = 0; i < size; i++)
 	{
