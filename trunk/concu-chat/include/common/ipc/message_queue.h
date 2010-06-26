@@ -18,7 +18,7 @@
 
 using std::string;
 
-class RawMessageQueue : public Resource
+class RawMessageQueue: public Resource
 {
 public:
 
@@ -28,8 +28,8 @@ public:
 	 * @param pathName     A path to an existing file.
 	 * @param id       A char to identify the shared memory object.
 	 */
-	explicit RawMessageQueue(const string& pathName, char id,
-			bool ownResource = true);
+	explicit RawMessageQueue(const string& pathName, char id, bool ownResource =
+			true);
 
 	/**
 	 * Sends size bytes from the buffer to the queue. The id of the message
@@ -40,7 +40,7 @@ public:
 	 * @param size		The size, in bytes, of the data to be read.
 	 * @param mtype		The id of the message.
 	 */
-	void sendFixedSize(const void* buffer, size_t size, long mtype = 0);
+	void sendFixedSize(const void* buffer, size_t size, long mtype);
 
 	/**
 	 * Receives size bytes from the queue and stores them in the buffer.
@@ -55,7 +55,7 @@ public:
 	 * 							  mtype field is less than or equal to the
 	 * 							  absolute value of the mtype argument.
 	 */
-	void receiveFixedSize(void* buffer, size_t size, long mtype = 0);
+	void receiveFixedSize(void* buffer, size_t size, long mtype);
 
 	/**
 	 *  Immediately removes the message queue, awakening all waiting reader and
@@ -65,11 +65,11 @@ public:
 	 *  _freeOnExit seted in true. If _freeOnExit's value is true, the message
 	 *  queue is removed.
 	 */
-	virtual ~RawMessageQueue() throw();
+	virtual ~RawMessageQueue() throw ();
 
 protected:
 	int _queueId;
-	bool  _freeOnExit;
+	bool _freeOnExit;
 
 	size_t tryReceive(void* buffer, size_t size, long mtype = 0);
 
@@ -77,15 +77,18 @@ protected:
 	virtual void print(ostream& stream) const;
 
 	// Non copiable.
-	DECLARE_NON_COPIABLE(RawMessageQueue)
+DECLARE_NON_COPIABLE(RawMessageQueue)
 };
 
 /**
  * A class responsible for inter-process communication.
  */
-class MessageQueue : public RawMessageQueue
+class MessageQueue: public RawMessageQueue
 {
 public:
+
+	static const long DEFAULT_SEND_MTYPE = 1;
+	static const long DEFAULT_RECEIVE_MTYPE = 0;
 
 	/**
 	 * Connect to a message queue, or create it if it doesn't exist
@@ -93,9 +96,11 @@ public:
 	 * @param pathName     A path to an existing file.
 	 * @param id       A char to identify the shared memory object.
 	 */
-	explicit MessageQueue(const string& pathName, char id,
-			bool ownResource = true): RawMessageQueue(pathName,id,ownResource)
-	{ }
+	explicit MessageQueue(const string& pathName, char id, bool ownResource =
+			true) :
+		RawMessageQueue(pathName, id, ownResource)
+	{
+	}
 
 	/**
 	 * Send an object through the queue. Note that the object must be of scalar
@@ -105,10 +110,10 @@ public:
 	 * @param obj	The object to be send to the queue.
 	 * @param mtype	The id of the message.
 	 */
-	template <typename T>
-	void send(const T& obj, long mtype = 0)
+	template<typename T>
+	void send(const T& obj, long mtype = DEFAULT_SEND_MTYPE)
 	{
-		RawMessageQueue::sendFixedSize(&obj,sizeof(T),mtype);
+		RawMessageQueue::sendFixedSize(&obj, sizeof(T), mtype);
 	}
 
 	/**
@@ -119,11 +124,11 @@ public:
 	 * @param mtype	The id of the message.
 	 * @return 		The 'T' object read from the queue.
 	 */
-	template <typename T>
-	T receive(long mtype = 0)
+	template<typename T>
+	T receive(long mtype = DEFAULT_RECEIVE_MTYPE)
 	{
 		T obj;
-		RawMessageQueue::receiveFixedSize(&obj,sizeof(T),mtype);
+		RawMessageQueue::receiveFixedSize(&obj, sizeof(T), mtype);
 		return obj;
 	}
 
@@ -133,7 +138,8 @@ public:
 	 * @param message	The message to be send to the queue.
 	 * @param mtype		The id of the message.
 	 */
-	void sendByteArray(const ByteArray& message, long mtype = 0);
+	void sendByteArray(const ByteArray& message, long mtype =
+			DEFAULT_SEND_MTYPE);
 
 	/**
 	 * Receives a byte array message from the queue.
@@ -141,7 +147,7 @@ public:
 	 * @param message Byte array where the message will be stored.
 	 * @param mtype	  The id of the message.
 	 */
-	const ByteArray receiveByteArray(long mtype = 0);
+	const ByteArray receiveByteArray(long mtype = DEFAULT_RECEIVE_MTYPE);
 
 	/*
 	 * Send a string message through the queue.
@@ -149,7 +155,9 @@ public:
 	 * @param message       The message to be send to the queue.
 	 * @param mtype         The id of the message.
 	 */
-	void sendString(const std::string& message, long mtype = 0);
+	void
+			sendString(const std::string& message, long mtype =
+					DEFAULT_SEND_MTYPE);
 
 	/**
 	 * Receives a string message from the queue.
@@ -157,14 +165,15 @@ public:
 	 * @param mtype The id of the message.
 	 * @return              The string message read from the queue.
 	 */
-	const std::string receiveString(long mtype = 0);
+	const std::string receiveString(long mtype = DEFAULT_RECEIVE_MTYPE);
 
 	/**
 	 * Removes the message queue. The calling process must be the creator the
 	 * message queue
 	 */
-	virtual ~MessageQueue() throw()
-	{ }
+	virtual ~MessageQueue() throw ()
+	{
+	}
 };
 
 #endif /* MESSAGE_QUEUE_H_ */
