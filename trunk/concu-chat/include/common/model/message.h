@@ -35,16 +35,17 @@ public:
 
 	virtual ByteArray serialize()
 	{
-		ByteArray result;
-		addToByteArray(result, &_type, sizeof(_type));
-		addToByteArray(result, &_data[0], _data.size());
-		return result;
+		ByteArrayWriter writer;
+		writer.write(_type);
+		writer.writeByteArray(_data);
+		return writer.getByteArray();
 	}
 
 	virtual void deserialize(const ByteArray& bytes)
 	{
-		getFromByteArray(bytes, 0, &_type, sizeof(_type));
-		_data = ByteArray(bytes.begin() + sizeof(_type), bytes.end());
+		ByteArrayReader reader(bytes);
+		_type = reader.read<unsigned>();
+		_data = reader.readAll();
 	}
 
 private:

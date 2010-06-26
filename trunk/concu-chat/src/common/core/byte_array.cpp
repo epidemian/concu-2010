@@ -63,14 +63,14 @@ ByteArrayWriter::ByteArrayWriter()
 {
 }
 
-void ByteArrayWriter::writeInt(int int1)
-{
-	addToByteArray(_bytes, &int1, sizeof(int));
-}
-
 void ByteArrayWriter::writeString(const std::string& string)
 {
 	addStringToByteArray(_bytes, string);
+}
+
+void ByteArrayWriter::writeByteArray(const ByteArray& bytes)
+{
+	_bytes.insert(_bytes.end(), bytes.begin(), bytes.end());
 }
 
 ByteArray ByteArrayWriter::getByteArray()
@@ -84,21 +84,17 @@ ByteArrayReader::ByteArrayReader(const ByteArray& bytes) :
 	_index = 0;
 }
 
-int ByteArrayReader::readInt()
-{
-	int int1;
-	size_t size = sizeof(int);
-
-	getFromByteArray(_bytes, _index, &int1, size);
-	_index += size;
-
-	return int1;
-}
-
 std::string ByteArrayReader::readString()
 {
 	const char* data = &_bytes[0];
 	std::string string(data + _index);
 	_index += string.size() + 1;
 	return string;
+}
+
+ByteArray ByteArrayReader::readAll()
+{
+	ByteArray bytes(_bytes.begin() + _index, _bytes.end());
+	_index += bytes.size();
+	return bytes;
 }

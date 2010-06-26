@@ -32,19 +32,19 @@ void testInts()
 	int int4 = 0;
 
 	ByteArrayWriter writer;
-	writer.writeInt(int1);
-	writer.writeInt(int2);
-	writer.writeInt(int3);
-	writer.writeInt(int4);
+	writer.write<int>(int1);
+	writer.write<int>(int2);
+	writer.write<int>(int3);
+	writer.write<int>(int4);
 
 	ByteArray bytes = writer.getByteArray();
 
 	ByteArrayReader reader(bytes);
 
-	if (reader.readInt() == int1 &&
-		reader.readInt() == int2 &&
-		reader.readInt() == int3 &&
-		reader.readInt() == int4)
+	if (reader.read<int>() == int1 &&
+		reader.read<int>() == int2 &&
+		reader.read<int>() == int3 &&
+		reader.read<int>() == int4)
 		std::cout << "Green test" << std::endl;
 	else
 		std::cout << "Red test" << std::endl;
@@ -84,7 +84,7 @@ void testIntsAndStrings(){
 
 	ByteArrayWriter writer;
 	writer.writeString(name);
-	writer.writeInt(lifes);
+	writer.write(lifes);
 	writer.writeString(pass);
 
 	ByteArray bytes = writer.getByteArray();
@@ -92,7 +92,7 @@ void testIntsAndStrings(){
 	ByteArrayReader reader(bytes);
 
 	if (reader.readString() == name &&
-		reader.readInt() == lifes &&
+		reader.read<int>() == lifes &&
 		reader.readString() == pass)
 		std::cout << "Green test" << std::endl;
 	else
