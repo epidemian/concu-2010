@@ -17,8 +17,10 @@
 #include <fcntl.h>
 
 #include <sstream>
+#include <iostream>
 
 using std::ostringstream;
+using std::cout;
 
 Client::Client(int argc, char* argv[])
 {
@@ -40,14 +42,15 @@ int Client::run()
 
 	switch (pid)
 	{
-	case -1 :
+	case -1:
 		throw Exception("fork()");
 		break;
-	case 0 : // Child.
+	case 0: // Child.
 		runUserInputProcess();
 		break;
-	default : // Parent.
+	default: // Parent.
 		runMainProcess();
+		destroyQueueFile();
 		break;
 	}
 	return 0;
@@ -78,7 +81,7 @@ void Client::runMainProcess()
 	{
 		Message message;
 		message.deserialize(queue.receiveByteArray());
-		processMessage(message,exit);
+		processMessage(message, exit);
 	}
 }
 
@@ -86,6 +89,15 @@ void Client::createQueueFile()
 {
 	if (mknod(_queueFileName.c_str(), 0666, 0) == -1)
 		throw Exception("could not create file " + _queueFileName);
+}
+
+void Client::destroyQueueFile()
+{
+	bool unlinkError = unlink(_queueFileName.c_str()) == -1;
+
+	if (unlinkError && errno != ENOENT) // ENOENT = no such file.
+		throw Exception("destroyQueueFile(): could not unlink the queue file "
+				+ _queueFileName);
 }
 
 void Client::processMessage(const Message& message, bool& exitNow)
@@ -105,6 +117,6 @@ void Client::processMessage(const Message& message, bool& exitNow)
 void Client::processUserInputMessage(const ByteArray& data)
 {
 	string msg = byteArrayToString(data);
-	msg.size();
+	cout << "Input message: " << msg << "\n";
 }
 

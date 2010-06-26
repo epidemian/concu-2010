@@ -14,9 +14,9 @@ class Serializable
 {
 public:
 	virtual ByteArray serialize() = 0;
-	virtual void deserializeFromIndex(const ByteArray& bytes, size_t startIndex,
-			size_t size) = 0;
-	void deserialize(const ByteArray& bytes);
+	virtual void deserialize(const ByteArray& bytes) = 0;
+	void deserializeFromIndex(const ByteArray& bytes, size_t startIndex,
+			size_t size);
 };
 
 #endif /* SERIALIZABLE_H_ */
