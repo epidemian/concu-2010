@@ -7,7 +7,11 @@
 
 #include "core/serializable.h"
 
-void Serializable::deserialize(const ByteArray& bytes)
+void Serializable::deserializeFromIndex(const ByteArray& bytes,
+		size_t startIndex, size_t size)
 {
-	deserializeFromIndex(bytes,0,bytes.size());
+	ByteArray::const_iterator from = bytes.begin() + startIndex;
+	ByteArray::const_iterator to = bytes.begin() + startIndex + size;
+	ByteArray subBytes = ByteArray(from, to);
+	this->deserialize(subBytes);
 }

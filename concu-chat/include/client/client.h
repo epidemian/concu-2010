@@ -30,6 +30,7 @@ private:
 	void runMainProcess();
 
 	void createQueueFile();
+	void destroyQueueFile();
 	void processMessage(const Message& message, bool& exitNow);
 
 	void processUserInputMessage(const ByteArray& data);

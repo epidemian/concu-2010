@@ -41,8 +41,7 @@ public:
 		return result;
 	}
 
-	virtual void deserializeFromIndex(const ByteArray& bytes, size_t startIndex,
-			size_t size)
+	virtual void deserialize(const ByteArray& bytes)
 	{
 		getFromByteArray(bytes, 0, &_type, sizeof(_type));
 		_data = ByteArray(bytes.begin() + sizeof(_type), bytes.end());
