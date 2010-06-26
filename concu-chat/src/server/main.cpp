@@ -5,8 +5,10 @@
  *      Author: nicolas
  */
 
+#include "server.h"
+
 int main(int argc, char* argv[])
 {
-//	Server server;
-//	server.run(argc, argv);
+	Server server(argc, argv);
+	return server.run();
 }
