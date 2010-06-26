@@ -31,3 +31,18 @@ void PeerTable::removePeer(const PeerTableEntry& peer)
 		throw ModelError("Peer does not exist");
 	_peers.erase(it);
 }
+
+
+ByteArray PeerTableEntry::serialize()
+{
+	ByteArray bytes;
+	addStringToByteArray(bytes,_name);
+	addStringToByteArray(bytes,_id);
+	return bytes;
+}
+
+void PeerTableEntry::deserialize(const ByteArray& bytes)
+{
+
+
+}

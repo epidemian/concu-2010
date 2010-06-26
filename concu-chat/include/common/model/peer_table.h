@@ -15,7 +15,7 @@
 using std::vector;
 using std::string;
 
-class PeerTableEntry
+class PeerTableEntry : public Serializable
 {
 public:
 	PeerTableEntry(const string& name, const string& id):
@@ -29,6 +29,9 @@ public:
 	{
 		return _name == p._name && _id == p._id;
 	}
+
+	ByteArray serialize();
+	void deserialize(const ByteArray& bytes);
 
 private:
 	string _name;
