@@ -15,17 +15,17 @@
 using std::vector;
 using std::string;
 
-class PeerTableEntry
+class Peer
 {
 public:
-	PeerTableEntry(const string& name, const string& id):
+	Peer(const string& name, const string& id):
 		_name(name), _id(id)
 	{ }
 
 	const string& getName() const { return _name; }
 	const string& getId()   const { return _id; }
 
-	bool operator == (const PeerTableEntry& p)
+	bool operator == (const Peer& p)
 	{
 		return _name == p._name && _id == p._id;
 	}
@@ -41,14 +41,21 @@ public:
 	PeerTable()
 	{ }
 
-	void addPeer(const PeerTableEntry& peer);
-	void removePeer(const PeerTableEntry& peer);
+	void add(const Peer& peer);
+	void remove(const Peer& peer);
+
+	bool containsId(const string& peerId) const;
+	bool containsName(const string& peerName) const;
+
+	const Peer* getById(const string& peerId) const;
+	const Peer* getByName(const string& peerName) const;
+
 
 	ByteArray serialize();
 	void deserialize(const ByteArray& bytes);
 
 private:
-	typedef vector<PeerTableEntry> PeerVector;
+	typedef vector<Peer> PeerVector;
 	PeerVector _peers;
 };
 

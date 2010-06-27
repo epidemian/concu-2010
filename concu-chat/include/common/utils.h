@@ -9,6 +9,11 @@
 #define UTILS_H_
 
 #include <stdexcept>
+#include <string>
+#include <sstream>
+
+using std::string;
+using std::ostringstream;
 
 #define ARR_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -17,5 +22,13 @@
 	void operator = (className&);
 
 int strToInt(const char* str) throw (std::invalid_argument);
+
+template <typename T>
+string toStr(T obj)
+{
+	ostringstream oss;
+	oss << obj;
+	return oss.str();
+}
 
 #endif /* UTILS_H_ */
