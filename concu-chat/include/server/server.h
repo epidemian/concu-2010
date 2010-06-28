@@ -8,6 +8,10 @@
 #include "model/message.h"
 #include "model/peer_table.h"
 
+#include <string>
+
+using std::string;
+
 #ifndef SERVER_H_
 #define SERVER_H_
 
@@ -29,8 +33,10 @@ private:
 	void createQueueFile();
 	void destroyQueueFile();
 
-	// TODO parametros?
-	void addPeer();
+	void registerNameRequest(string,pid_t);
+	void processPeerTableRequest(pid_t);
+
+	string getUserQueueFileName(pid_t);
 };
 
 
