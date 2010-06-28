@@ -9,11 +9,13 @@
 #include "client.h"
 #include "exception.h"
 #include "core/byte_array.h"
+#include "utils.h"
 
 #include <string>
 #include <algorithm>
 #include <iostream>
 
+using std::cout;
 using std::cerr;
 using std::string;
 
@@ -63,9 +65,7 @@ NotConnectedState::~NotConnectedState()
 
 void NotConnectedState::processUserInputMessage(const string& userInput)
 {
-	// TODO:
-//	string userName = trimString(userInput);
-	string userName = userInput;
+	string userName = trim(userInput);
 	bool valid = std::count_if(userName.begin(), userName.end(), isalnum) > 0;
 	if (valid)
 	{
@@ -113,17 +113,16 @@ IdleState::IdleState(Client& client, const string& userName) :
 
 void IdleState::processUserInputMessage(const string& userInput)
 {
-	// TODO
-	//string trimmedInput = trimString(userInput);
-	if (userInput == Client::PEER_TABLE_COMMAND)
+	string trimmedInput = trim(userInput);
+	if (trimmedInput == Client::PEER_TABLE_COMMAND)
 	{
 		// TODO:
 		//_client.requestPeerTable();
 	}
-	else if (userInput.find(Client::START_CHAT_COMMAND) == 0)
+	else if (trimmedInput.find(Client::START_CHAT_COMMAND) == 0)
 	{
-		// string peerName = trimString(trimmedInput.substr(Client::START_CHAT_COMMAND.size()));
-		string peerName = userInput.substr(Client::START_CHAT_COMMAND.size() + 1);
+		string peerName = trim(trimmedInput.substr(
+				Client::START_CHAT_COMMAND.size()));
 
 		const Peer* peer = _peerTable.getByName(peerName);
 		if (peer)
@@ -131,7 +130,8 @@ void IdleState::processUserInputMessage(const string& userInput)
 			// TODO:
 			//_client.sendStartChatRequest(peer->getId());
 		}
-		else {
+		else
+		{
 			// TODO
 			//_client.getView().showInvalidPeerName(peer->getName());
 		}

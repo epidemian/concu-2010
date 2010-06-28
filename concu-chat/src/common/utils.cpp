@@ -8,6 +8,7 @@
 #include "utils.h"
 
 #include <sstream>
+#include <algorithm>
 
 int strToInt(const char* str) throw (std::invalid_argument)
 {
@@ -15,6 +16,27 @@ int strToInt(const char* str) throw (std::invalid_argument)
 	std::istringstream iss(str);
 	iss >> n;
 	if (!iss)
-		throw std::invalid_argument("strToInt(): Invalid argument");
+		throw std::invalid_argument("strToInt(): Bad format");
 	return n;
+}
+
+string trimLeft(const string& str)
+{
+	size_t startPos = 0;
+	while (startPos < str.size() && isblank(str[startPos]))
+		startPos++;
+	return startPos == 0 ? str : str.substr(startPos);
+}
+
+string trimRight(const string& str)
+{
+	size_t nChars = str.size();
+	while (nChars > 0 && isblank(str[nChars - 1]))
+		nChars--;
+	return nChars == str.size() ? str : str.substr(0, nChars);
+}
+
+string trim(const string& str)
+{
+	return trimLeft(trimRight(str));
 }
