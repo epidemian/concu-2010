@@ -242,7 +242,7 @@ void WaitingUserStartChatResponseState::processUserInputMessage(
 ChattingState::ChattingState(Client& client, const string& userName,
 		const Peer& peer) :
 	ConnectedState(client, userName), _peer(peer),
-		_peerMessageQueue(
+		_peerQueue(
 			getClientQueueFileName(peer.getId()),
 			CommonConstants::QUEUE_ID,
 			false)
@@ -254,12 +254,12 @@ void ChattingState::processUserInputMessage(const string& userInput)
 {
 	if (trim(userInput) == ClientView::END_CHAT_COMMAND)
 	{
-		_client.sendEndChatMessage(_peer.getId());
+		_client.sendEndChatMessage(_peerQueue);
 		_client.changeState(new IdleState(_client, _userName));
 	}
 	else
 	{
-		_client.sendChatMessage(_peer.getId(), userInput);
+		_client.sendChatMessage(_peerQueue, userInput);
 	}
 }
 

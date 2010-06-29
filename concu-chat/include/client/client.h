@@ -8,6 +8,7 @@
 #ifndef CLIENT_H_
 #define CLIENT_H_
 
+#include "ipc/message_queue.h"
 #include "model/message.h"
 #include "client_view.h"
 
@@ -33,8 +34,8 @@ public:
 	void sendPeerTableRequest();
 	void sendStartChatRequest(pid_t peerId);
 	void sendStartChatResponse(pid_t peerId, bool responseOk);
-	void sendChatMessage(pid_t peerId, const string& chatMessage);
-	void sendEndChatMessage(pid_t peerId);
+	void sendChatMessage(MessageQueue& peerQueue, const string& chatMessage);
+	void sendEndChatMessage(MessageQueue& peerQueue);
 
 	ClientView& getView();
 private:
