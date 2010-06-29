@@ -94,7 +94,7 @@ void ClientView::showPeerLeftChat(const string& peerName)
 
 void ClientView::showChatMessage(const string& peerName, const string& chatMessage)
 {
-
+	cout << peerName << " says: " << chatMessage << "\n";
 }
 
 bool ClientView::isYesString(const string& str)

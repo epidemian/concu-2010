@@ -116,7 +116,7 @@ public:
 
 private:
 	Peer _peer;
-	MessageQueue _peerMessageQueue;
+	MessageQueue _peerQueue;
 };
 
 #endif /* CLIENT_STATE_H_ */

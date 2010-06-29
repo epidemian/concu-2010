@@ -108,12 +108,12 @@ void Client::sendStartChatResponse(pid_t peerId, bool responseOk)
 	// TODO implement me!
 }
 
-void Client::sendChatMessage(pid_t peerId, const string& chatMessage)
+void Client::sendChatMessage(MessageQueue& peerQueue, const string& chatMessage)
 {
 	// TODO implement me!
 }
 
-void Client::sendEndChatMessage(pid_t peerId)
+void Client::sendEndChatMessage(MessageQueue& peerQueue)
 {
 	// TODO implement me!
 }
