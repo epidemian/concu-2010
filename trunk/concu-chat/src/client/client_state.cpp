@@ -154,7 +154,7 @@ void IdleState::processUserInputMessage(const string& userInput)
 		const Peer* peer = _peerTable.getByName(peerName);
 		if (peer)
 		{
-			_client.sendStartChatRequest(peer->getId());
+			_client.sendStartChatRequest(peer->getId(), _userName);
 			_client.changeState(new WaitingPeerStartChatResponseState(_client,
 					_userName, *peer));
 		}

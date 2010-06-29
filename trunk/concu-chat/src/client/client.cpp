@@ -207,6 +207,12 @@ void Client::processMessage(const Message& message, bool& exitNow)
 		_state->processPeerTableResponse(message.getData());
 		break;
 	}
+	case Message::TYPE_START_CHAT_REQUEST:
+	{
+		string peerName = reader.readString();
+		Peer peer(peerName, message.getMessengerPid());
+		_state->processStartChatRequest(peer);
+	}
 	default:
 		throw Exception("Invalid message type " + toStr(message.getType()));
 	}
