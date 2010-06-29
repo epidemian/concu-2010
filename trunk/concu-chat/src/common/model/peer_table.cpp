@@ -9,6 +9,13 @@
 #include "model/model_error.h"
 
 #include <algorithm>
+#include <iostream>
+
+std::ostream& operator << (std::ostream& os, const Peer& peer)
+{
+	os << "Peer [name=" << peer.getName() << ", id=" << peer.getId() << "]";
+	return os;
+}
 
 void PeerTable::add(const Peer& peer)
 {

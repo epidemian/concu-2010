@@ -26,6 +26,10 @@ public:
 	virtual void processUserInputMessage(const string& userInput);
 	virtual void processRegisterNameResponse(bool responseOk);
 	virtual void processPeerTableResponse(const ByteArray& data);
+	virtual void processStartChatRequest(const Peer& peer);
+	virtual void processStartChatResponse(bool responseOk);
+	virtual void processEndChat();
+	virtual void processChatMessage(const string& chatMessage);
 
 protected:
 	Client& _client;
@@ -64,14 +68,41 @@ protected:
 class IdleState: public ConnectedState
 {
 public:
+
+	static const string PEER_TABLE_COMMAND;
+	static const string START_CHAT_COMMAND;
+
 	IdleState(Client& client, const string& userName);
 
 	virtual void processUserInputMessage(const string& userInput);
 	virtual void processPeerTableResponse(const ByteArray& data);
+	virtual void processStartChatRequest(const Peer& peer);
 
 private:
 	PeerTable _peerTable;
 };
 
+class WaitingPeerStartChatResponseState: public ConnectedState
+{
+public:
+	WaitingPeerStartChatResponseState(Client& client, const string& userName, const Peer& peer);
+
+
+
+private:
+	PeerTable _peerTable;
+};
+
+
+class WaitingUserStartChatResponse: public ConnectedState
+{
+public:
+	WaitingUserStartChatResponse(Client& client, const string& userName, const Peer& peer);
+
+
+
+private:
+	PeerTable _peerTable;
+};
 
 #endif /* CLIENT_STATE_H_ */

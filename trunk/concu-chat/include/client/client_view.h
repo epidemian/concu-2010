@@ -21,6 +21,9 @@ public:
 	void showInvalidName(const string& userName);
 	void showAlreadyUsedName(const string& userName);
 	void showPeerTable(const PeerTable& peerTable);
+	void showIdleStateCommands();
+	void showInvalidPeerName(const string& peerName);
+	void showInvalidCommand(const string& command);
 };
 
 #endif /* CLIENT_VIEW_H_ */

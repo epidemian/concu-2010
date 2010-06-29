@@ -6,6 +6,7 @@
  */
 
 #include "client_view.h"
+#include "client_state.h"
 
 #include <iostream>
 
@@ -31,4 +32,23 @@ void ClientView::showPeerTable(const PeerTable& peerTable)
 {
 	// TODO: Implement me!
 	cout << "Showing table!\n";
+}
+
+void ClientView::showIdleStateCommands()
+{
+	cout << "Commands:\n";
+	cout << IdleState::PEER_TABLE_COMMAND << " to show the connected peers\n";
+	cout << IdleState::START_CHAT_COMMAND
+			<< " <peer-name> to start chatting with a peer\n";
+}
+
+void ClientView::showInvalidPeerName(const string& peerName)
+{
+	cout << "Peer " << peerName
+			<< " does not exist. Try updating the peer table\n";
+}
+
+void ClientView::showInvalidCommand(const string& command)
+{
+	cout << "Invalid command: " << command << "\n";
 }

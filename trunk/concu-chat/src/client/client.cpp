@@ -25,10 +25,6 @@ using std::ostringstream;
 using std::cout;
 using std::string;
 
-const string Client::PEER_TABLE_COMMAND = "PEERTABLE";
-const string Client::START_CHAT_COMMAND = "CHAT";
-
-
 void showIgnoredParameters(int argc, char* argv[])
 {
 	if (argc > 1)
@@ -90,9 +86,21 @@ void Client::sendRegisterNameRequest(const string& userName)
 	ByteArrayWriter writer;
 	writer.writeString(userName);
 	ByteArray data = writer.getByteArray();
-	Message msg = Message(Message::TYPE_REGISTER_NAME_REQUEST, getpid(), data);
+	Message msg(Message::TYPE_REGISTER_NAME_REQUEST, getpid(), data);
 
 	sendMessageToServer(msg);
+}
+
+void Client::sendPeerTableRequest()
+{
+	Message msg(Message::TYPE_PEER_TABLE_REQUEST, getpid());
+	sendMessageToServer(msg);
+}
+
+void Client::sendStartChatRequest(pid_t peerId)
+{
+	// TODO implement me!
+	// abrir cola del peer y mandarle mensaje.
 }
 
 ClientView& Client::getView()

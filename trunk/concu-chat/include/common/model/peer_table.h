@@ -10,6 +10,8 @@
 
 #include <vector>
 #include <string>
+#include <iosfwd>
+
 #include "core/serializable.h"
 
 using std::vector;
@@ -29,6 +31,8 @@ public:
 	{
 		return _name == p._name && _id == p._id;
 	}
+
+	friend std::ostream& operator << (std::ostream& os, const Peer& peer);
 
 private:
 	string _name;
