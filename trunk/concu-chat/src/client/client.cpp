@@ -8,6 +8,7 @@
 #include "client.h"
 #include "exception.h"
 #include "ipc/message_queue.h"
+#include "model/queue_utils.h"
 #include "constants.h"
 #include "core/byte_array.h"
 #include "client_state.h"
@@ -86,19 +87,22 @@ void Client::sendRegisterNameRequest(const string& userName)
 	ByteArrayWriter writer;
 	writer.writeString(userName);
 	ByteArray data = writer.getByteArray();
-	Message msg(Message::TYPE_REGISTER_NAME_REQUEST, getpid(), data);
 
-	sendMessageToServer(msg);
+	sendMessageToServer(Message::TYPE_REGISTER_NAME_REQUEST, data);
 }
 
 void Client::sendPeerTableRequest()
 {
-	Message msg(Message::TYPE_PEER_TABLE_REQUEST, getpid());
-	sendMessageToServer(msg);
+	sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST);
 }
 
 void Client::sendStartChatRequest(pid_t peerId)
 {
+	Message message(Message::TYPE_START_CHAT_REQUEST,getpid());
+
+	string queueFileName = getClientQueueFileName(peerId);
+
+
 	// TODO implement me!
 	// abrir cola del peer y mandarle mensaje.
 }
@@ -203,8 +207,24 @@ void Client::processMessage(const Message& message, bool& exitNow)
 	}
 }
 
-void Client::sendMessageToServer(const Message& msg)
+void Client::sendMessage(const string& queueFileName, MessageType type, const ByteArray& data)
 {
-	// TODO: Implement me!
+	MessageQueue serverQueue(queueFileName, CommonConstants::QUEUE_ID, false);
+	Message message(type, getpid(), data);
+	serverQueue.sendByteArray(message.serialize());
 }
 
+void Client::sendMessageToServer(MessageType type, const ByteArray& data)
+{
+	sendMessage(getServerQueueFileName(), type, data);
+}
+
+void Client::sendMessageToPeer(pid_t peerId, MessageType type, const ByteArray& data)
+{
+	sendMessage(getClientQueueFileName(peerId), type, data);
+}
+
+void Client::sendMessageToMyself(MessageType type, const ByteArray& data)
+{
+	sendMessageToPeer(getpid(), type, data);
+}
