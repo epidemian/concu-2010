@@ -40,6 +40,8 @@ public:
 	ClientView& getView();
 private:
 
+	typedef Message::MessageType MessageType;
+
 	string _queueFileName;
 	ClientState* _state;
 	ClientView _view;
@@ -51,7 +53,10 @@ private:
 	void destroyQueueFile();
 	void processMessage(const Message& message, bool& exitNow);
 
-	void sendMessageToServer(const Message& msg);
+	void sendMessage(const string& queueFileName, MessageType type, const ByteArray& data = ByteArray());
+	void sendMessageToServer(MessageType type, const ByteArray& data = ByteArray());
+	void sendMessageToPeer(pid_t peerId, MessageType type, const ByteArray& data = ByteArray());
+	void sendMessageToMyself(MessageType type, const ByteArray& data = ByteArray());
 };
 
 #endif /* CLIENT_H_ */
