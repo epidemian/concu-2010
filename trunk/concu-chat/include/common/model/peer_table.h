@@ -58,15 +58,7 @@ public:
 	ByteArray serialize();
 	void deserialize(const ByteArray& bytes);
 
-	typedef vector<Peer>::const_iterator PeerTableInterator;
-	PeerTableInterator begin()
-	{
-		return _peers.begin();
-	}
-	PeerTableInterator end()
-	{
-		return _peers.end();
-	}
+	friend std::ostream& operator << (std::ostream& os, const PeerTable& peers);
 
 private:
 	typedef vector<Peer> PeerVector;
