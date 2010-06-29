@@ -103,6 +103,21 @@ void Client::sendStartChatRequest(pid_t peerId)
 	// abrir cola del peer y mandarle mensaje.
 }
 
+void Client::sendStartChatResponse(pid_t peerId, bool responseOk)
+{
+	// TODO implement me!
+}
+
+void Client::sendChatMessage(pid_t peerId, const string& chatMessage)
+{
+	// TODO implement me!
+}
+
+void Client::sendEndChatMessage(pid_t peerId)
+{
+	// TODO implement me!
+}
+
 ClientView& Client::getView()
 {
 	return _view;

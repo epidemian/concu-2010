@@ -10,6 +10,7 @@
 
 #include "model/peer_table.h"
 #include "core/byte_array.h"
+#include "ipc/message_queue.h"
 
 #include <string>
 
@@ -69,9 +70,6 @@ class IdleState: public ConnectedState
 {
 public:
 
-	static const string PEER_TABLE_COMMAND;
-	static const string START_CHAT_COMMAND;
-
 	IdleState(Client& client, const string& userName);
 
 	virtual void processUserInputMessage(const string& userInput);
@@ -85,24 +83,40 @@ private:
 class WaitingPeerStartChatResponseState: public ConnectedState
 {
 public:
-	WaitingPeerStartChatResponseState(Client& client, const string& userName, const Peer& peer);
+	WaitingPeerStartChatResponseState(Client& client, const string& userName,
+			const Peer& peer);
 
-
+	virtual void processUserInputMessage(const string& userInput);
+	virtual void processStartChatResponse(bool responseOk);
 
 private:
-	PeerTable _peerTable;
+	Peer _peer;
 };
 
-
-class WaitingUserStartChatResponse: public ConnectedState
+class WaitingUserStartChatResponseState: public ConnectedState
 {
 public:
-	WaitingUserStartChatResponse(Client& client, const string& userName, const Peer& peer);
+	WaitingUserStartChatResponseState(Client& client, const string& userName,
+			const Peer& peer);
 
-
+	virtual void processUserInputMessage(const string& userInput);
 
 private:
-	PeerTable _peerTable;
+	Peer _peer;
+};
+
+class ChattingState: public ConnectedState
+{
+public:
+	ChattingState(Client& client, const string& userName, const Peer& peer);
+
+	virtual void processUserInputMessage(const string& userInput);
+	virtual void processEndChat();
+	virtual void processChatMessage(const string& chatMessage);
+
+private:
+	Peer _peer;
+	MessageQueue _peerMessageQueue;
 };
 
 #endif /* CLIENT_STATE_H_ */

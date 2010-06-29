@@ -46,21 +46,28 @@ template<typename T> string toStr(T obj)
 }
 
 /**
- * Removes the leading whitespace of a string.
+ * Generates a copy of a given string with no leading whitespace.
  * e.g: trimLeft("  hello world ") returns "hello world "
  */
 string trimLeft(const string& str);
 
 /**
- * Removes the trailing whitespace of a string.
+ * Generates a copy of a given string with no trailing whitespace.
  * e.g: trimRight(" hello world  ") returns " hello world"
  */
 string trimRight(const string& str);
 
 /**
- * Removes the leading and trailing whitespace of a string.
- * e.g: trim("  hello world  ") return "hello world"
+ * Generates a copy of a given string with no leading nor trailing whitespace.
+ * e.g: trim("  hello world  ") returns "hello world"
  */
 string trim(const string& str);
+
+/**
+ * Generates a lowercase version of a string.
+ * e.g: toLowerCase("AbCd") returns "abcd"
+ */
+string toLowerCase(const string& str);
+
 
 #endif /* UTILS_H_ */
