@@ -1,15 +1,13 @@
 ################################################################################
 #                                                                              #
-# LD-Soft Makefile Template                                                    #
+# Multi-target Makefile                                                        #
 #                                                                              #
 # Author: Demian Ferreiro                                                      #
 # Created: 2009/04/18                                                          #
 #                                                                              #
-# Copyleft 2009 LD-Soft - Under the GPL license (http://www.gnu.org)           #
-#                                                                              #
 ################################################################################
 
-
+  
 ##### BASIC CONFIGURATION ######################################################
 
 # Programs' names.

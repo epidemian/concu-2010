@@ -28,6 +28,18 @@ using std::string;
 const string Client::PEER_TABLE_COMMAND = "PEERTABLE";
 const string Client::START_CHAT_COMMAND = "CHAT";
 
+
+void showIgnoredParameters(int argc, char* argv[])
+{
+	if (argc > 1)
+	{
+		cout << "Ignorig parameters: ";
+		for (int i = 1; i < argc; i++)
+			cout << argv[i] << " ";
+		cout << "\n";
+	}
+}
+
 Client::Client(int argc, char* argv[]) :
 	_state(0)
 {
@@ -35,7 +47,7 @@ Client::Client(int argc, char* argv[]) :
 	oss << "queues/client" << getpid() << ".queue";
 	_queueFileName = oss.str();
 
-	changeState(new NotConnectedState(*this));
+	showIgnoredParameters(argc, argv);
 }
 
 Client::~Client()
@@ -58,6 +70,7 @@ int Client::run()
 		runUserInputProcess();
 		break;
 	default: // Parent.
+		changeState(new NotConnectedState(*this));
 		runMainProcess();
 		destroyQueueFile();
 		break;

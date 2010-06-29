@@ -18,12 +18,12 @@ using std::string;
 class Peer
 {
 public:
-	Peer(const string& name, const string& id):
+	Peer(const string& name, pid_t id):
 		_name(name), _id(id)
 	{ }
 
 	const string& getName() const { return _name; }
-	const string& getId()   const { return _id; }
+	const pid_t& getId()   const { return _id; }
 
 	bool operator == (const Peer& p)
 	{
@@ -32,7 +32,7 @@ public:
 
 private:
 	string _name;
-	string _id;
+	pid_t _id;
 };
 
 class PeerTable : public Serializable
@@ -44,10 +44,10 @@ public:
 	void add(const Peer& peer);
 	void remove(const Peer& peer);
 
-	bool containsId(const string& peerId) const;
+	bool containsId(pid_t peerId) const;
 	bool containsName(const string& peerName) const;
 
-	const Peer* getById(const string& peerId) const;
+	const Peer* getById(pid_t peerId) const;
 	const Peer* getByName(const string& peerName) const;
 
 
