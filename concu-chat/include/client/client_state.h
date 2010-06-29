@@ -31,6 +31,7 @@ public:
 	virtual void processStartChatResponse(bool responseOk);
 	virtual void processEndChat();
 	virtual void processChatMessage(const string& chatMessage);
+	virtual void processExit();
 
 protected:
 	Client& _client;
@@ -61,6 +62,8 @@ class ConnectedState: public ClientState
 {
 public:
 	ConnectedState(Client& client, const string& userName);
+
+	virtual void processExit();
 
 protected:
 	string _userName;

@@ -70,7 +70,7 @@ const Peer* PeerTable::getById(pid_t peerId) const
 {
 	for (size_t i = 0; i < _peers.size(); i++)
 		if (_peers[i].getId() == peerId)
-			return &_peers[0];
+			return &_peers[i];
 	return 0;
 }
 
@@ -78,7 +78,7 @@ const Peer* PeerTable::getByName(const string& peerName) const
 {
 	for (size_t i = 0; i < _peers.size(); i++)
 		if (_peers[i].getName() == peerName)
-			return &_peers[0];
+			return &_peers[i];
 	return 0;
 }
 
@@ -99,6 +99,8 @@ ByteArray PeerTable::serialize()
 
 void PeerTable::deserialize(const ByteArray& bytes)
 {
+	_peers.clear();
+
 	ByteArrayReader reader(bytes);
 	int size = reader.read<int> ();
 

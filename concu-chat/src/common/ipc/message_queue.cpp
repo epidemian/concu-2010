@@ -24,7 +24,8 @@ RawMessageQueue::RawMessageQueue(const string& pathName, char id,
 	// Creates key.
 	key_t key = ftok(pathName.c_str(), id);
 	if (key == (key_t) -1)
-		throw IpcError("RawMessageQueue(): Could not create key", errno);
+		throw IpcError("RawMessageQueue(): Could not create key. path="
+				+ pathName, errno);
 
 	// Try to create the message queue.
 	_queueId = msgget(key, 0644 | IPC_CREAT | IPC_EXCL);
