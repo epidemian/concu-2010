@@ -154,11 +154,5 @@ void Server::unregisterNameRequest(string userName)
 
 void Server::showPeerTable()
 {
-	cout << "Peer Table: Name - Adress\n\n";
-	PeerTable::PeerTableInterator iterator = _peerTable.begin();
-	for (; iterator != _peerTable.end(); iterator++)
-	{
-		Peer peer = *iterator;
-		cout << peer.getName() << " " << getClientQueueFileName(peer.getId()) << "\n";
-	}
+	cout << _peerTable;
 }

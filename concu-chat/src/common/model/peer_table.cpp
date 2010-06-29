@@ -17,6 +17,19 @@ std::ostream& operator << (std::ostream& os, const Peer& peer)
 	return os;
 }
 
+std::ostream& operator << (std::ostream& os, const PeerTable& peers)
+{
+	os << "Peer Table: Name - Adress\n";
+
+	vector<Peer>::const_iterator iterator = peers._peers.begin();
+	for (; iterator != peers._peers.end(); iterator++)
+	{
+		Peer peer = *iterator;
+		os << peer.getName() << " - " << peer.getId() << "\n";
+	}
+	return os;
+}
+
 void PeerTable::add(const Peer& peer)
 {
 	if (containsName(peer.getName()))
