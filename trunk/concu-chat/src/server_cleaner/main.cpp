@@ -8,10 +8,18 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <fcntl.h>
+#include "exception.h"
 
 #include "ipc/message_queue.h"
 #include "model/queue_utils.h"
 #include "model/peer_table.h"
+#include "model/message.h"
+#include "constants.h"
+#include "utils.h"
+#include "core/byte_array.h"
 
 using std::cout;
 using std::cerr;
@@ -23,11 +31,15 @@ void quit(MessageQueue& serverQueue);
 
 int main(int argc, char **argv)
 {
-	MessageQueue serverQueue(getServerQueueFileName(), CommonConstants::QUEUE_ID, false);
+	MessageQueue serverQueue(getServerQueueFileName(),
+			CommonConstants::QUEUE_ID, false);
+	int c;
+	opterr = 0;
 
-	while ((c = getopt(argc, argv, "u:m:q")) != -1) {
-
-		switch (c) {
+	while ((c = getopt(argc, argv, ":u:mq")) != -1)
+	{
+		switch (c)
+		{
 		case 'u':
 			unregisterUser(serverQueue, optarg);
 			break;
@@ -37,67 +49,40 @@ int main(int argc, char **argv)
 		case 'q':
 			quit(serverQueue);
 			break;
+		case ':':
+			cerr << "Missing argument " << optopt << "\n";
+			return 1;
+			break;
+		case '?':
+			cerr << "Incorrect parameter: " << optopt << "\n";
+			return 1;
+			break;
 		default:
-			cerr << "Incorrect parameter: " << c << "\n";
-			return -1;
+			cerr << "Error parsing arguments\n";
+			return 1;
+			break;
 		}
 	}
 }
 
 void unregisterUser(MessageQueue& serverQueue, string userName)
 {
-	/*
-	 * Sends the request.
-	 */
 	ByteArrayWriter writer;
 	writer.writeString(userName);
 
-	Message messageSent(Message::TYPE_UNREGISTER_NAME_RESPONSE, getpid(), writer.getByteArray());
+	Message messageSent(Message::TYPE_UNREGISTER_NAME_REQUEST, getpid(),
+			writer.getByteArray());
 	serverQueue.sendByteArray(messageSent.serialize());
-
-	/*
-	 * Receives the request.
-	 */
-	Message messageReceived;
-	messageReceived.deserialize(serverQueue.receiveByteArray());
-
-	ByteArrayReader reader(messageReceived.getData());
-	bool response = reader.read<bool>();
-
-	cout << "The user " << userName << response ? "has " : "hasn't " << "been removed\n";
 }
 
 void showPeerTable(MessageQueue& serverQueue)
 {
-	/*
-	 * Sends the request.
-	 */
-	Message messageSent(Message::TYPE_PEER_TABLE_REQUEST, getpid());
+	Message messageSent(Message::TYPE_SHOW_PEER_TABLE_REQUEST, getpid());
 	serverQueue.sendByteArray(messageSent.serialize());
-
-	/*
-	 * Receives the request.
-	 */
-	Message messageReceived;
-	messageReceived.deserialize(serverQueue.receiveByteArray());
-
-	PeerTable peerTable;
-	peerTable.deserialize(messageReceived.getData());
-
-	cout << "Peer Table: Name - Adress\n\n";
-	PeerTable::PeerTableInterator iterator = peerTable.begin();
-	for (; iterator != peerTable.end(); iterator++)
-	{
-		Peer peer = *iterator;
-		cout << peer.getName() << getClientQueueFileName(peer.getId()) << "\n";
-	}
 }
 
 void quit(MessageQueue& serverQueue)
 {
-	/*
-	 * Sends the request.
-	 */
 	Message messageSent(Message::TYPE_SERVER_EXIT, getpid());
 	serverQueue.sendByteArray(messageSent.serialize());
 }

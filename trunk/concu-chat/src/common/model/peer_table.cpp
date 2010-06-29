@@ -27,9 +27,17 @@ void PeerTable::add(const Peer& peer)
 	_peers.push_back(peer);
 }
 
-void PeerTable::remove(const Peer& peer)
+void PeerTable::remove(const string& peerName)
 {
-	PeerVector::iterator it = std::find(_peers.begin(), _peers.end(), peer);
+	PeerVector::iterator it = _peers.begin();
+
+	for (; it != _peers.end(); it++)
+	{
+		Peer peer = *it;
+		if (peer.getName() == peerName)
+			break;
+	}
+
 	if (it == _peers.end())
 		throw ModelError("Peer does not exist");
 	_peers.erase(it);

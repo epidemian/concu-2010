@@ -29,12 +29,14 @@ private:
 	string _queueFileName;
 	PeerTable _peerTable;
 
-	void processMessage(const Message& message);
+	void processMessage(const Message& message, bool& exit);
 	void createQueueFile();
 	void destroyQueueFile();
 
 	void registerNameRequest(string,pid_t);
 	void processPeerTableRequest(pid_t);
+	void unregisterNameRequest(string);
+	void showPeerTable();
 };
 
 
