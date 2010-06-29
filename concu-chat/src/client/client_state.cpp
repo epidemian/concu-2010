@@ -55,6 +55,28 @@ void ClientState::processPeerTableResponse(const ByteArray&)
 	cerr << "Invalid processPeerTableResponse() call\n";
 }
 
+void ClientState::processStartChatRequest(const Peer& peer)
+{
+	cerr << "Invalid processStartChatRequest() call. peerName=" << peer << "\n";
+}
+
+void ClientState::processStartChatResponse(bool responseOk)
+{
+	cerr << "Invalid processStartChatResponse() call. responseOk="
+			<< responseOk << "\n";
+}
+
+void ClientState::processEndChat()
+{
+	cerr << "Invalid processEndChat() call.\n";
+}
+
+void ClientState::processChatMessage(const string& chatMessage)
+{
+	cerr << "Invalid processChatMessage() call. chatMessage=" << chatMessage
+			<< "\n";
+}
+
 NotConnectedState::NotConnectedState(Client& client) :
 	ClientState(client)
 {
@@ -108,35 +130,42 @@ ConnectedState::ConnectedState(Client& client, const string& userName) :
 {
 }
 
+const string IdleState::PEER_TABLE_COMMAND = "PEERTABLE";
+const string IdleState::START_CHAT_COMMAND = "CHAT";
+
 IdleState::IdleState(Client& client, const string& userName) :
 	ConnectedState(client, userName)
 {
+	_client.getView().showIdleStateCommands();
+	_client.sendPeerTableRequest();
 }
 
 void IdleState::processUserInputMessage(const string& userInput)
 {
 	string trimmedInput = trim(userInput);
-	if (trimmedInput == Client::PEER_TABLE_COMMAND)
+	if (trimmedInput == PEER_TABLE_COMMAND)
 	{
-		// TODO:
-		//_client.requestPeerTable();
+		_client.sendPeerTableRequest();
 	}
-	else if (trimmedInput.find(Client::START_CHAT_COMMAND) == 0)
+	else if (trimmedInput.find(START_CHAT_COMMAND) == 0)
 	{
-		string peerName = trim(trimmedInput.substr(
-				Client::START_CHAT_COMMAND.size()));
+		string peerName = trim(trimmedInput.substr(START_CHAT_COMMAND.size()));
 
 		const Peer* peer = _peerTable.getByName(peerName);
 		if (peer)
 		{
-			// TODO:
-			//_client.sendStartChatRequest(peer->getId());
+			_client.sendStartChatRequest(peer->getId());
+			_client.changeState(new WaitingPeerStartChatResponseState(_client,
+					_userName, *peer));
 		}
 		else
 		{
-			// TODO
-			//_client.getView().showInvalidPeerName(peer->getName());
+			_client.getView().showInvalidPeerName(peer->getName());
 		}
+	}
+	else
+	{
+		_client .getView().showInvalidCommand(trimmedInput);
 	}
 }
 
@@ -145,3 +174,24 @@ void IdleState::processPeerTableResponse(const ByteArray& data)
 	_peerTable.deserialize(data);
 	_client.getView().showPeerTable(_peerTable);
 }
+
+void IdleState::processStartChatRequest(const Peer& peer)
+{
+	_client.changeState(new WaitingUserStartChatResponse(_client, _userName,
+			peer));
+}
+
+WaitingPeerStartChatResponseState::WaitingPeerStartChatResponseState(
+		Client& client, const string& userName, const Peer& peer) :
+	ConnectedState(client, userName)
+{
+
+}
+
+WaitingUserStartChatResponse::WaitingUserStartChatResponse(Client& client,
+		const string& userName, const Peer& peer) :
+	ConnectedState(client, userName)
+{
+
+}
+

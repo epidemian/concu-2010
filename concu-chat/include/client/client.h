@@ -22,9 +22,6 @@ class Client
 {
 public:
 
-	static const string PEER_TABLE_COMMAND;
-	static const string START_CHAT_COMMAND;
-
 	Client(int argc, char* argv[]);
 
 	~Client();
@@ -33,6 +30,8 @@ public:
 
 	void changeState(ClientState* newState);
 	void sendRegisterNameRequest(const string& userName);
+	void sendPeerTableRequest();
+	void sendStartChatRequest(pid_t peerId);
 
 	ClientView& getView();
 private:
@@ -47,6 +46,7 @@ private:
 	void createQueueFile();
 	void destroyQueueFile();
 	void processMessage(const Message& message, bool& exitNow);
+
 
 	void sendMessageToServer(const Message& msg);
 };
