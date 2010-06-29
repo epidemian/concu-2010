@@ -88,6 +88,15 @@ void Client::sendRegisterNameRequest(const string& userName)
 	sendMessageToServer(Message::TYPE_REGISTER_NAME_REQUEST, data);
 }
 
+void Client::sendUnregisterNameRequest(const string& userName)
+{
+	ByteArrayWriter writer;
+	writer.writeString(userName);
+	ByteArray data = writer.getByteArray();
+
+	sendMessageToServer(Message::TYPE_UNREGISTER_NAME_REQUEST, data);
+}
+
 void Client::sendPeerTableRequest()
 {
 	sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST);
@@ -154,8 +163,6 @@ void Client::runMainProcess()
 	MessageQueue queue(_queueFileName, CommonConstants::QUEUE_ID, true);
 	bool exit = false;
 
-	// TODO Registrarse en el server.
-
 	while (!exit)
 	{
 		Message message;
@@ -194,6 +201,7 @@ void Client::processMessage(const Message& message, bool& exitNow)
 	case Message::TYPE_USER_EXIT:
 	{
 		exitNow = true;
+		_state->processExit();
 		break;
 	}
 	case Message::TYPE_REGISTER_NAME_RESPONSE:

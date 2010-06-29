@@ -79,6 +79,10 @@ void ClientState::processChatMessage(const string& chatMessage)
 			<< "\n";
 }
 
+void ClientState::processExit()
+{
+}
+
 NotConnectedState::NotConnectedState(Client& client) :
 	ClientState(client)
 {
@@ -132,6 +136,11 @@ ConnectedState::ConnectedState(Client& client, const string& userName) :
 {
 }
 
+void ConnectedState::processExit()
+{
+	_client.sendUnregisterNameRequest(_userName);
+}
+
 IdleState::IdleState(Client& client, const string& userName) :
 	ConnectedState(client, userName)
 {
@@ -151,7 +160,9 @@ void IdleState::processUserInputMessage(const string& userInput)
 		string peerName = trim(trimmedInput.substr(
 				ClientView::START_CHAT_COMMAND.size()));
 
+		cout << "peerName " << peerName << "\n";
 		const Peer* peer = _peerTable.getByName(peerName);
+		cout << "peer " << peer << "\n";
 		if (peer)
 		{
 			_client.sendStartChatRequest(peer->getId(), _userName);
@@ -160,7 +171,7 @@ void IdleState::processUserInputMessage(const string& userInput)
 		}
 		else
 		{
-			_client.getView().showInvalidPeerName(peer->getName());
+			_client.getView().showInvalidPeerName(peerName);
 		}
 	}
 	else
@@ -199,13 +210,13 @@ void WaitingPeerStartChatResponseState::processStartChatResponse(
 {
 	if (responseOk)
 	{
-		_client.getView().showPeerCanceledChat(_peer.getName());
-		_client.changeState(new IdleState(_client, _userName));
+		_client.getView().showPeerAcceptedChat(_peer.getName());
+		_client.changeState(new ChattingState(_client, _userName, _peer));
 	}
 	else
 	{
-		_client.getView().showPeerAcceptedChat(_peer.getName());
-		_client.changeState(new ChattingState(_client, _userName, _peer));
+		_client.getView().showPeerCanceledChat(_peer.getName());
+		_client.changeState(new IdleState(_client, _userName));
 	}
 }
 
@@ -220,9 +231,11 @@ void WaitingUserStartChatResponseState::processUserInputMessage(
 		const string& userInput)
 {
 	string trimmedInput = trim(userInput);
+	cout << "input \"" << trimmedInput << "\"\n";
 	bool userSayYes = _client.getView().isYesString(trimmedInput);
 	bool userSayNo = _client.getView().isNoString(trimmedInput);
 
+	cout << std::boolalpha << "user say yes: " << userSayYes << " userSayNO " << userSayNo << "\n";
 	if (userSayYes || userSayNo)
 	{
 		bool startChatting = userSayYes;

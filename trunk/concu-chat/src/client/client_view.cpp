@@ -21,7 +21,7 @@ const string ClientView::LOWERCASE_NO = "no";
 
 void ClientView::askUserName()
 {
-	cout << "Enter your name: ";
+	cout << "Enter your name: " << std::flush;
 }
 
 void ClientView::showInvalidName(const string& userName)
@@ -37,8 +37,7 @@ void ClientView::showAlreadyUsedName(const string& userName)
 
 void ClientView::showPeerTable(const PeerTable& peerTable)
 {
-	// TODO: Implement me!
-	cout << "Showing table!\n";
+	cout << peerTable;
 }
 
 void ClientView::showIdleStateCommands()
@@ -68,7 +67,7 @@ void ClientView::showWaitingPeerResponse(const string& peerName)
 void ClientView::askUserStartChatWith(const string& peerName)
 {
 	cout << peerName << " wants to chat with you\n";
-	cout << "Accept? (" << LOWERCASE_YES << "/" << LOWERCASE_NO << "): ";
+	cout << "Accept? (" << LOWERCASE_YES << "/" << LOWERCASE_NO << "): " << std::flush;
 }
 
 void ClientView::showPeerCanceledChat(const string& peerName)

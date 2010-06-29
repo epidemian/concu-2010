@@ -31,6 +31,7 @@ public:
 
 	void changeState(ClientState* newState);
 	void sendRegisterNameRequest(const string& userName);
+	void sendUnregisterNameRequest(const string& userName);
 	void sendPeerTableRequest();
 	void sendStartChatRequest(pid_t peerId, const string& userName);
 	void sendStartChatResponse(pid_t peerId, bool responseOk);

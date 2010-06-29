@@ -18,7 +18,6 @@ using std::cout;
 
 ResourceCollector::ResourceCollector()
 {
-	std::cout << "ResourceCollector created\n";
 }
 
 ResourceCollector::~ResourceCollector()
