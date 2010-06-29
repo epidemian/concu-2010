@@ -35,8 +35,6 @@ private:
 
 	void registerNameRequest(string,pid_t);
 	void processPeerTableRequest(pid_t);
-
-	string getUserQueueFileName(pid_t);
 };
 
 

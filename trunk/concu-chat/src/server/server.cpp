@@ -10,20 +10,15 @@
 #include "ipc/message_queue.h"
 #include "constants.h"
 #include "core/byte_array.h"
+#include "model/queue_utils.h"
 
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>
 #include <fcntl.h>
 
-#include <sstream>
-
-using std::ostringstream;
-
 Server::Server(int argc, char** argv) {
-	ostringstream oss;
-	oss << "queues/server" << getpid() << ".queue";
-	_queueFileName = oss.str();
+	_queueFileName = getServerQueueFileName();
 }
 
 Server::~Server() {
@@ -60,13 +55,6 @@ void Server::destroyQueueFile() {
 		throw Exception("could not destroy file " + _queueFileName);
 }
 
-string Server::getUserQueueFileName(pid_t pid)
-{
-	ostringstream oss;
-	oss << "queues/client" << pid << ".queue";
-	return oss.str();
-}
-
 void Server::processMessage(const Message& message) {
 	ByteArrayReader reader(message.getData());
 
@@ -97,7 +85,7 @@ void Server::registerNameRequest(string userName, pid_t userPid)
 		_peerTable.add(peer);
 	}
 
-	string userQueueFileName = this->getUserQueueFileName(userPid);
+	string userQueueFileName = getClientQueueFileName(userPid);
 	MessageQueue queue(userQueueFileName, CommonConstants::QUEUE_ID, false);
 
 	ByteArrayWriter writer;
@@ -109,7 +97,7 @@ void Server::registerNameRequest(string userName, pid_t userPid)
 
 void Server::processPeerTableRequest(pid_t userPid)
 {
-	string userQueueFileName = this->getUserQueueFileName(userPid);
+	string userQueueFileName = getClientQueueFileName(userPid);
 	MessageQueue queue(userQueueFileName, CommonConstants::QUEUE_ID, false);
 
 	Message message(Message::TYPE_PEER_TABLE_RESPONSE, getpid(), _peerTable.serialize());
