@@ -28,7 +28,7 @@ void PeerTable::remove(const Peer& peer)
 	_peers.erase(it);
 }
 
-bool PeerTable::containsId(const string& peerId) const
+bool PeerTable::containsId(pid_t peerId) const
 {
 	return bool(getById(peerId));
 }
@@ -38,7 +38,7 @@ bool PeerTable::containsName(const string& peerName) const
 	return bool(getByName(peerName));
 }
 
-const Peer* PeerTable::getById(const string& peerId) const
+const Peer* PeerTable::getById(pid_t peerId) const
 {
 	for (size_t i = 0; i < _peers.size(); i++)
 		if (_peers[i].getId() == peerId)
@@ -59,11 +59,11 @@ ByteArray PeerTable::serialize()
 	ByteArrayWriter writer;
 	// The first element in the byte array is the size of the peer table.
 	writer.write(_peers.size());
-	for (int i = 0; i < _peers.size(); i++)
+	for (size_t i = 0; i < _peers.size(); i++)
 	{
-		Peer entry = _peers[i];
-		writer.writeString(entry.getName());
-		writer.writeString(entry.getId());
+		Peer peer = _peers[i];
+		writer.writeString(peer.getName());
+		writer.write<pid_t>(peer.getId());
 	}
 
 	return writer.getByteArray();
@@ -77,9 +77,9 @@ void PeerTable::deserialize(const ByteArray& bytes)
 	for (int i = 0; i < size; i++)
 	{
 		std::string name = reader.readString();
-		std::string id = reader.readString();
+		pid_t id = reader.read<pid_t>();
 
-		Peer entry(name, id);
-		_peers.push_back(entry);
+		Peer peer(name, id);
+		_peers.push_back(peer);
 	}
 }

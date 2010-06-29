@@ -40,15 +40,17 @@ ClientState::~ClientState()
 
 void ClientState::processUserInputMessage(const string& userInput)
 {
-	cerr << "Invalid processUserInputMessage() call\n";
+	cerr << "Invalid processUserInputMessage() call. userInput= " << userInput
+			<< "\n";
 }
 
 void ClientState::processRegisterNameResponse(bool responseOk)
 {
-	cerr << "Invalid processRegisterNameResponse() call\n";
+	cerr << "Invalid processRegisterNameResponse() call. responseOk="
+			<< std::boolalpha << responseOk << "\n";
 }
 
-void ClientState::processPeerTableResponse(const ByteArray& data)
+void ClientState::processPeerTableResponse(const ByteArray&)
 {
 	cerr << "Invalid processPeerTableResponse() call\n";
 }

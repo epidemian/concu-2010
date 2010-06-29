@@ -93,8 +93,8 @@ int main(int argc, char* argv[])
 		nConsumers = strToInt(argv[2]);
 		break;
 	case 1 :
-		nProducers = randomInt(10) + 1;
-		nConsumers = randomInt(10) + 1;
+		nProducers = randomInt(1, 10);
+		nConsumers = randomInt(1, 10);
 		break;
 	default :
 		cout << "Usage: " << argv[0] << " <n-producers> <n-consumers>\n";
@@ -324,7 +324,7 @@ Item produce(int producerNo)
 			"Choripanes", "Empanadas", "Pizzas", "Chocolates" };
 	static const int nTypes = ARR_SIZE(types);
 
-	int randNo = randomInt(100) + 1;
+	int randNo = randomInt(1, 100);
 	const char* randType = types[randomInt(nTypes)];
 
 	ostringstream description;
