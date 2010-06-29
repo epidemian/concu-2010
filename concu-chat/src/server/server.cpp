@@ -111,8 +111,8 @@ void Server::processMessage(const Message& message, bool& exit)
 
 void Server::registerNameRequest(string userName, pid_t userPid)
 {
-	bool response = _peerTable.containsName(userName);
-	if (!response)
+	bool registerOk = !_peerTable.containsName(userName);
+	if (registerOk)
 	{
 		Peer peer(userName, userPid);
 		_peerTable.add(peer);
@@ -122,7 +122,7 @@ void Server::registerNameRequest(string userName, pid_t userPid)
 	MessageQueue queue(userQueueFileName, CommonConstants::QUEUE_ID, false);
 
 	ByteArrayWriter writer;
-	writer.write(response);
+	writer.write(registerOk);
 
 	Message message(Message::TYPE_REGISTER_NAME_RESPONSE, getpid(),
 			writer.getByteArray());
