@@ -40,3 +40,11 @@ string trim(const string& str)
 {
 	return trimLeft(trimRight(str));
 }
+
+string toLowerCase(const string& str)
+{
+	string lower = str;
+	for (size_t i = 0; i < str.size(); i++)
+		lower = tolower(str[i]);
+	return lower;
+}

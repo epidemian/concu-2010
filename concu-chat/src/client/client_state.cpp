@@ -10,6 +10,8 @@
 #include "exception.h"
 #include "core/byte_array.h"
 #include "utils.h"
+#include "model/queue_utils.h"
+#include "constants.h"
 
 #include <string>
 #include <algorithm>
@@ -130,9 +132,6 @@ ConnectedState::ConnectedState(Client& client, const string& userName) :
 {
 }
 
-const string IdleState::PEER_TABLE_COMMAND = "PEERTABLE";
-const string IdleState::START_CHAT_COMMAND = "CHAT";
-
 IdleState::IdleState(Client& client, const string& userName) :
 	ConnectedState(client, userName)
 {
@@ -143,13 +142,14 @@ IdleState::IdleState(Client& client, const string& userName) :
 void IdleState::processUserInputMessage(const string& userInput)
 {
 	string trimmedInput = trim(userInput);
-	if (trimmedInput == PEER_TABLE_COMMAND)
+	if (trimmedInput == ClientView::PEER_TABLE_COMMAND)
 	{
 		_client.sendPeerTableRequest();
 	}
-	else if (trimmedInput.find(START_CHAT_COMMAND) == 0)
+	else if (trimmedInput.find(ClientView::START_CHAT_COMMAND) == 0)
 	{
-		string peerName = trim(trimmedInput.substr(START_CHAT_COMMAND.size()));
+		string peerName = trim(trimmedInput.substr(
+				ClientView::START_CHAT_COMMAND.size()));
 
 		const Peer* peer = _peerTable.getByName(peerName);
 		if (peer)
@@ -177,21 +177,100 @@ void IdleState::processPeerTableResponse(const ByteArray& data)
 
 void IdleState::processStartChatRequest(const Peer& peer)
 {
-	_client.changeState(new WaitingUserStartChatResponse(_client, _userName,
-			peer));
+	_client.changeState(new WaitingUserStartChatResponseState(_client,
+			_userName, peer));
 }
 
 WaitingPeerStartChatResponseState::WaitingPeerStartChatResponseState(
 		Client& client, const string& userName, const Peer& peer) :
-	ConnectedState(client, userName)
+	ConnectedState(client, userName), _peer(peer)
 {
-
+	_client.getView().showWaitingPeerResponse(peer.getName());
 }
 
-WaitingUserStartChatResponse::WaitingUserStartChatResponse(Client& client,
-		const string& userName, const Peer& peer) :
-	ConnectedState(client, userName)
+void WaitingPeerStartChatResponseState::processUserInputMessage(const string&)
 {
+	// TODO: tratar el cancelar (?)
+	_client.getView().showWaitingPeerResponse(_peer.getName());
+}
 
+void WaitingPeerStartChatResponseState::processStartChatResponse(
+		bool responseOk)
+{
+	if (responseOk)
+	{
+		_client.getView().showPeerCanceledChat(_peer.getName());
+		_client.changeState(new IdleState(_client, _userName));
+	}
+	else
+	{
+		_client.getView().showPeerAcceptedChat(_peer.getName());
+		_client.changeState(new ChattingState(_client, _userName, _peer));
+	}
+}
+
+WaitingUserStartChatResponseState::WaitingUserStartChatResponseState(
+		Client& client, const string& userName, const Peer& peer) :
+	ConnectedState(client, userName), _peer(peer)
+{
+	_client.getView().askUserStartChatWith(_peer.getName());
+}
+
+void WaitingUserStartChatResponseState::processUserInputMessage(
+		const string& userInput)
+{
+	string trimmedInput = trim(userInput);
+	bool userSayYes = _client.getView().isYesString(trimmedInput);
+	bool userSayNo = _client.getView().isNoString(trimmedInput);
+
+	if (userSayYes || userSayNo)
+	{
+		bool startChatting = userSayYes;
+		_client.sendStartChatResponse(_peer.getId(), startChatting);
+
+		if (startChatting)
+			_client.changeState(new ChattingState(_client, _userName, _peer));
+		else
+			_client.changeState(new IdleState(_client, _userName));
+	}
+	else
+	{
+		_client.getView().askUserStartChatWith(_peer.getName());
+	}
+}
+
+ChattingState::ChattingState(Client& client, const string& userName,
+		const Peer& peer) :
+	ConnectedState(client, userName), _peer(peer),
+		_peerMessageQueue(
+			getClientQueueFileName(peer.getId()),
+			CommonConstants::QUEUE_ID,
+			false)
+{
+	_client.getView().showStartChatMessage(_peer.getName());
+}
+
+void ChattingState::processUserInputMessage(const string& userInput)
+{
+	if (trim(userInput) == ClientView::END_CHAT_COMMAND)
+	{
+		_client.sendEndChatMessage(_peer.getId());
+		_client.changeState(new IdleState(_client, _userName));
+	}
+	else
+	{
+		_client.sendChatMessage(_peer.getId(), userInput);
+	}
+}
+
+void ChattingState::processEndChat()
+{
+	_client.getView().showPeerLeftChat(_peer.getName());
+	_client.changeState(new IdleState(_client, _userName));
+}
+
+void ChattingState::processChatMessage(const string& chatMessage)
+{
+	_client.getView().showChatMessage(_peer.getName(), chatMessage);
 }
 

@@ -32,6 +32,9 @@ public:
 	void sendRegisterNameRequest(const string& userName);
 	void sendPeerTableRequest();
 	void sendStartChatRequest(pid_t peerId);
+	void sendStartChatResponse(pid_t peerId, bool responseOk);
+	void sendChatMessage(pid_t peerId, const string& chatMessage);
+	void sendEndChatMessage(pid_t peerId);
 
 	ClientView& getView();
 private:
@@ -46,7 +49,6 @@ private:
 	void createQueueFile();
 	void destroyQueueFile();
 	void processMessage(const Message& message, bool& exitNow);
-
 
 	void sendMessageToServer(const Message& msg);
 };
