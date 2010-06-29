@@ -40,10 +40,7 @@ void showIgnoredParameters(int argc, char* argv[])
 Client::Client(int argc, char* argv[]) :
 	_state(0)
 {
-	ostringstream oss;
-	oss << "queues/client" << getpid() << ".queue";
-	_queueFileName = oss.str();
-
+	_queueFileName = getClientQueueFileName();
 	showIgnoredParameters(argc, argv);
 }
 
@@ -96,30 +93,38 @@ void Client::sendPeerTableRequest()
 	sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST);
 }
 
-void Client::sendStartChatRequest(pid_t peerId)
+void Client::sendStartChatRequest(pid_t peerId, const string& userName)
 {
-	Message message(Message::TYPE_START_CHAT_REQUEST,getpid());
+	ByteArrayWriter writer;
+	writer.writeString(userName);
+	ByteArray data = writer.getByteArray();
 
-	string queueFileName = getClientQueueFileName(peerId);
-
-
-	// TODO implement me!
-	// abrir cola del peer y mandarle mensaje.
+	sendMessageToPeer(peerId, Message::TYPE_START_CHAT_REQUEST, data);
 }
 
 void Client::sendStartChatResponse(pid_t peerId, bool responseOk)
 {
-	// TODO implement me!
+	ByteArrayWriter writer;
+	writer.write(responseOk);
+	ByteArray data = writer.getByteArray();
+
+	sendMessageToPeer(peerId, Message::TYPE_START_CHAT_RESPONSE, data);
 }
 
 void Client::sendChatMessage(MessageQueue& peerQueue, const string& chatMessage)
 {
-	// TODO implement me!
+	ByteArrayWriter writer;
+	writer.writeString(chatMessage);
+	ByteArray data = writer.getByteArray();
+
+	Message message(Message::TYPE_CHAT_MESSAGE, getpid(), data);
+	peerQueue.sendByteArray(message.serialize());
 }
 
 void Client::sendEndChatMessage(MessageQueue& peerQueue)
 {
-	// TODO implement me!
+	Message message(Message::TYPE_END_CHAT, getpid());
+	peerQueue.sendByteArray(message.serialize());
 }
 
 ClientView& Client::getView()

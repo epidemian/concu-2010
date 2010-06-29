@@ -32,7 +32,7 @@ public:
 	void changeState(ClientState* newState);
 	void sendRegisterNameRequest(const string& userName);
 	void sendPeerTableRequest();
-	void sendStartChatRequest(pid_t peerId);
+	void sendStartChatRequest(pid_t peerId, const string& userName);
 	void sendStartChatResponse(pid_t peerId, bool responseOk);
 	void sendChatMessage(MessageQueue& peerQueue, const string& chatMessage);
 	void sendEndChatMessage(MessageQueue& peerQueue);
