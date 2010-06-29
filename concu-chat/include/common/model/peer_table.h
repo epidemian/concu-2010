@@ -46,7 +46,7 @@ public:
 	{ }
 
 	void add(const Peer& peer);
-	void remove(const Peer& peer);
+	void remove(const string& peerName);
 
 	bool containsId(pid_t peerId) const;
 	bool containsName(const string& peerName) const;

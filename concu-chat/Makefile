@@ -13,6 +13,7 @@
 # Programs' names.
 client = client
 server = server
+servercleaner = server-cleaner
 shmtest = shared-memory-test
 fifotest = fifo-test
 exceptiontest = exceptions-test
@@ -24,6 +25,7 @@ bytearraytest = byte-array-test
 # Programs to build.
 programs = $(server)\
  $(client)\
+ $(servercleaner)\
  $(shmtest)\
  $(fifotest)\
  $(exceptiontest)\
@@ -46,6 +48,7 @@ include_dirs = include/common include/server include/client
 # Variable names must be <program name>_src_dirs
 $(client)_src_dirs = src/client
 $(server)_src_dirs = src/server
+$(servercleaner)_src_dirs = src/server_cleaner
 
 $(shmtest)_src_files        = tests/shared_memory_test.cpp
 $(fifotest)_src_files       = tests/fifo_test.cpp
