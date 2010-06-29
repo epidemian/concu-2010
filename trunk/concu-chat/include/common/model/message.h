@@ -25,13 +25,14 @@ public:
 		TYPE_USER_EXIT,
 		TYPE_REGISTER_NAME_REQUEST,
 		TYPE_REGISTER_NAME_RESPONSE,
+		TYPE_UNREGISTER_NAME_REQUEST,
+		TYPE_UNREGISTER_NAME_RESPONSE,
 		TYPE_PEER_TABLE_REQUEST,
 		TYPE_PEER_TABLE_RESPONSE,
 		TYPE_START_CHAT_REQUEST,
 		TYPE_START_CHAT_RESPONSE,
 		TYPE_END_CHAT,
 		TYPE_CHAT_MESSAGE
-
 	};
 
 	Message() :
@@ -39,7 +40,8 @@ public:
 	{
 	}
 
-	Message(MessageType type, pid_t messengerPid, const ByteArray& data) :
+	Message(MessageType type, pid_t messengerPid, const ByteArray& data =
+			ByteArray()) :
 		_type(type), _messengerPid(messengerPid), _data(data)
 	{
 	}
