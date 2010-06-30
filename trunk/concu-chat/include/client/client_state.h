@@ -80,6 +80,8 @@ public:
 	virtual void processStartChatRequest(const Peer& peer);
 
 private:
+
+	void processStartChatCommand(const string& peerName);
 	PeerTable _peerTable;
 };
 
@@ -116,6 +118,8 @@ public:
 	virtual void processUserInputMessage(const string& userInput);
 	virtual void processEndChat();
 	virtual void processChatMessage(const string& chatMessage);
+	virtual void processStartChatRequest(const Peer& peer);
+
 
 private:
 	Peer _peer;

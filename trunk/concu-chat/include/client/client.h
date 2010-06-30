@@ -30,13 +30,17 @@ public:
 	int run();
 
 	void changeState(ClientState* newState);
-	void sendRegisterNameRequest(const string& userName);
-	void sendUnregisterNameRequest(const string& userName);
+
+	// Messages to server.
+	bool sendRegisterNameRequest(const string& userName);
+	bool sendUnregisterNameRequest(const string& userName);
 	void sendPeerTableRequest();
-	void sendStartChatRequest(pid_t peerId, const string& userName);
-	void sendStartChatResponse(pid_t peerId, bool responseOk);
-	void sendChatMessage(MessageQueue& peerQueue, const string& chatMessage);
-	void sendEndChatMessage(MessageQueue& peerQueue);
+
+	// Messages to peer.
+	bool sendStartChatRequest(pid_t peerId, const string& userName);
+	bool sendStartChatResponse(pid_t peerId, bool responseOk);
+	bool sendChatMessage(MessageQueue& peerQueue, const string& chatMessage);
+	bool sendEndChatMessage(MessageQueue& peerQueue);
 
 	ClientView& getView();
 private:
@@ -54,10 +58,14 @@ private:
 	void destroyQueueFile();
 	void processMessage(const Message& message, bool& exitNow);
 
-	void sendMessage(const string& queueFileName, MessageType type, const ByteArray& data = ByteArray());
-	void sendMessageToServer(MessageType type, const ByteArray& data = ByteArray());
-	void sendMessageToPeer(pid_t peerId, MessageType type, const ByteArray& data = ByteArray());
-	void sendMessageToMyself(MessageType type, const ByteArray& data = ByteArray());
+	bool sendMessage(const string& queueFileName, MessageType type,
+			const ByteArray& data = ByteArray());
+	bool sendMessageToServer(MessageType type, const ByteArray& data =
+			ByteArray());
+	bool sendMessageToPeer(pid_t peerId, MessageType type,
+			const ByteArray& data = ByteArray());
+	bool sendMessageToMyself(MessageType type, const ByteArray& data =
+			ByteArray());
 };
 
 #endif /* CLIENT_H_ */

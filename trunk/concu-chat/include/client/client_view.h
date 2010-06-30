@@ -25,10 +25,12 @@ public:
 	static const string END_CHAT_COMMAND;
 
 	void askUserName();
+	void showCouldNotContactServer();
 	void showInvalidName(const string& userName);
 	void showAlreadyUsedName(const string& userName);
 	void showPeerTable(const PeerTable& peerTable);
 	void showIdleStateCommands();
+	void showCannotChatWithYourself();
 	void showInvalidPeerName(const string& peerName);
 	void showInvalidCommand(const string& command);
 	void showWaitingPeerResponse(const string& peerName);
