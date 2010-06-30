@@ -24,6 +24,11 @@ void ClientView::askUserName()
 	cout << "Enter your name: " << std::flush;
 }
 
+void ClientView::showCouldNotContactServer()
+{
+	cout << "Could not contact server =(\n";
+}
+
 void ClientView::showInvalidName(const string& userName)
 {
 	cout << "The name \"" << userName << "\" is not valid\n";
@@ -46,6 +51,11 @@ void ClientView::showIdleStateCommands()
 	cout << PEER_TABLE_COMMAND << " to show the connected peers\n";
 	cout << START_CHAT_COMMAND
 			<< " <peer-name> to start chatting with a peer\n";
+}
+
+void ClientView::showCannotChatWithYourself()
+{
+	cout << "You cannot chat with youself! (sorry)\n";
 }
 
 void ClientView::showInvalidPeerName(const string& peerName)
@@ -72,7 +82,7 @@ void ClientView::askUserStartChatWith(const string& peerName)
 
 void ClientView::showPeerCanceledChat(const string& peerName)
 {
-	cout << peerName << " doesn't want to talk to you. Sorry =(\n";
+	cout << peerName << " is busy now. Sorry =(\n";
 }
 
 void ClientView::showPeerAcceptedChat(const string& peerName)

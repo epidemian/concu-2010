@@ -99,9 +99,14 @@ void NotConnectedState::processUserInputMessage(const string& userInput)
 	bool valid = std::count_if(userName.begin(), userName.end(), isalnum) > 0;
 	if (valid)
 	{
-		_client.sendRegisterNameRequest(userName);
-		_client.changeState(new WaitingRegisterNameResponseState(_client,
-				userName));
+		if (_client.sendRegisterNameRequest(userName))
+			_client.changeState(new WaitingRegisterNameResponseState(_client,
+					userName));
+		else
+		{
+			_client.getView().showCouldNotContactServer();
+		}
+
 	}
 	else
 	{
@@ -159,10 +164,23 @@ void IdleState::processUserInputMessage(const string& userInput)
 	{
 		string peerName = trim(trimmedInput.substr(
 				ClientView::START_CHAT_COMMAND.size()));
+		processStartChatCommand(peerName);
+	}
+	else
+	{
+		_client .getView().showInvalidCommand(trimmedInput);
+	}
+}
 
-		cout << "peerName " << peerName << "\n";
+void IdleState::processStartChatCommand(const string& peerName)
+{
+	if (peerName == _userName)
+	{
+		_client.getView().showCannotChatWithYourself();
+	}
+	else
+	{
 		const Peer* peer = _peerTable.getByName(peerName);
-		cout << "peer " << peer << "\n";
 		if (peer)
 		{
 			_client.sendStartChatRequest(peer->getId(), _userName);
@@ -173,10 +191,6 @@ void IdleState::processUserInputMessage(const string& userInput)
 		{
 			_client.getView().showInvalidPeerName(peerName);
 		}
-	}
-	else
-	{
-		_client .getView().showInvalidCommand(trimmedInput);
 	}
 }
 
@@ -231,11 +245,9 @@ void WaitingUserStartChatResponseState::processUserInputMessage(
 		const string& userInput)
 {
 	string trimmedInput = trim(userInput);
-	cout << "input \"" << trimmedInput << "\"\n";
 	bool userSayYes = _client.getView().isYesString(trimmedInput);
 	bool userSayNo = _client.getView().isNoString(trimmedInput);
 
-	cout << std::boolalpha << "user say yes: " << userSayYes << " userSayNO " << userSayNo << "\n";
 	if (userSayYes || userSayNo)
 	{
 		bool startChatting = userSayYes;
@@ -254,10 +266,8 @@ void WaitingUserStartChatResponseState::processUserInputMessage(
 
 ChattingState::ChattingState(Client& client, const string& userName,
 		const Peer& peer) :
-	ConnectedState(client, userName), _peer(peer),
-		_peerQueue(
-			getClientQueueFileName(peer.getId()),
-			CommonConstants::QUEUE_ID,
+	ConnectedState(client, userName), _peer(peer), _peerQueue(
+			getClientQueueFileName(peer.getId()), CommonConstants::QUEUE_ID,
 			false)
 {
 	_client.getView().showStartChatMessage(_peer.getName());
@@ -285,5 +295,10 @@ void ChattingState::processEndChat()
 void ChattingState::processChatMessage(const string& chatMessage)
 {
 	_client.getView().showChatMessage(_peer.getName(), chatMessage);
+}
+
+void ChattingState::processStartChatRequest(const Peer& peer)
+{
+	_client.sendStartChatResponse(peer.getId(), false);
 }
 

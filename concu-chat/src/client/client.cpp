@@ -12,6 +12,7 @@
 #include "constants.h"
 #include "core/byte_array.h"
 #include "client_state.h"
+#include "ipc/ipc_error.h"
 
 #include <unistd.h>
 #include <sys/wait.h>
@@ -79,61 +80,76 @@ void Client::changeState(ClientState* newState)
 	_state = newState;
 }
 
-void Client::sendRegisterNameRequest(const string& userName)
+bool Client::sendRegisterNameRequest(const string& userName)
 {
 	ByteArrayWriter writer;
 	writer.writeString(userName);
 	ByteArray data = writer.getByteArray();
 
-	sendMessageToServer(Message::TYPE_REGISTER_NAME_REQUEST, data);
+	return sendMessageToServer(Message::TYPE_REGISTER_NAME_REQUEST, data);
 }
 
-void Client::sendUnregisterNameRequest(const string& userName)
+bool Client::sendUnregisterNameRequest(const string& userName)
 {
 	ByteArrayWriter writer;
 	writer.writeString(userName);
 	ByteArray data = writer.getByteArray();
 
-	sendMessageToServer(Message::TYPE_UNREGISTER_NAME_REQUEST, data);
+	return sendMessageToServer(Message::TYPE_UNREGISTER_NAME_REQUEST, data);
 }
 
 void Client::sendPeerTableRequest()
 {
-	sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST);
+	if (!sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST))
+		getView().showCouldNotContactServer();
 }
 
-void Client::sendStartChatRequest(pid_t peerId, const string& userName)
+bool Client::sendStartChatRequest(pid_t peerId, const string& userName)
 {
 	ByteArrayWriter writer;
 	writer.writeString(userName);
 	ByteArray data = writer.getByteArray();
 
-	sendMessageToPeer(peerId, Message::TYPE_START_CHAT_REQUEST, data);
+	return sendMessageToPeer(peerId, Message::TYPE_START_CHAT_REQUEST, data);
 }
 
-void Client::sendStartChatResponse(pid_t peerId, bool responseOk)
+bool Client::sendStartChatResponse(pid_t peerId, bool responseOk)
 {
 	ByteArrayWriter writer;
 	writer.write(responseOk);
 	ByteArray data = writer.getByteArray();
 
-	sendMessageToPeer(peerId, Message::TYPE_START_CHAT_RESPONSE, data);
+	return sendMessageToPeer(peerId, Message::TYPE_START_CHAT_RESPONSE, data);
 }
 
-void Client::sendChatMessage(MessageQueue& peerQueue, const string& chatMessage)
+bool Client::sendChatMessage(MessageQueue& peerQueue, const string& chatMessage)
 {
 	ByteArrayWriter writer;
 	writer.writeString(chatMessage);
 	ByteArray data = writer.getByteArray();
 
-	Message message(Message::TYPE_CHAT_MESSAGE, getpid(), data);
-	peerQueue.sendByteArray(message.serialize());
+	try
+	{
+		Message message(Message::TYPE_CHAT_MESSAGE, getpid(), data);
+		peerQueue.sendByteArray(message.serialize());
+		return true;
+	} catch (IpcError& e)
+	{
+		return false;
+	}
 }
 
-void Client::sendEndChatMessage(MessageQueue& peerQueue)
+bool Client::sendEndChatMessage(MessageQueue& peerQueue)
 {
-	Message message(Message::TYPE_END_CHAT, getpid());
-	peerQueue.sendByteArray(message.serialize());
+	try
+	{
+		Message message(Message::TYPE_END_CHAT, getpid());
+		peerQueue.sendByteArray(message.serialize());
+		return true;
+	} catch (IpcError& e)
+	{
+		return false;
+	}
 }
 
 ClientView& Client::getView()
@@ -224,7 +240,7 @@ void Client::processMessage(const Message& message, bool& exitNow)
 	}
 	case Message::TYPE_START_CHAT_RESPONSE:
 	{
-		bool responseOk = reader.read<bool>();
+		bool responseOk = reader.read<bool> ();
 		_state->processStartChatResponse(responseOk);
 		break;
 	}
@@ -244,24 +260,34 @@ void Client::processMessage(const Message& message, bool& exitNow)
 	}
 }
 
-void Client::sendMessage(const string& queueFileName, MessageType type, const ByteArray& data)
+bool Client::sendMessage(const string& queueFileName, MessageType type,
+		const ByteArray& data)
 {
-	MessageQueue serverQueue(queueFileName, CommonConstants::QUEUE_ID, false);
-	Message message(type, getpid(), data);
-	serverQueue.sendByteArray(message.serialize());
+	try
+	{
+		MessageQueue serverQueue(queueFileName, CommonConstants::QUEUE_ID,
+				false);
+		Message message(type, getpid(), data);
+		serverQueue.sendByteArray(message.serialize());
+		return true;
+	} catch (IpcError& e)
+	{
+		return false;
+	}
 }
 
-void Client::sendMessageToServer(MessageType type, const ByteArray& data)
+bool Client::sendMessageToServer(MessageType type, const ByteArray& data)
 {
-	sendMessage(getServerQueueFileName(), type, data);
+	return sendMessage(getServerQueueFileName(), type, data);
 }
 
-void Client::sendMessageToPeer(pid_t peerId, MessageType type, const ByteArray& data)
+bool Client::sendMessageToPeer(pid_t peerId, MessageType type,
+		const ByteArray& data)
 {
-	sendMessage(getClientQueueFileName(peerId), type, data);
+	return sendMessage(getClientQueueFileName(peerId), type, data);
 }
 
-void Client::sendMessageToMyself(MessageType type, const ByteArray& data)
+bool Client::sendMessageToMyself(MessageType type, const ByteArray& data)
 {
-	sendMessageToPeer(getpid(), type, data);
+	return sendMessageToPeer(getpid(), type, data);
 }
