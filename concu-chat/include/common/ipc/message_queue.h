@@ -76,7 +76,7 @@ protected:
 	virtual void print(ostream& stream) const;
 
 	// Non copiable.
-DECLARE_NON_COPIABLE(RawMessageQueue)
+	DECLARE_NON_COPIABLE(RawMessageQueue)
 };
 
 /**
