@@ -26,12 +26,12 @@ public:
 	int run();
 
 private:
-	string _queueFileName;
 	PeerTable _peerTable;
 
 	void processMessage(const Message& message, bool& exit);
-	void createQueueFile();
-	void destroyQueueFile();
+
+	static void createQueueFile();
+	static void destroyQueueFile();
 
 	void registerNameRequest(string,pid_t);
 	void processPeerTableRequest(pid_t);

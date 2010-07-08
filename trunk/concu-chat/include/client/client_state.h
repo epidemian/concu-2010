@@ -114,11 +114,13 @@ class ChattingState: public ConnectedState
 {
 public:
 	ChattingState(Client& client, const string& userName, const Peer& peer);
+	virtual ~ChattingState();
 
 	virtual void processUserInputMessage(const string& userInput);
 	virtual void processEndChat();
 	virtual void processChatMessage(const string& chatMessage);
 	virtual void processStartChatRequest(const Peer& peer);
+	virtual void processExit();
 
 
 private:

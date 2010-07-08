@@ -15,7 +15,7 @@ class IpcError: public Exception
 public:
 	IpcError(const string& msj, int errorCode = 0);
 
-	int errorCode() { return _errorCode; }
+	int getErrorCode();
 
 private:
 	int _errorCode;

@@ -9,7 +9,13 @@
 
 #include <cstring>
 
-IpcError::IpcError(const string& msj, int errorCode):
+IpcError::IpcError(const string& msj, int errorCode) :
 	Exception(msj + " - Error: " + (errorCode ? strerror(errorCode) : "")),
-	_errorCode(errorCode)
-{ }
+			_errorCode(errorCode)
+{
+}
+
+int IpcError::getErrorCode()
+{
+	return _errorCode;
+}

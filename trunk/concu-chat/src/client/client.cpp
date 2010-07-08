@@ -18,31 +18,22 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <stdlib.h>
 
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <cstring>
 
 using std::ostringstream;
-using std::cout;
 using std::string;
-
-void showIgnoredParameters(int argc, char* argv[])
-{
-	if (argc > 1)
-	{
-		cout << "Ignorig parameters: ";
-		for (int i = 1; i < argc; i++)
-			cout << argv[i] << " ";
-		cout << "\n";
-	}
-}
 
 Client::Client(int argc, char* argv[]) :
 	_state(0)
 {
 	_queueFileName = getClientQueueFileName();
-	showIgnoredParameters(argc, argv);
+	getView().showIgnoredParameters(argc, argv);
 }
 
 Client::~Client()
@@ -52,10 +43,14 @@ Client::~Client()
 
 int Client::run()
 {
+	signal(SIGINT, SIG_IGN);
+	signal(SIGTERM, SIG_IGN);
+
 	createQueueFile();
 
-	pid_t pid = fork();
+	getView().showWelcomeMessage();
 
+	pid_t pid = fork();
 	switch (pid)
 	{
 	case -1:
@@ -70,7 +65,7 @@ int Client::run()
 		destroyQueueFile();
 		break;
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 void Client::changeState(ClientState* newState)
@@ -98,28 +93,27 @@ bool Client::sendUnregisterNameRequest(const string& userName)
 	return sendMessageToServer(Message::TYPE_UNREGISTER_NAME_REQUEST, data);
 }
 
-void Client::sendPeerTableRequest()
+bool Client::sendPeerTableRequest()
 {
-	if (!sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST))
-		getView().showCouldNotContactServer();
+	sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST);
 }
 
-bool Client::sendStartChatRequest(pid_t peerId, const string& userName)
+bool Client::sendStartChatRequest(const Peer& peer, const string& userName)
 {
 	ByteArrayWriter writer;
 	writer.writeString(userName);
 	ByteArray data = writer.getByteArray();
 
-	return sendMessageToPeer(peerId, Message::TYPE_START_CHAT_REQUEST, data);
+	return sendMessageToPeer(peer, Message::TYPE_START_CHAT_REQUEST, data);
 }
 
-bool Client::sendStartChatResponse(pid_t peerId, bool responseOk)
+bool Client::sendStartChatResponse(const Peer& peer, bool responseOk)
 {
 	ByteArrayWriter writer;
 	writer.write(responseOk);
 	ByteArray data = writer.getByteArray();
 
-	return sendMessageToPeer(peerId, Message::TYPE_START_CHAT_RESPONSE, data);
+	return sendMessageToPeer(peer, Message::TYPE_START_CHAT_RESPONSE, data);
 }
 
 bool Client::sendChatMessage(MessageQueue& peerQueue, const string& chatMessage)
@@ -128,28 +122,12 @@ bool Client::sendChatMessage(MessageQueue& peerQueue, const string& chatMessage)
 	writer.writeString(chatMessage);
 	ByteArray data = writer.getByteArray();
 
-	try
-	{
-		Message message(Message::TYPE_CHAT_MESSAGE, getpid(), data);
-		peerQueue.sendByteArray(message.serialize());
-		return true;
-	} catch (IpcError& e)
-	{
-		return false;
-	}
+	return sendMessageToQueue(peerQueue, Message::TYPE_CHAT_MESSAGE, data);
 }
 
 bool Client::sendEndChatMessage(MessageQueue& peerQueue)
 {
-	try
-	{
-		Message message(Message::TYPE_END_CHAT, getpid());
-		peerQueue.sendByteArray(message.serialize());
-		return true;
-	} catch (IpcError& e)
-	{
-		return false;
-	}
+	return sendMessageToQueue(peerQueue, Message::TYPE_END_CHAT);
 }
 
 ClientView& Client::getView()
@@ -162,16 +140,23 @@ void Client::runUserInputProcess()
 	MessageQueue queue(_queueFileName, CommonConstants::QUEUE_ID, false);
 
 	string line;
-	while (std::getline(std::cin, line))
+	bool exit = false;
+
+	while (!exit && bool(std::getline(std::cin, line)))
 	{
-		ByteArrayWriter writer;
-		writer.writeString(line);
-		Message message(Message::TYPE_USER_INPUT, getpid(),
-				writer.getByteArray());
-		queue.sendByteArray(message.serialize());
+		if (trim(line) == ClientView::EXIT_COMMAND)
+		{
+			exit = true;
+		}
+		else
+		{
+			ByteArrayWriter writer;
+			writer.writeString(line);
+			ByteArray data = writer.getByteArray();
+			sendMessageToQueue(queue, Message::TYPE_USER_INPUT, data);
+		}
 	}
-	Message message(Message::TYPE_USER_EXIT, getpid(), stringToByteArray(line));
-	queue.sendByteArray(message.serialize());
+	sendMessageToQueue(queue, Message::TYPE_USER_EXIT);
 }
 
 void Client::runMainProcess()
@@ -260,34 +245,58 @@ void Client::processMessage(const Message& message, bool& exitNow)
 	}
 }
 
+bool Client::sendMessageToQueue(MessageQueue& queue, MessageType type,
+		const ByteArray& data)
+{
+	try
+	{
+		Message message(type, getpid(), data);
+		queue.sendByteArray(message.serialize());
+		return true;
+	} catch (IpcError& e)
+	{
+		// TODO log
+		std::cout
+				<< "Could not send message to queue. IpcError thrown. Error code: "
+				<< e.getErrorCode() << " - " << strerror(e.getErrorCode())
+				<< "\n";
+		return false;
+	}
+}
+
 bool Client::sendMessage(const string& queueFileName, MessageType type,
 		const ByteArray& data)
 {
 	try
 	{
-		MessageQueue serverQueue(queueFileName, CommonConstants::QUEUE_ID,
-				false);
-		Message message(type, getpid(), data);
-		serverQueue.sendByteArray(message.serialize());
-		return true;
+		MessageQueue queue(queueFileName, CommonConstants::QUEUE_ID, false);
+		return sendMessageToQueue(queue, type, data);
 	} catch (IpcError& e)
 	{
+		// TODO log
+		std::cout
+				<< "Could not create message queue. IpcError thrown. Error code: "
+				<< e.getErrorCode() << " - " << strerror(e.getErrorCode())
+				<< "\n";
 		return false;
 	}
 }
 
 bool Client::sendMessageToServer(MessageType type, const ByteArray& data)
 {
-	return sendMessage(getServerQueueFileName(), type, data);
+	bool couldSend = sendMessage(getServerQueueFileName(), type, data);
+	if (!couldSend)
+		getView().showCouldNotContactServer();
+	return couldSend;
 }
 
-bool Client::sendMessageToPeer(pid_t peerId, MessageType type,
+bool Client::sendMessageToPeer(const Peer& peer, MessageType type,
 		const ByteArray& data)
 {
-	return sendMessage(getClientQueueFileName(peerId), type, data);
+	string peerQueueFileName = getClientQueueFileName(peer.getId());
+	bool couldSend = sendMessage(peerQueueFileName, type, data);
+	if (!couldSend)
+		getView().showCouldNotContactPeer(peer.getName());
+	return couldSend;
 }
 
-bool Client::sendMessageToMyself(MessageType type, const ByteArray& data)
-{
-	return sendMessageToPeer(getpid(), type, data);
-}

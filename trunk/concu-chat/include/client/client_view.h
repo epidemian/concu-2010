@@ -9,6 +9,7 @@
 #define CLIENT_VIEW_H_
 
 #include "model/peer_table.h"
+#include "utils.h"
 
 #include <string>
 using std::string;
@@ -20,12 +21,18 @@ private:
 	static const string LOWERCASE_NO;
 
 public:
+	static const string EXIT_COMMAND;
 	static const string PEER_TABLE_COMMAND;
 	static const string START_CHAT_COMMAND;
 	static const string END_CHAT_COMMAND;
 
+	ClientView();
+
+	void showIgnoredParameters(int argc, char* argv[]);
+	void showWelcomeMessage();
 	void askUserName();
 	void showCouldNotContactServer();
+	void showCouldNotContactPeer(const string& peerName);
 	void showInvalidName(const string& userName);
 	void showAlreadyUsedName(const string& userName);
 	void showPeerTable(const PeerTable& peerTable);
@@ -37,12 +44,15 @@ public:
 	void askUserStartChatWith(const string& peerName);
 	void showPeerCanceledChat(const string& peerName);
 	void showPeerAcceptedChat(const string& peerName);
-	void showStartChatMessage(const string& peerName);
+	void showStartChatSession(const string& peerName);
+	void showEndChatSession(const string& peerName);
 	void showPeerLeftChat(const string& peerName);
 	void showChatMessage(const string& peerName, const string& chatMessage);
 
 	bool isYesString(const string& str);
 	bool isNoString(const string& str);
+
+	DECLARE_NON_COPIABLE(ClientView)
 };
 
 #endif /* CLIENT_VIEW_H_ */
