@@ -1,0 +1,99 @@
+\section{Enunciado}
+
+\subsection*{Objetivo}
+
+El objetivo de este trabajo es el desarrollo de un sistema de chat conocido como ''ConcuChat".  Este 
+es un sistema que permitirá a dos partes poder chatear mediante el intercambio de mensajes 
+instantáneos.  Esto quiere decir que ambas partes podrán comunicarse únicamente si ambas están 
+''en línea".
+
+\subsection*{Arquitectura}
+
+El sistema deberá estar formado por los siguientes módulos:
+
+\begin{enumerate}
+  \item Servicio de Localización
+  \item Programa de Chat
+\end{enumerate}
+
+\subsection*{Servicio de Localización}
+
+Es un módulo que se encarga de almacenar el nombre y la dirección de los distintos programas de 
+chat que estén en ejecución, así como de realizar la resolución entre nombre y dirección.  Para ello 
+contará con dos funciones:
+
+\begin{enumerate}
+  \item Registrar un nuevo programa de chat
+  \item Resolver la dirección de un programa de chat dado su nombre
+\end{enumerate}
+
+\subsection*{Programa de Chat}
+
+Es el módulo que utilizarán los usuarios para comunicarse entre sí.
+Cuando el módulo de chat se inicia, lo primero que hace es registrarse en el Servicio de 
+Localización para que pueda ser localizado por otros módulos de chat.  Si el usuario quiere chatear 
+con otro usuario, debe primero localizar a su contraparte utilizando el Servicio de Localización. 
+Una vez localizada a la contraparte se podrá comenzar el chat.
+
+\subsection*{Requerimientos funcionales}
+
+\subsubsection*{Servicio de Localización}
+\begin{enumerate}
+  \item Es el primer módulo del sistema que se ejecuta.  Si el Servicio de Localización no está activo, el sistema no funciona.
+  \item Permite registrar un par nombre – dirección.  Los nombres son únicos, por lo tanto debe rechazar una petición de registro si el nombre ya se encuentra registrado.
+  \item Permite consultar la dirección correspondiente a un nombre.
+  \item Permite desregistrar un par nombre – dirección.
+  \item No se requiere mantener un tiempo de vida de los registros, pero sí se debe poder eliminar un registro manualmente por línea de comandos.  Si un programa de chat no puede desregistrarse por algún motivo, entonces el operador deberá poder eliminar el registro mediante la ejecución de un comando.
+\end{enumerate}
+
+\subsubsection*{Programa de Chat}
+\begin{enumerate}
+  \item Al iniciarse, el módulo de chat debe registrarse en el Servicio de Localización.
+  \item Para conectarse con el Servicio de Localización, el programa de chat debe conocer la dirección de éste.
+  \item Cuando el usuario finaliza la aplicación, debe desregistrarse del Servicio de Localización.
+  \item El usuario debe poder indicar al programa que desea comunicarse con otra persona.  Para ello debe consultar al Servicio de Localización cuál es la dirección correspondiente al nombre de la otra parte.
+  \item Debe poder recibir mensajes de otros programas de chat.
+  \item	Debe poder enviar mensajes a otros programas de chat.
+  \item El envío y la recepción de mensajes deben ser en forma simultánea.
+  \item No es necesario implementar el corte de la comunicación.  Para terminar el chat actual y chatear con otra persona se puede cerrar y volver a abrir el programa de chat.
+\end{enumerate}
+
+\subsection*{Requerimientos no funcionales}
+\begin{enumerate}
+  \item El trabajo práctico deberá ser desarrollado en lenguaje C o C++, siendo este último el enguaje de preferencia.
+  \item Los módulos pueden no tener interfaz gráfica y ejecutarse en una o varias consolas de línea de comandos.
+  \item El trabajo práctico deberá funcionar en ambiente Unix / Linux.
+  \item La aplicación deberá funcionar en una única computadora.
+  \item Cada módulo deberá poder ejecutarse en “modo debug”, lo cual dejará registro de la actividad que realiza en uno o más archivos de texto para su revisión posterior.
+\end{enumerate}
+
+\subsection*{Esquema de direcciones}
+
+Cada módulo del sistema se identifica unívocamente por una dirección, es decir, cada vez que se 
+requiere referenciar a un módulo determinado para (por ejemplo) enviarle un mensaje, se lo debe 
+hacer mediante su dirección.  Sin embargo, las direcciones no suelen ser prácticas para las personas, 
+por lo cual se definen nombres para cada módulo, y un esquema de resolución nombre dirección,
+el cual se implementa en el Servicio de Localización.
+
+\subsection*{Tareas a realizar}
+
+A continuación se listan las tareas a realizar para completar el desarrollo del trabajo práctico:
+\begin{enumerate}
+  \item Dividir cada módulo en procesos.  El objetivo es lograr que cada módulo esté conformado por un conjunto de procesos que sean lo más sencillos posible.
+  \item Una vez obtenida la división en procesos, establecer un esquema de comunicación entre ellos teniendo en cuenta los requerimientos de la aplicación.  ¿Qué procesos se comunican entre sí?  ¿Qué datos necesitan compartir para poder trabajar?
+  \item Tratar de mapear la comunicación entre los procesos a los problemas conocidos de concurrencia.
+  \item Determinar los mecanismos de concurrencia a utilizar para cada una de las comunicaciones entre procesos que fueron detectados en el ítem 2.  No se requiere la utilización de algún mecanismo específico, la elección en cada caso queda a cargo del grupo y debe estar debidamente justificada.
+  \item Definir el esquema de direcciones que se va a utilizar para comunicar a las partes entre sí. Teniendo en cuenta que todos los componentes se ejecutan en la misma computadora, ¿cuál es el mejor modo de identificar unívocamente a las partes que intervienen?
+  \item Realizar la codificación de la aplicación.  El código fuente debe estar documentado.
+\end{enumerate}
+
+\subsection*{Informe}
+
+El informe a entregar junto con el trabajo práctico debe contener los siguientes ítems:
+\begin{enumerate}
+  \item Breve análisis de problema, incluyendo una especificación de los casos de uso de la aplicación.
+  \item Detalle de resolución de la lista de tareas anterior.  Prestar atención especial al ítem 4 de la lista de tareas, ya que se deberá justificar cada uno de los mecanismos de concurrencia elegidos.
+  \item Diagramas de clases de cada módulo.
+  \item Diagrama de transición de estados de un módulo de chat genérico.
+\end{enumerate}
+
