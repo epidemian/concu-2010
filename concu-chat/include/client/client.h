@@ -34,11 +34,11 @@ public:
 	// Messages to server.
 	bool sendRegisterNameRequest(const string& userName);
 	bool sendUnregisterNameRequest(const string& userName);
-	void sendPeerTableRequest();
+	bool sendPeerTableRequest();
 
 	// Messages to peer.
-	bool sendStartChatRequest(pid_t peerId, const string& userName);
-	bool sendStartChatResponse(pid_t peerId, bool responseOk);
+	bool sendStartChatRequest(const Peer& peer, const string& userName);
+	bool sendStartChatResponse(const Peer& peer, bool responseOk);
 	bool sendChatMessage(MessageQueue& peerQueue, const string& chatMessage);
 	bool sendEndChatMessage(MessageQueue& peerQueue);
 
@@ -58,14 +58,14 @@ private:
 	void destroyQueueFile();
 	void processMessage(const Message& message, bool& exitNow);
 
+	bool sendMessageToQueue(MessageQueue& queue, MessageType type,
+			const ByteArray& data = ByteArray());
 	bool sendMessage(const string& queueFileName, MessageType type,
 			const ByteArray& data = ByteArray());
 	bool sendMessageToServer(MessageType type, const ByteArray& data =
 			ByteArray());
-	bool sendMessageToPeer(pid_t peerId, MessageType type,
+	bool sendMessageToPeer(const Peer& peer, MessageType type,
 			const ByteArray& data = ByteArray());
-	bool sendMessageToMyself(MessageType type, const ByteArray& data =
-			ByteArray());
 };
 
 #endif /* CLIENT_H_ */

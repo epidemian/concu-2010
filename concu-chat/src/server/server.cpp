@@ -18,51 +18,79 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <stdlib.h>
 
 using std::cout;
 using std::cerr;
 
+namespace
+{
+
+void showServerStartMessage()
+{
+	cout << "Servicio de Localización iniciado. Usar el comando "
+			<< "'server-admin --quit' o una señal SIGINT (crtl + C) para salir\n";
+}
+
+void showServerExitMessage()
+{
+	cout << "Cerrando Servicio de Localización...\n";
+}
+
+void signalHandler(int)
+{
+	showServerExitMessage();
+	exit(EXIT_SUCCESS);
+}
+
+} // end namespace
+
+
 Server::Server(int argc, char** argv)
 {
-	_queueFileName = getServerQueueFileName();
 }
 
 Server::~Server()
 {
-
 }
 
 int Server::run()
 {
 	createQueueFile();
+	atexit(destroyQueueFile);
 
-	MessageQueue queue(_queueFileName, CommonConstants::QUEUE_ID, true);
+	signal(SIGINT, signalHandler);
+	signal(SIGTERM, signalHandler);
+
+	MessageQueue queue(getServerQueueFileName(), CommonConstants::QUEUE_ID, true);
 	bool exit = false;
+
+	showServerStartMessage();
 
 	while (!exit)
 	{
 		Message message;
 		message.deserialize(queue.receiveByteArray());
-		processMessage(message,exit);
+		processMessage(message, exit);
 	}
 
-	destroyQueueFile();
-
-	return 0;
+	showServerExitMessage();
+	return EXIT_SUCCESS;
 }
 
 void Server::createQueueFile()
 {
-	if (mknod(_queueFileName.c_str(), 0666, 0) == -1)
-		throw Exception("could not create file " + _queueFileName);
+	if (mknod(getServerQueueFileName().c_str(), 0666, 0) == -1)
+		throw Exception("could not create file " + getServerQueueFileName());
 }
 
 void Server::destroyQueueFile()
 {
-	bool unlinkError = unlink(_queueFileName.c_str()) == -1;
+	bool unlinkError = unlink(getServerQueueFileName().c_str()) == -1;
 
 	if (unlinkError && errno != ENOENT) // ENOENT = No such file.
-		throw Exception("could not destroy file " + _queueFileName);
+		throw Exception("could not destroy file " + getServerQueueFileName());
 }
 
 void Server::processMessage(const Message& message, bool& exit)
@@ -100,7 +128,6 @@ void Server::processMessage(const Message& message, bool& exit)
 	}
 	case Message::TYPE_SERVER_EXIT:
 	{
-		cout << "Closing server...\n";
 		exit = true;
 		break;
 	}
@@ -144,12 +171,11 @@ void Server::unregisterNameRequest(string userName)
 	try
 	{
 		_peerTable.remove(userName);
+		cout << "The user has been removed\n";
 	} catch (ModelError& e)
 	{
 		cerr << "Couldn't remove. The user doesn't exit\n";
 	}
-
-	cout << "The user has been removed\n";
 }
 
 void Server::showPeerTable()

@@ -97,20 +97,14 @@ void NotConnectedState::processUserInputMessage(const string& userInput)
 {
 	string userName = trim(userInput);
 	bool valid = std::count_if(userName.begin(), userName.end(), isalnum) > 0;
-	if (valid)
-	{
-		if (_client.sendRegisterNameRequest(userName))
-			_client.changeState(new WaitingRegisterNameResponseState(_client,
-					userName));
-		else
-		{
-			_client.getView().showCouldNotContactServer();
-		}
-
-	}
-	else
+	if (!valid)
 	{
 		_client.getView().showInvalidName(userName);
+	}
+	else if (_client.sendRegisterNameRequest(userName))
+	{
+		_client.changeState(new WaitingRegisterNameResponseState(_client,
+				userName));
 	}
 }
 
@@ -168,7 +162,7 @@ void IdleState::processUserInputMessage(const string& userInput)
 	}
 	else
 	{
-		_client .getView().showInvalidCommand(trimmedInput);
+		_client.getView().showInvalidCommand(trimmedInput);
 	}
 }
 
@@ -181,16 +175,11 @@ void IdleState::processStartChatCommand(const string& peerName)
 	else
 	{
 		const Peer* peer = _peerTable.getByName(peerName);
-		if (peer)
-		{
-			_client.sendStartChatRequest(peer->getId(), _userName);
+		if (peer && _client.sendStartChatRequest(*peer, _userName))
 			_client.changeState(new WaitingPeerStartChatResponseState(_client,
 					_userName, *peer));
-		}
 		else
-		{
 			_client.getView().showInvalidPeerName(peerName);
-		}
 	}
 }
 
@@ -251,9 +240,10 @@ void WaitingUserStartChatResponseState::processUserInputMessage(
 	if (userSayYes || userSayNo)
 	{
 		bool startChatting = userSayYes;
-		_client.sendStartChatResponse(_peer.getId(), startChatting);
+		bool couldSendResponse = _client.sendStartChatResponse(_peer,
+				startChatting);
 
-		if (startChatting)
+		if (startChatting && couldSendResponse)
 			_client.changeState(new ChattingState(_client, _userName, _peer));
 		else
 			_client.changeState(new IdleState(_client, _userName));
@@ -270,20 +260,29 @@ ChattingState::ChattingState(Client& client, const string& userName,
 			getClientQueueFileName(peer.getId()), CommonConstants::QUEUE_ID,
 			false)
 {
-	_client.getView().showStartChatMessage(_peer.getName());
+	_client.getView().showStartChatSession(_peer.getName());
+}
+
+ChattingState::~ChattingState()
+{
+	_client.getView().showEndChatSession(_peer.getName());
 }
 
 void ChattingState::processUserInputMessage(const string& userInput)
 {
+	bool endChat = false;
 	if (trim(userInput) == ClientView::END_CHAT_COMMAND)
 	{
 		_client.sendEndChatMessage(_peerQueue);
-		_client.changeState(new IdleState(_client, _userName));
+		endChat = true;
 	}
 	else
 	{
-		_client.sendChatMessage(_peerQueue, userInput);
+		endChat = !_client.sendChatMessage(_peerQueue, userInput);
 	}
+
+	if (endChat)
+		_client.changeState(new IdleState(_client, _userName));
 }
 
 void ChattingState::processEndChat()
@@ -299,6 +298,12 @@ void ChattingState::processChatMessage(const string& chatMessage)
 
 void ChattingState::processStartChatRequest(const Peer& peer)
 {
-	_client.sendStartChatResponse(peer.getId(), false);
+	_client.sendStartChatResponse(peer, false);
+}
+
+void ChattingState::processExit()
+{
+	ConnectedState::processExit();
+	_client.sendEndChatMessage(_peerQueue);
 }
 

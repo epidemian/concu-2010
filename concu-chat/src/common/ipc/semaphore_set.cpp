@@ -179,7 +179,7 @@ void SemaphoreSet::wait(size_t semIndex)
 {
 	validateIndex(semIndex);
 	if (semOperation(_semId, semIndex, -1) == -1)
-		throw IpcError("SemaphoreSet::signal(): wait() failed", errno);
+		throw IpcError("SemaphoreSet::wait(): semop() failed", errno);
 }
 
 

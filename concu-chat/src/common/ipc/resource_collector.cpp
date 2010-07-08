@@ -13,7 +13,6 @@
 #include <iostream>
 #include <cstdlib>
 
-using std::cout;
 
 
 ResourceCollector::ResourceCollector()
@@ -58,14 +57,9 @@ bool ResourceCollector::alreadyRegistered(Resource* res) const
 
 void ResourceCollector::disposeAllResources()
 {
-	cout << "ResourceCollector: disposing all not-yet-destroyed resources in "
-			"process " << getpid() << ".\n";
 	while (!_resources.empty())
 	{
 		Resource* res = _resources.front();
-		if (res->ownResources()) // If it doesn't, it's not so important.
-			cout << "  Disposing " << *res << " in process " << getpid()
-			     << ".\n";
 		res->dispose();
 		_resources.pop_front();
 	}
