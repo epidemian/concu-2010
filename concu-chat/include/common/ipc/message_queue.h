@@ -69,7 +69,6 @@ public:
 
 protected:
 	int _queueId;
-	bool _freeOnExit;
 
 	size_t tryReceive(void* buffer, size_t size, long mtype = 0);
 
