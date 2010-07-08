@@ -18,15 +18,15 @@
 
 using std::string;
 
-class RawMessageQueue: public Resource
-{
+class RawMessageQueue: public Resource {
 public:
 
 	/**
 	 * Connect to a message queue, or create it if it doesn't exist
 	 *
 	 * @param pathName     A path to an existing file.
-	 * @param id       A char to identify the shared memory object.
+	 * @param id           A char to identify the shared memory object.
+	 * @param ownResource  Specifies whether the resource owner.
 	 */
 	explicit RawMessageQueue(const string& pathName, char id, bool ownResource =
 			true);
@@ -83,8 +83,7 @@ DECLARE_NON_COPIABLE(RawMessageQueue)
 /**
  * A class responsible for inter-process communication.
  */
-class MessageQueue: public RawMessageQueue
-{
+class MessageQueue: public RawMessageQueue {
 public:
 
 	static const long DEFAULT_SEND_MTYPE = 1;
@@ -94,12 +93,12 @@ public:
 	 * Connect to a message queue, or create it if it doesn't exist
 	 *
 	 * @param pathName     A path to an existing file.
-	 * @param id       A char to identify the shared memory object.
+	 * @param id           A char to identify the shared memory object.
+	 * @param ownResource  Specifies whether the resource owner.
 	 */
 	explicit MessageQueue(const string& pathName, char id, bool ownResource =
 			true) :
-		RawMessageQueue(pathName, id, ownResource)
-	{
+		RawMessageQueue(pathName, id, ownResource) {
 	}
 
 	/**
@@ -111,8 +110,7 @@ public:
 	 * @param mtype	The id of the message.
 	 */
 	template<typename T>
-	void send(const T& obj, long mtype = DEFAULT_SEND_MTYPE)
-	{
+	void send(const T& obj, long mtype = DEFAULT_SEND_MTYPE) {
 		RawMessageQueue::sendFixedSize(&obj, sizeof(T), mtype);
 	}
 
@@ -125,8 +123,7 @@ public:
 	 * @return 		The 'T' object read from the queue.
 	 */
 	template<typename T>
-	T receive(long mtype = DEFAULT_RECEIVE_MTYPE)
-	{
+	T receive(long mtype = DEFAULT_RECEIVE_MTYPE) {
 		T obj;
 		RawMessageQueue::receiveFixedSize(&obj, sizeof(T), mtype);
 		return obj;
@@ -144,8 +141,8 @@ public:
 	/**
 	 * Receives a byte array message from the queue.
 	 *
-	 * @param message Byte array where the message will be stored.
-	 * @param mtype	  The id of the message.
+	 * @param mtype	 The id of the message.
+	 * @return 		 Byte array with the message.
 	 */
 	const ByteArray receiveByteArray(long mtype = DEFAULT_RECEIVE_MTYPE);
 
@@ -156,8 +153,7 @@ public:
 	 * @param mtype         The id of the message.
 	 */
 	void
-			sendString(const std::string& message, long mtype =
-					DEFAULT_SEND_MTYPE);
+	sendString(const std::string& message, long mtype = DEFAULT_SEND_MTYPE);
 
 	/**
 	 * Receives a string message from the queue.
@@ -171,8 +167,7 @@ public:
 	 * Removes the message queue. The calling process must be the creator the
 	 * message queue
 	 */
-	virtual ~MessageQueue() throw ()
-	{
+	virtual ~MessageQueue() throw () {
 	}
 };
 
