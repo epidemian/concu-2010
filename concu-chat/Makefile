@@ -21,6 +21,7 @@ messagetest = message-queue-test
 semaphoretest = semaphore-test
 producertest = producer-consumer-test
 bytearraytest = byte-array-test
+filelocktest = file-lock-test
 
 # Programs to build.
 programs = $(server)\
@@ -29,11 +30,12 @@ programs = $(server)\
  $(shmtest)\
  $(fifotest)\
  $(exceptiontest)\
+ $(filelocktest)\
  $(messagetest)\
  $(semaphoretest)\
  $(producertest)\
  $(bytearraytest)\
-
+ 
 # Language: C or C++
 language = C++
 
@@ -57,6 +59,7 @@ $(messagetest)_src_files    = tests/message_queue_test.cpp
 $(semaphoretest)_src_files  = tests/semaphore_test.cpp
 $(producertest)_src_files   = tests/producer_consumer_test.cpp
 $(bytearraytest)_src_files  = tests/byte_array_test.cpp
+$(filelocktest)_src_files   = tests/file_lock_test.cpp 
 
 # Program-scpecific LDFLAGS. (CFLAGS are global... sorry)
 $(client)_ldflags =
@@ -67,7 +70,7 @@ $(server)_ldflags =
 #static = yes
 
 # Uncomment to make the compilation process more verbose.
-verbose = yes
+#verbose = yes
 
 
 ##### ADVANCED CONFIGURATION ###################################################
