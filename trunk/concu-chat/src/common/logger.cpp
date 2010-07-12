@@ -48,7 +48,7 @@ Logger& Logger::instance()
 }
 
 Logger::Logger() :
-	_logging(true)
+	_logging(false)
 {
 	_fd = open(LOG_FILE_NAME.c_str(), O_RDWR | O_APPEND | O_CREAT, 0644);
 

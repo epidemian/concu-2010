@@ -60,7 +60,7 @@ void signalHandler(int)
 } // end namespace
 
 
-Server::Server(int argc, char** argv)
+Server::Server()
 {
 }
 
