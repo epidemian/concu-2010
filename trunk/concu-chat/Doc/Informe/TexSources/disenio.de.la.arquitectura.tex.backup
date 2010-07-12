@@ -69,9 +69,3 @@ al proceso principal de cada usuario.
 \begin{center}
 \small\includegraphics[scale=0.65]{./Images/DiagramaDeEstados}
 \end{center}
-
-\subsubsection{Diagrama de clases de los estados}
-\begin{center}
-\small\includegraphics[scale=0.45]{./Images/DiagramaDeClasesDeLosEstados2}
-\end{center}
-
