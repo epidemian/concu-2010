@@ -73,7 +73,7 @@ int Client::run()
 		runUserInputProcess();
 		break;
 	default: // Parent.
-		changeState(new NotConnectedState(*this));
+		changeState(new NotRegisteredState(*this));
 		runMainProcess();
 		destroyQueueFile();
 		break;
