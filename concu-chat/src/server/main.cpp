@@ -6,12 +6,13 @@
  */
 
 #include "server.h"
-#include "arg_parse.h"
+#include "common.h"
 
 #include <iostream>
 
 int main(int argc, char* argv[])
 {
+	loadConfigFile();
 	parseArguments(argc, argv);
 
 	try
@@ -27,5 +28,4 @@ int main(int argc, char* argv[])
 		std::cerr << "Unknown error\n";
 	}
 }
-
 

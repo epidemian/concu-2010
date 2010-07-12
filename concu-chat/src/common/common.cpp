@@ -5,8 +5,10 @@
  *      Author: demian
  */
 
-#include "arg_parse.h"
+#include "common.h"
 #include "logger.h"
+#include "config_file.h"
+#include "global_config.h"
 
 #include <getopt.h>
 #include <cstdlib>
@@ -18,6 +20,8 @@ using std::cerr;
 
 namespace
 {
+
+static const string CONFIG_FILE_NAME = "config.txt";
 
 void showHelp(const string& commandName)
 {
@@ -65,4 +69,11 @@ void parseArguments(int argc, char* argv[])
 			exit(EXIT_FAILURE);
 		}
 	}
+}
+
+
+void loadConfigFile()
+{
+	GlobalConfig::ConfigPtr configFile(new ConfigFile(CONFIG_FILE_NAME));
+	GlobalConfig::setConfig(configFile);
 }

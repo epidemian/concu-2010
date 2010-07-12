@@ -28,7 +28,6 @@ public:
 
 	ClientView();
 
-	void showIgnoredParameters(int argc, char* argv[]);
 	void showWelcomeMessage();
 	void askUserName();
 	void showCouldNotContactServer();
