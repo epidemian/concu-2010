@@ -12,7 +12,7 @@
 
 /**
  * A class responsible for locking a file so only one process can access to it
- * at the same time. FileLock is advisory, so it's the programmer responsability
+ * at the same time. FileLock is advisory, so it's the programmer responsibility
  * to use then when a file has one. FileLock locks the entire file for reading
  * and writing.
  */
