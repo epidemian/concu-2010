@@ -38,11 +38,11 @@ void printLineSeparator()
 
 } // end namespace
 
-const string ClientView::EXIT_COMMAND = "EXIT";
-const string ClientView::PEER_TABLE_COMMAND = "PEERTABLE";
-const string ClientView::START_CHAT_COMMAND = "CHAT";
-const string ClientView::END_CHAT_COMMAND = "ENDCHAT";
-const string ClientView::LOWERCASE_YES = "yes";
+const string ClientView::EXIT_COMMAND = "-salir";
+const string ClientView::PEER_TABLE_COMMAND = "-usuarios";
+const string ClientView::START_CHAT_COMMAND = "-hola";
+const string ClientView::END_CHAT_COMMAND = "-adios";
+const string ClientView::LOWERCASE_YES = "si";
 const string ClientView::LOWERCASE_NO = "no";
 
 ClientView::ClientView()
@@ -52,36 +52,37 @@ ClientView::ClientView()
 void ClientView::showWelcomeMessage()
 {
 	printLineSeparator();
-	println("Welcome to Concu-Chat 2010!");
-	println("Type " + EXIT_COMMAND
-			+ " or enter an EOF character (ctrl + D) to exit at any moment.");
+	println("Bienvenido a Concu-Chat 2010!");
+	println(
+			"Escribí " + EXIT_COMMAND
+					+ " o un caracter e fin de archivo (ctrl + D) para salir cuando quieras.");
 	printLineSeparator();
 }
 
 void ClientView::askUserName()
 {
-	print("Enter your name: ");
+	print("Tu nombre?: ");
 }
 
 void ClientView::showCouldNotContactServer()
 {
-	println("Could not contact server =(");
+	println("No se pudo contactar al servicio de localización =(");
 }
 
 void ClientView::showCouldNotContactPeer(const string& peerName)
 {
-	println("Could not contact " + peerName + " =(");
+	println("No se pudo contactar a " + peerName + " =(");
 }
 
 void ClientView::showInvalidName(const string& userName)
 {
-	println("The name \"" + userName + "\" is not valid");
+	println("El nombre \"" + userName + "\" no es válido");
 }
 
 void ClientView::showAlreadyUsedName(const string& userName)
 {
-	println("The name \"" + userName
-			+ "\" is already in use. Try another one =P");
+	println("El nombre \"" + userName
+			+ "\" ya está siendo usado. Intentá con otro nombre =P");
 }
 
 void ClientView::showPeerTable(const PeerTable& peerTable)
@@ -91,70 +92,71 @@ void ClientView::showPeerTable(const PeerTable& peerTable)
 
 void ClientView::showIdleStateCommands()
 {
-	println("Commands:");
-	println(PEER_TABLE_COMMAND + " to show the connected peers");
-	println(START_CHAT_COMMAND + " <peer-name> to start chatting with a peer");
+	println("Comandos:");
+	println(PEER_TABLE_COMMAND + " para mostrar los usuarios conectados");
+	println(START_CHAT_COMMAND + " <nombre-usuario> para chatear con alguien");
 }
 
 void ClientView::showCannotChatWithYourself()
 {
-	println("You cannot chat with youself! (sorry)");
+	println("No podés chatear con vos mismo! (lo siento...)");
 }
 
 void ClientView::showInvalidPeerName(const string& peerName)
 {
-	println("Peer " + peerName + " does not exist. Try updating the peer table");
+	println("El usuario " + peerName
+			+ " no existe. Intentá actualizar la tabla de usuarios");
 }
 
 void ClientView::showInvalidCommand(const string& command)
 {
-	println("Invalid command: " + command);
+	println("Comando invlálido: " + command);
 }
 
 void ClientView::showWaitingPeerResponse(const string& peerName)
 {
-	println("Waiting for " + peerName + " response");
+	println("Esperando la respuesta de " + peerName);
 }
 
 void ClientView::askUserStartChatWith(const string& peerName)
 {
-	println(peerName + " wants to chat with you");
-	print("Accept? (" + LOWERCASE_YES + "/" + LOWERCASE_NO + "): ");
+	println(peerName + " quiere chatear con vos");
+	print("Querés? (" + LOWERCASE_YES + "/" + LOWERCASE_NO + "): ");
 }
 
 void ClientView::showPeerCanceledChat(const string& peerName)
 {
-	println(peerName + " is busy now. Sorry =(");
+	println(peerName + " está ocupado. Lo siento mucho =(");
 }
 
 void ClientView::showPeerAcceptedChat(const string& peerName)
 {
-	println(peerName + " accepted!");
+	println(peerName + " aceptó!");
 }
 
 void ClientView::showStartChatSession(const string& peerName)
 {
 	printLineSeparator();
-	println("Chat session with " + peerName + " started");
-	println("Type " + END_CHAT_COMMAND + " to end the chat session");
+	println("Sesión de chat con " + peerName + " iniciada");
+	println("Escribí " + END_CHAT_COMMAND + " para terminar la sesión");
 	printLineSeparator();
 }
 
 void ClientView::showEndChatSession(const string& peerName)
 {
-	println("Chat session with " + peerName + " ended");
+	println("Sesión de chat con " + peerName + " terminada");
 	printLineSeparator();
 }
 
 void ClientView::showPeerLeftChat(const string& peerName)
 {
-	println(peerName + " has left =(");
+	println(peerName + " se ha ido =(");
 }
 
 void ClientView::showChatMessage(const string& peerName,
 		const string& chatMessage)
 {
-	println(peerName + " says: " + chatMessage);
+	println(peerName + " dice: " + chatMessage);
 }
 
 bool ClientView::isYesString(const string& str)
