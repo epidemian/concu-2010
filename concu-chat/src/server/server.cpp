@@ -12,8 +12,11 @@
 #include "core/byte_array.h"
 #include "model/queue_utils.h"
 #include "model/model_error.h"
+#include "logger.h"
 
 #include <iostream>
+#include <sstream>
+
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>
@@ -23,19 +26,29 @@
 
 using std::cout;
 using std::cerr;
+using std::ostringstream;
 
 namespace
 {
+
+void log(const string& message)
+{
+	ostringstream oss;
+	oss << "Server " << getpid() << ": " << message;
+	Logger::instance().log(oss.str());
+}
 
 void showServerStartMessage()
 {
 	cout << "Servicio de Localización iniciado. Usar el comando "
 			<< "'server-admin --quit' o una señal SIGINT (crtl + C) para salir\n";
+	log("Up and running...");
 }
 
 void showServerExitMessage()
 {
 	cout << "Cerrando Servicio de Localización...\n";
+	log("Closing down");
 }
 
 void signalHandler(int)
@@ -63,7 +76,8 @@ int Server::run()
 	signal(SIGINT, signalHandler);
 	signal(SIGTERM, signalHandler);
 
-	MessageQueue queue(getServerQueueFileName(), CommonConstants::QUEUE_ID, true);
+	MessageQueue queue(getServerQueueFileName(), CommonConstants::QUEUE_ID,
+			true);
 	bool exit = false;
 
 	showServerStartMessage();
@@ -76,6 +90,7 @@ int Server::run()
 	}
 
 	showServerExitMessage();
+
 	return EXIT_SUCCESS;
 }
 
@@ -111,19 +126,19 @@ void Server::processMessage(const Message& message, bool& exit)
 		string userName = reader.readString();
 		pid_t userPid = message.getMessengerPid();
 
-		registerNameRequest(userName, userPid);
+		processRegisterNameRequest(userName, userPid);
 		break;
 	}
 	case Message::TYPE_UNREGISTER_NAME_REQUEST:
 	{
 		string userName = reader.readString();
 
-		unregisterNameRequest(userName);
+		processUnregisterNameRequest(userName);
 		break;
 	}
 	case Message::TYPE_SHOW_PEER_TABLE_REQUEST:
 	{
-		showPeerTable();
+		processShowPeerTableRequest();
 		break;
 	}
 	case Message::TYPE_SERVER_EXIT:
@@ -136,7 +151,7 @@ void Server::processMessage(const Message& message, bool& exit)
 	}
 }
 
-void Server::registerNameRequest(string userName, pid_t userPid)
+void Server::processRegisterNameRequest(string userName, pid_t userPid)
 {
 	bool registerOk = !_peerTable.containsName(userName);
 	if (registerOk)
@@ -144,6 +159,11 @@ void Server::registerNameRequest(string userName, pid_t userPid)
 		Peer peer(userName, userPid);
 		_peerTable.add(peer);
 	}
+
+	ostringstream logMsg;
+	logMsg << "Received register name request from " << userPid << ", name = "
+			<< userName << ", register OK = " << std::boolalpha << registerOk;
+	log(logMsg.str());
 
 	string userQueueFileName = getClientQueueFileName(userPid);
 	MessageQueue queue(userQueueFileName, CommonConstants::QUEUE_ID, false);
@@ -158,6 +178,10 @@ void Server::registerNameRequest(string userName, pid_t userPid)
 
 void Server::processPeerTableRequest(pid_t userPid)
 {
+	ostringstream logMsg;
+	logMsg << "Received peer table request from " << userPid;
+	log(logMsg.str());
+
 	string userQueueFileName = getClientQueueFileName(userPid);
 	MessageQueue queue(userQueueFileName, CommonConstants::QUEUE_ID, false);
 
@@ -166,19 +190,25 @@ void Server::processPeerTableRequest(pid_t userPid)
 	queue.sendByteArray(message.serialize());
 }
 
-void Server::unregisterNameRequest(string userName)
+void Server::processUnregisterNameRequest(string userName)
 {
 	try
 	{
 		_peerTable.remove(userName);
-		cout << "The user has been removed\n";
+		ostringstream logMsg;
+		logMsg << "Received unregister name request, name = " << userName;
+		log(logMsg.str());
 	} catch (ModelError& e)
 	{
 		cerr << "Couldn't remove. The user doesn't exit\n";
 	}
 }
 
-void Server::showPeerTable()
+void Server::processShowPeerTableRequest()
 {
+	ostringstream logMsg;
+	logMsg << "Received show peer table request. " << _peerTable;
+	log(logMsg.str());
+
 	cout << _peerTable;
 }

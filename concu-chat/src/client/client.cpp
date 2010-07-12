@@ -13,6 +13,7 @@
 #include "core/byte_array.h"
 #include "client_state.h"
 #include "ipc/ipc_error.h"
+#include "logger.h"
 
 #include <unistd.h>
 #include <sys/wait.h>
@@ -28,6 +29,19 @@
 
 using std::ostringstream;
 using std::string;
+
+namespace
+{
+
+void log(const string& message)
+{
+	ostringstream oss;
+	oss << "Client " << getpid() << ": " << message;
+	Logger::instance().log(oss.str());
+}
+
+} // end namespace
+
 
 Client::Client(int argc, char* argv[]) :
 	_state(0)
@@ -161,6 +175,8 @@ void Client::runUserInputProcess()
 
 void Client::runMainProcess()
 {
+	log("Up and running...");
+
 	MessageQueue queue(_queueFileName, CommonConstants::QUEUE_ID, true);
 	bool exit = false;
 
@@ -170,6 +186,8 @@ void Client::runMainProcess()
 		message.deserialize(queue.receiveByteArray());
 		processMessage(message, exit);
 	}
+
+	log("Closing down");
 }
 
 void Client::createQueueFile()
