@@ -6,10 +6,14 @@
  */
 
 #include "client.h"
+#include "arg_parse.h"
+
 #include <iostream>
 
 int main(int argc, char* argv[])
 {
+	parseArguments(argc, argv);
+
 	try
 	{
 		Client client(argc, argv);

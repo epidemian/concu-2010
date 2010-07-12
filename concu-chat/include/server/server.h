@@ -19,7 +19,6 @@ class Server
 {
 public:
 	Server();
-	Server(int argc, char* argv[]);
 
 	~Server();
 
