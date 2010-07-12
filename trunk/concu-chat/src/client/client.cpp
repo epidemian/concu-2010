@@ -43,11 +43,10 @@ void log(const string& message)
 } // end namespace
 
 
-Client::Client(int argc, char* argv[]) :
+Client::Client() :
 	_state(0)
 {
 	_queueFileName = getClientQueueFileName();
-	getView().showIgnoredParameters(argc, argv);
 }
 
 Client::~Client()

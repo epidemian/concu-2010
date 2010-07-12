@@ -11,6 +11,9 @@
 class CommonConstants
 {
 public:
+	/**
+	 * TODO: move to global config.
+	 */
 	static const char QUEUE_ID = 'Q';
 };
 

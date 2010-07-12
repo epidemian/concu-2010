@@ -8,6 +8,7 @@
 #include "logger.h"
 #include "ipc/ipc_error.h"
 #include "ipc/file_lock.h"
+#include "global_config.h"
 
 #include <ctime>
 #include <cstdio>
@@ -17,10 +18,8 @@
 #include <fcntl.h>
 #include <errno.h>
 
-/**
- * TODO: Get from config.
- */
-static const string LOG_FILE_NAME = "log.txt";
+
+static const string LOG_FILE_NAME_KEY = "log_file";
 
 namespace
 {
@@ -50,10 +49,11 @@ Logger& Logger::instance()
 Logger::Logger() :
 	_logging(false)
 {
-	_fd = open(LOG_FILE_NAME.c_str(), O_RDWR | O_APPEND | O_CREAT, 0644);
+	string logFileName = GlobalConfig::get<string>(LOG_FILE_NAME_KEY);
+	_fd = open(logFileName.c_str(), O_RDWR | O_APPEND | O_CREAT, 0644);
 
 	if (_fd == -1)
-		throw IpcError("Could not open log file " + LOG_FILE_NAME, errno);
+		throw IpcError("Could not open log file " + logFileName, errno);
 }
 
 Logger::~Logger()

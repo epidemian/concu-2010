@@ -23,7 +23,7 @@ class Client
 {
 public:
 
-	Client(int argc, char* argv[]);
+	Client();
 
 	~Client();
 

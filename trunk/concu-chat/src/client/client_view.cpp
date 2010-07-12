@@ -49,17 +49,6 @@ ClientView::ClientView()
 {
 }
 
-void ClientView::showIgnoredParameters(int argc, char* argv[])
-{
-	if (argc > 1)
-	{
-		print("Ignoring parameters: ");
-		for (int i = 1; i < argc; i++)
-			print(toStr(argv[i]) + " ");
-		println();
-	}
-}
-
 void ClientView::showWelcomeMessage()
 {
 	printLineSeparator();
