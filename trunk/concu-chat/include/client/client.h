@@ -29,17 +29,58 @@ public:
 
 	int run();
 
+	/**
+	 * Change the current state of the client.
+	 */
 	void changeState(ClientState* newState);
 
-	// Messages to server.
+	/**
+	 * Sends a request to register a name to the server.
+	 * @param userName The name to be registered.
+	 * @return Whether the message could be sent or not.
+	 */
 	bool sendRegisterNameRequest(const string& userName);
+
+	/**
+	 * Sends a request to unregister a name to the server.
+	 * @param userName The name to be unregistered.
+	 * @return Whether the message could be sent or not.
+	 */
 	bool sendUnregisterNameRequest(const string& userName);
+
+	/**
+	 * Sends a request to the server to get the peer table.
+	 * @return Whether the message could be sent or not.
+	 */
 	bool sendPeerTableRequest();
 
-	// Messages to peer.
+	/**
+	 * Sends a request to start a chat session to a peer.
+	 * @param peer The peer whom the user wants to chat.
+	 * @param userName The name of the user (this client's user).
+	 * @return Whether the message could be sent or not.
+	 */
 	bool sendStartChatRequest(const Peer& peer, const string& userName);
+
+	/**
+	 * Sends a response of a start chat request to a peer.
+	 * @param peer The peer that originally sent the start chat request.
+	 * @param responseOk True if the user accepted to chat with the peer. False
+	 * otherwise.
+	 * @return Whether the message could be sent or not.
+	 */
 	bool sendStartChatResponse(const Peer& peer, bool responseOk);
+
+	/**
+	 * Sends a chat message to a peer.
+	 * @return Whether the message could be sent or not.
+	 */
 	bool sendChatMessage(MessageQueue& peerQueue, const string& chatMessage);
+
+	/**
+	 * Sends an end chat message to a peer.
+	 * @return Whether the message could be sent or not.
+	 */
 	bool sendEndChatMessage(MessageQueue& peerQueue);
 
 	ClientView& getView();

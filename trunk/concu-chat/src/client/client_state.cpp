@@ -83,17 +83,17 @@ void ClientState::processExit()
 {
 }
 
-NotConnectedState::NotConnectedState(Client& client) :
+NotRegisteredState::NotRegisteredState(Client& client) :
 	ClientState(client)
 {
 	_client.getView().askUserName();
 }
 
-NotConnectedState::~NotConnectedState()
+NotRegisteredState::~NotRegisteredState()
 {
 }
 
-void NotConnectedState::processUserInputMessage(const string& userInput)
+void NotRegisteredState::processUserInputMessage(const string& userInput)
 {
 	string userName = trim(userInput);
 	bool valid = std::count_if(userName.begin(), userName.end(), isalnum) > 0;
@@ -126,22 +126,22 @@ void WaitingRegisterNameResponseState::processRegisterNameResponse(
 	else
 	{
 		_client.getView().showAlreadyUsedName(_userName);
-		_client.changeState(new NotConnectedState(_client));
+		_client.changeState(new NotRegisteredState(_client));
 	}
 }
 
-ConnectedState::ConnectedState(Client& client, const string& userName) :
+RegisteredState::RegisteredState(Client& client, const string& userName) :
 	ClientState(client), _userName(userName)
 {
 }
 
-void ConnectedState::processExit()
+void RegisteredState::processExit()
 {
 	_client.sendUnregisterNameRequest(_userName);
 }
 
 IdleState::IdleState(Client& client, const string& userName) :
-	ConnectedState(client, userName)
+	RegisteredState(client, userName)
 {
 	_client.getView().showIdleStateCommands();
 	_client.sendPeerTableRequest();
@@ -197,7 +197,7 @@ void IdleState::processStartChatRequest(const Peer& peer)
 
 WaitingPeerStartChatResponseState::WaitingPeerStartChatResponseState(
 		Client& client, const string& userName, const Peer& peer) :
-	ConnectedState(client, userName), _peer(peer)
+	RegisteredState(client, userName), _peer(peer)
 {
 	_client.getView().showWaitingPeerResponse(peer.getName());
 }
@@ -225,7 +225,7 @@ void WaitingPeerStartChatResponseState::processStartChatResponse(
 
 WaitingUserStartChatResponseState::WaitingUserStartChatResponseState(
 		Client& client, const string& userName, const Peer& peer) :
-	ConnectedState(client, userName), _peer(peer)
+	RegisteredState(client, userName), _peer(peer)
 {
 	_client.getView().askUserStartChatWith(_peer.getName());
 }
@@ -256,7 +256,7 @@ void WaitingUserStartChatResponseState::processUserInputMessage(
 
 ChattingState::ChattingState(Client& client, const string& userName,
 		const Peer& peer) :
-	ConnectedState(client, userName), _peer(peer), _peerQueue(
+	RegisteredState(client, userName), _peer(peer), _peerQueue(
 			getClientQueueFileName(peer.getId()), CommonConstants::QUEUE_ID,
 			false)
 {
@@ -303,7 +303,7 @@ void ChattingState::processStartChatRequest(const Peer& peer)
 
 void ChattingState::processExit()
 {
-	ConnectedState::processExit();
+	RegisteredState::processExit();
 	_client.sendEndChatMessage(_peerQueue);
 }
 
