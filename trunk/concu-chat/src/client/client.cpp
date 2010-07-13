@@ -73,7 +73,6 @@ int Client::run()
 		runUserInputProcess();
 		break;
 	default: // Parent.
-		changeState(new NotRegisteredState(*this));
 		runMainProcess();
 		destroyQueueFile();
 		break;
@@ -200,6 +199,8 @@ void Client::runUserInputProcess()
 void Client::runMainProcess()
 {
 	log("Up and running...");
+
+	changeState(new NotRegisteredState(*this));
 
 	MessageQueue queue(_queueFileName, getQueueId(), true);
 	bool exit = false;
