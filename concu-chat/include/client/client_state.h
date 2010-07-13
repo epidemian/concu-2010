@@ -122,7 +122,7 @@ class IdleState: public RegisteredState
 {
 public:
 
-	IdleState(Client& client, const string& userName);
+	IdleState(Client& client, const string& userName, bool showCommands);
 
 	virtual void entryAction();
 	virtual void processUserInputMessage(const string& userInput);
@@ -133,6 +133,7 @@ private:
 
 	void processStartChatCommand(const string& peerName);
 	PeerTable _peerTable;
+	bool _showEntryInfo;
 };
 
 /**

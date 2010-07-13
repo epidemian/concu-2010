@@ -20,30 +20,23 @@ using std::string;
 class Peer
 {
 public:
-	Peer(const string& name, pid_t id):
-		_name(name), _id(id)
-	{ }
+	Peer(const string& name, pid_t id);
 
-	const string& getName() const { return _name; }
-	const pid_t& getId()   const { return _id; }
+	const string& getName() const;
+	const pid_t& getId() const;
 
-	bool operator == (const Peer& p)
-	{
-		return _name == p._name && _id == p._id;
-	}
-
-	friend std::ostream& operator << (std::ostream& os, const Peer& peer);
+	bool operator ==(const Peer& p);
+	friend std::ostream& operator <<(std::ostream& os, const Peer& peer);
 
 private:
 	string _name;
 	pid_t _id;
 };
 
-class PeerTable : public Serializable
+class PeerTable: public Serializable
 {
 public:
-	PeerTable()
-	{ }
+	PeerTable();
 
 	void add(const Peer& peer);
 	void remove(const string& peerName);
@@ -54,11 +47,10 @@ public:
 	const Peer* getById(pid_t peerId) const;
 	const Peer* getByName(const string& peerName) const;
 
-
 	ByteArray serialize();
 	void deserialize(const ByteArray& bytes);
 
-	friend std::ostream& operator << (std::ostream& os, const PeerTable& peers);
+	friend std::ostream& operator <<(std::ostream& os, const PeerTable& peers);
 
 private:
 	typedef vector<Peer> PeerVector;

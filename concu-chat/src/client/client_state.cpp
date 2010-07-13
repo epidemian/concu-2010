@@ -130,7 +130,7 @@ void WaitingRegisterNameResponseState::processRegisterNameResponse(
 		bool responseOk)
 {
 	if (responseOk)
-		_client.changeState(new IdleState(_client, _userName));
+		_client.changeState(new IdleState(_client, _userName, true));
 	else
 	{
 		_client.getView().showAlreadyUsedName(_userName);
@@ -154,15 +154,18 @@ void RegisteredState::processUserExit()
 	_client.sendUnregisterNameRequest(_userName);
 }
 
-IdleState::IdleState(Client& client, const string& userName) :
-	RegisteredState("Idle", client, userName)
+IdleState::IdleState(Client& client, const string& userName, bool showEntryInfo) :
+	RegisteredState("Idle", client, userName), _showEntryInfo(showEntryInfo)
 {
 }
 
 void IdleState::entryAction()
 {
-	_client.getView().showIdleStateCommands();
-	_client.sendPeerTableRequest();
+	if (_showEntryInfo)
+	{
+		_client.getView().showIdleStateCommands();
+		_client.sendPeerTableRequest();
+	}
 }
 
 void IdleState::processUserInputMessage(const string& userInput)
@@ -241,7 +244,7 @@ void WaitingPeerStartChatResponseState::processStartChatResponse(
 	else
 	{
 		_client.getView().showPeerCanceledChat(_peer.getName());
-		_client.changeState(new IdleState(_client, _userName));
+		_client.changeState(new IdleState(_client, _userName, false));
 	}
 }
 
@@ -273,7 +276,7 @@ void WaitingUserStartChatResponseState::processUserInputMessage(
 		if (startChatting && couldSendResponse)
 			_client.changeState(new ChattingState(_client, _userName, _peer));
 		else
-			_client.changeState(new IdleState(_client, _userName));
+			_client.changeState(new IdleState(_client, _userName, false));
 	}
 	else
 	{
@@ -318,13 +321,13 @@ void ChattingState::processUserInputMessage(const string& userInput)
 	}
 
 	if (endChat)
-		_client.changeState(new IdleState(_client, _userName));
+		_client.changeState(new IdleState(_client, _userName, false));
 }
 
 void ChattingState::processEndChat()
 {
 	_client.getView().showPeerLeftChat(_peer.getName());
-	_client.changeState(new IdleState(_client, _userName));
+	_client.changeState(new IdleState(_client, _userName, false));
 }
 
 void ChattingState::processChatMessage(const string& chatMessage)
