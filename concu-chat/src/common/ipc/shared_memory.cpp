@@ -61,9 +61,6 @@ void RawSharedMemory::doDispose() throw ()
 
 	if (state.shm_nattch == 0 && ownResources())
 	{
-		// TODO: qué pasa si justo acá el scheduler cambia a otro proceso y
-		// ese proceso hace un shmat de esta memoria?
-
 		// Destroys shared memory.
 		errorCode = shmctl(_shmId, IPC_RMID, NULL);
 		if (errorCode == -1)

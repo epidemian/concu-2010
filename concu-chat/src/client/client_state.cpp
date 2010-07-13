@@ -227,7 +227,6 @@ void WaitingPeerStartChatResponseState::entryAction()
 
 void WaitingPeerStartChatResponseState::processUserInputMessage(const string&)
 {
-	// TODO: tratar el cancelar (?)
 	_client.getView().showWaitingPeerResponse(_peer.getName());
 }
 
