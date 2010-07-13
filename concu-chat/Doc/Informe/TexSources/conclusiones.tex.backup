@@ -7,18 +7,12 @@ solución traía problemas por el tamaño fijo de la memoria. Luego se pensó ut
 caso el problema rondaba por la sincronización en el envío de los mensajes. Finalmente se terminó usando
 cola de mensajes ya que permitía enviar mensajes de tamaño variable sincronizados.
 
-Por otro lado, se discutió cúal era la forma correcta de dividir en procesos a un programa concurrente. El 
+Por otro lado, se discutió cómo era la forma correcta de dividir en procesos a un programa concurrente. El 
 principal problema estaba relacionado con que la memoria no era compartida como en el caso de los hilos livianos.
-En ese caso era muy simple pensar una solución ya que todos los recursos en común dentro de la aplicación se encontrarían 
+En ese caso era muy simple pensar ya que todos los recursos en común dentro de la aplicación se encontrarían 
 en un mismo espacio de direcciones. Finalmente, como ya se analizó en el sección de diseño, se decidió separar
 al módulo cliente en dos procesos. Uno muy simple, el cual tenía como única función leer comandos de teclado
 y enviarlos a un procesos principal encargado de interpretar dichos comandos. En el caso del servidor, se optó 
-por un sólo proceso encargado de recibir peticiones, atenderlas y responderlas a medida que iban arrivando.
+por un sólo proceso encargado de recibir peticiones, atenderlas y responderlas a medida que iban llegando.
 
-Otro tema de discución que surgió fue, cómo realizar la arquitectura del
-sistema para que sea compatible con una interfaz gráfica. Como concecuencia del problema mencionado sobre la 
-memoria no-compartida, el diseño actual no soportaría el uso de la misma. Dos procesos distintos no podrían 
-estar usando la misma interfaz gráfica ya que los objetos utilizados por la vista no estarían en el espacio
-de direcciones de ambos procesos. 
-
-
+      
