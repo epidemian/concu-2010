@@ -18,7 +18,8 @@
 
 using std::string;
 
-class RawMessageQueue: public Resource {
+class RawMessageQueue: public Resource
+{
 public:
 
 	/**
@@ -76,13 +77,14 @@ protected:
 	virtual void print(ostream& stream) const;
 
 	// Non copiable.
-	DECLARE_NON_COPIABLE(RawMessageQueue)
+DECLARE_NON_COPIABLE(RawMessageQueue)
 };
 
 /**
  * A class responsible for inter-process communication.
  */
-class MessageQueue: public RawMessageQueue {
+class MessageQueue: public RawMessageQueue
+{
 public:
 
 	static const long DEFAULT_SEND_MTYPE = 1;
@@ -97,7 +99,8 @@ public:
 	 */
 	explicit MessageQueue(const string& pathName, char id, bool ownResource =
 			true) :
-		RawMessageQueue(pathName, id, ownResource) {
+		RawMessageQueue(pathName, id, ownResource)
+	{
 	}
 
 	/**
@@ -109,7 +112,8 @@ public:
 	 * @param mtype	The id of the message.
 	 */
 	template<typename T>
-	void send(const T& obj, long mtype = DEFAULT_SEND_MTYPE) {
+	void send(const T& obj, long mtype = DEFAULT_SEND_MTYPE)
+	{
 		RawMessageQueue::sendFixedSize(&obj, sizeof(T), mtype);
 	}
 
@@ -122,7 +126,8 @@ public:
 	 * @return 		The 'T' object read from the queue.
 	 */
 	template<typename T>
-	T receive(long mtype = DEFAULT_RECEIVE_MTYPE) {
+	T receive(long mtype = DEFAULT_RECEIVE_MTYPE)
+	{
 		T obj;
 		RawMessageQueue::receiveFixedSize(&obj, sizeof(T), mtype);
 		return obj;
@@ -166,7 +171,8 @@ public:
 	 * Removes the message queue. The calling process must be the creator the
 	 * message queue
 	 */
-	virtual ~MessageQueue() throw () {
+	virtual ~MessageQueue() throw ()
+	{
 	}
 };
 
