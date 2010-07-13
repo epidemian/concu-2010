@@ -45,6 +45,12 @@ void showServerStartMessage()
 	log("Up and running...");
 }
 
+void showServerAlreadyRunning()
+{
+	cout << "El servicio de localización ya se encuentra corriendo!\n";
+	log("Another server already running");
+}
+
 void showServerExitMessage()
 {
 	cout << "Cerrando Servicio de Localización...\n";
@@ -70,14 +76,18 @@ Server::~Server()
 
 int Server::run()
 {
-	createQueueFile();
+	if (!createQueueFile())
+	{
+		showServerAlreadyRunning();
+		return EXIT_FAILURE;
+	}
+
 	atexit(destroyQueueFile);
 
 	signal(SIGINT, signalHandler);
 	signal(SIGTERM, signalHandler);
 
-	MessageQueue queue(getServerQueueFileName(), getQueueId(),
-			true);
+	MessageQueue queue(getServerQueueFileName(), getQueueId(), true);
 	bool exit = false;
 
 	showServerStartMessage();
@@ -94,10 +104,17 @@ int Server::run()
 	return EXIT_SUCCESS;
 }
 
-void Server::createQueueFile()
+bool Server::createQueueFile()
 {
 	if (mknod(getServerQueueFileName().c_str(), 0666, 0) == -1)
-		throw Exception("could not create file " + getServerQueueFileName());
+	{
+		if (errno == EEXIST)
+			return false;
+		else
+			throw Exception("could not create file " + getServerQueueFileName());
+	}
+
+	return true;
 }
 
 void Server::destroyQueueFile()

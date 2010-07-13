@@ -1,0 +1,31 @@
+\section{Manual de usuario}
+
+\begin{itemize}
+  \item Opciones al correr el servicio de loca.
+\end{itemize}
+\begin{center}
+  \small\includegraphics[scale=0.65]{./Images/AyudaCliente}
+\end{center}
+
+\begin{itemize}
+  \item Opciones al correr un cliente.
+\end{itemize}
+\begin{center}
+  \small\includegraphics[scale=0.65]{./Images/AyudaCliente}
+\end{center}
+
+\begin{itemize}
+  \item Correr servicio de localización.
+\end{itemize}
+\begin{center}
+  \small\includegraphics[scale=0.65]{./Images/Server}
+\end{center}
+
+
+
+\begin{itemize}
+  \item Correr usuarios.
+\end{itemize}
+\begin{center}
+  \small\includegraphics[scale=0.65]{./Images/Cliente}
+\end{center}
