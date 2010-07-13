@@ -9,6 +9,12 @@
 #define ARG_PARSE_H_
 
 /**
+ *
+ */
+char getQueueId();
+
+
+/**
  * Parses the command-line arguments for both client and server.
  */
 void parseArguments(int argc, char* argv[]);

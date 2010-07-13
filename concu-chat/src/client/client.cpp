@@ -9,7 +9,7 @@
 #include "exception.h"
 #include "ipc/message_queue.h"
 #include "model/queue_utils.h"
-#include "constants.h"
+#include "common.h"
 #include "core/byte_array.h"
 #include "client_state.h"
 #include "ipc/ipc_error.h"
@@ -118,7 +118,7 @@ bool Client::sendUnregisterNameRequest(const string& userName)
 
 bool Client::sendPeerTableRequest()
 {
-	sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST);
+	return sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST);
 }
 
 bool Client::sendStartChatRequest(const Peer& peer, const string& userName)
@@ -160,7 +160,7 @@ ClientView& Client::getView()
 
 void Client::runUserInputProcess()
 {
-	MessageQueue queue(_queueFileName, CommonConstants::QUEUE_ID, false);
+	MessageQueue queue(_queueFileName, getQueueId(), false);
 
 	string line;
 	bool exit = false;
@@ -186,7 +186,7 @@ void Client::runMainProcess()
 {
 	log("Up and running...");
 
-	MessageQueue queue(_queueFileName, CommonConstants::QUEUE_ID, true);
+	MessageQueue queue(_queueFileName, getQueueId(), true);
 	bool exit = false;
 
 	while (!exit)
@@ -309,7 +309,7 @@ bool Client::sendMessage(const string& queueFileName, MessageType type,
 {
 	try
 	{
-		MessageQueue queue(queueFileName, CommonConstants::QUEUE_ID, false);
+		MessageQueue queue(queueFileName, getQueueId(), false);
 		return sendMessageToQueue(queue, type, data);
 	} catch (IpcError& e)
 	{
