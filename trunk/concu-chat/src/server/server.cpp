@@ -8,11 +8,11 @@
 #include "server.h"
 #include "exception.h"
 #include "ipc/message_queue.h"
-#include "constants.h"
 #include "core/byte_array.h"
 #include "model/queue_utils.h"
 #include "model/model_error.h"
 #include "logger.h"
+#include "common.h"
 
 #include <iostream>
 #include <sstream>
@@ -76,7 +76,7 @@ int Server::run()
 	signal(SIGINT, signalHandler);
 	signal(SIGTERM, signalHandler);
 
-	MessageQueue queue(getServerQueueFileName(), CommonConstants::QUEUE_ID,
+	MessageQueue queue(getServerQueueFileName(), getQueueId(),
 			true);
 	bool exit = false;
 
@@ -166,7 +166,7 @@ void Server::processRegisterNameRequest(const string& userName, pid_t userPid)
 	log(logMsg.str());
 
 	string userQueueFileName = getClientQueueFileName(userPid);
-	MessageQueue queue(userQueueFileName, CommonConstants::QUEUE_ID, false);
+	MessageQueue queue(userQueueFileName, getQueueId(), false);
 
 	ByteArrayWriter writer;
 	writer.write(registerOk);
@@ -183,7 +183,7 @@ void Server::processPeerTableRequest(pid_t userPid)
 	log(logMsg.str());
 
 	string userQueueFileName = getClientQueueFileName(userPid);
-	MessageQueue queue(userQueueFileName, CommonConstants::QUEUE_ID, false);
+	MessageQueue queue(userQueueFileName, getQueueId(), false);
 
 	Message message(Message::TYPE_PEER_TABLE_RESPONSE, getpid(),
 			_peerTable.serialize());

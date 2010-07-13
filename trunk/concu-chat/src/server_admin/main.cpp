@@ -10,9 +10,9 @@
 #include "model/queue_utils.h"
 #include "model/peer_table.h"
 #include "model/message.h"
-#include "constants.h"
 #include "utils.h"
 #include "core/byte_array.h"
+#include "common.h"
 
 #include <iostream>
 #include <string>
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 	}
 
 	MessageQueue serverQueue(getServerQueueFileName(),
-			CommonConstants::QUEUE_ID, false);
+			getQueueId(), false);
 
 	int c;
 	opterr = 0;
