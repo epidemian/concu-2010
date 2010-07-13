@@ -93,8 +93,10 @@ void ClientView::showPeerTable(const PeerTable& peerTable)
 void ClientView::showIdleStateCommands()
 {
 	println("Comandos:");
-	println(PEER_TABLE_COMMAND + " para mostrar los usuarios conectados");
-	println(START_CHAT_COMMAND + " <nombre-usuario> para chatear con alguien");
+	println("    " + PEER_TABLE_COMMAND
+			+ " para mostrar los usuarios conectados");
+	println("    " + START_CHAT_COMMAND
+			+ " <nombre-usuario> para chatear con alguien");
 }
 
 void ClientView::showCannotChatWithYourself()

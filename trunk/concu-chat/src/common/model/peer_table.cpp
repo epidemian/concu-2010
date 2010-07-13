@@ -11,13 +11,33 @@
 #include <algorithm>
 #include <iostream>
 
-std::ostream& operator << (std::ostream& os, const Peer& peer)
+Peer::Peer(const string& name, pid_t id) :
+	_name(name), _id(id)
+{
+}
+
+const string& Peer::getName() const
+{
+	return _name;
+}
+
+const pid_t& Peer::getId() const
+{
+	return _id;
+}
+
+bool Peer::operator ==(const Peer& p)
+{
+	return _name == p._name && _id == p._id;
+}
+
+std::ostream& operator <<(std::ostream& os, const Peer& peer)
 {
 	os << "Peer [name=" << peer.getName() << ", id=" << peer.getId() << "]";
 	return os;
 }
 
-std::ostream& operator << (std::ostream& os, const PeerTable& peers)
+std::ostream& operator <<(std::ostream& os, const PeerTable& peers)
 {
 	os << "Usuarios: Nombre - Dirección\n";
 
@@ -25,9 +45,13 @@ std::ostream& operator << (std::ostream& os, const PeerTable& peers)
 	for (; iterator != peers._peers.end(); iterator++)
 	{
 		Peer peer = *iterator;
-		os << peer.getName() << " - " << peer.getId() << "\n";
+		os << "    " << peer.getName() << " - " << peer.getId() << "\n";
 	}
 	return os;
+}
+
+PeerTable::PeerTable()
+{
 }
 
 void PeerTable::add(const Peer& peer)
@@ -91,7 +115,7 @@ ByteArray PeerTable::serialize()
 	{
 		Peer peer = _peers[i];
 		writer.writeString(peer.getName());
-		writer.write<pid_t>(peer.getId());
+		writer.write<pid_t> (peer.getId());
 	}
 
 	return writer.getByteArray();
@@ -107,7 +131,7 @@ void PeerTable::deserialize(const ByteArray& bytes)
 	for (int i = 0; i < size; i++)
 	{
 		std::string name = reader.readString();
-		pid_t id = reader.read<pid_t>();
+		pid_t id = reader.read<pid_t> ();
 
 		Peer peer(name, id);
 		_peers.push_back(peer);
