@@ -32,9 +32,9 @@ private:
 	static void createQueueFile();
 	static void destroyQueueFile();
 
-	void processRegisterNameRequest(string,pid_t);
+	void processRegisterNameRequest(const string&,pid_t);
 	void processPeerTableRequest(pid_t);
-	void processUnregisterNameRequest(string);
+	void processUnregisterNameRequest(const string&);
 	void processShowPeerTableRequest();
 };
 
