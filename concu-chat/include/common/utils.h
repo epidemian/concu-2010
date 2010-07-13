@@ -46,6 +46,11 @@ template<typename T> string toStr(T obj)
 }
 
 /**
+ * Transforms a boolean into a "true" | "false" string.
+ */
+string toStr(bool b);
+
+/**
  * Generates a copy of a given string with no leading whitespace.
  * e.g: trimLeft("  hello world ") returns "hello world "
  */

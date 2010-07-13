@@ -11,7 +11,7 @@
 #include "core/byte_array.h"
 #include "utils.h"
 #include "model/queue_utils.h"
-#include "constants.h"
+#include "common.h"
 
 #include <string>
 #include <algorithm>
@@ -291,7 +291,7 @@ ChattingState::ChattingState(Client& client, const string& userName,
 		const Peer& peer) :
 	RegisteredState("Chatting with " + peer.getName(), client, userName),
 			_peer(peer), _peerQueue(getClientQueueFileName(peer.getId()),
-					CommonConstants::QUEUE_ID, false)
+					getQueueId(), false)
 {
 }
 
