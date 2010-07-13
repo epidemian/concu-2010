@@ -29,7 +29,7 @@ private:
 
 	void processMessage(const Message& message, bool& exit);
 
-	static void createQueueFile();
+	static bool createQueueFile();
 	static void destroyQueueFile();
 
 	void processRegisterNameRequest(const string&,pid_t);

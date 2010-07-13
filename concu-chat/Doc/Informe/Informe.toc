@@ -13,5 +13,5 @@
 \contentsline {subsection}{\numberline {3.5}Estados del cliente}{9}
 \contentsline {subsubsection}{\numberline {3.5.1}Diagrama de estados}{9}
 \contentsline {subsubsection}{\numberline {3.5.2}Diagrama de clases de los estados}{10}
-\contentsline {section}{\numberline {4}C\IeC {\'o}digoFuente}{11}
-\contentsline {section}{\numberline {5}Conclusiones}{96}
+\contentsline {section}{\numberline {4}Corrida de prueba}{11}
+\contentsline {section}{\numberline {5}Conclusiones}{16}
