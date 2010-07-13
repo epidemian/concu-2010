@@ -1,2 +1,6 @@
 
 log_file = log.txt
+queue_directory = queues/
+server_queue_path = queues/server_queue.queue
+client_prefix = client
+queue_extension = .queue

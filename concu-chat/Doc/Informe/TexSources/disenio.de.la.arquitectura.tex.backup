@@ -17,11 +17,20 @@ ya que es inaceptable que más de un proceso escriba en forma simultánea en la 
 Luego de analizar las diferentes alternativas, se optó por utilizar cola de mensajes
 ya que era el mecanismo de conumicación que mejor se adaptaba al problema.
 
-A continuación, se prensenta la interfaz de la clase cola de mensajes:
+\subsection{Arquitectura}
+\subsubsection{Cliente-Cliente}
+\begin{center}
+\small\includegraphics[scale=0.65]{./Images/ArquitecturaClienteConCliente}
+\end{center}
+\subsubsection{Cliente-Servicio de localización}
+\begin{center}
+\small\includegraphics[scale=0.65]{./Images/ArquitecturaClienteConServidor}
+\end{center}
 
-
-% Código fuente.
-\verbatiminput{./../../include/common/ipc/message_queue.h}  
+\subsection{Diagrama de clases}
+\begin{center}
+\small\includegraphics[scale=0.65]{./Images/DiagramaDeClases}
+\end{center}
 
 \subsection{Mensajes}
 
@@ -69,3 +78,9 @@ al proceso principal de cada usuario.
 \begin{center}
 \small\includegraphics[scale=0.65]{./Images/DiagramaDeEstados}
 \end{center}
+
+\subsubsection{Diagrama de clases de los estados}
+\begin{center}
+\small\includegraphics[scale=0.45]{./Images/DiagramaDeClasesDeLosEstados2}
+\end{center}
+
