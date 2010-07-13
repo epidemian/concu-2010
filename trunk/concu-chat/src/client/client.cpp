@@ -84,8 +84,18 @@ int Client::run()
 void Client::changeState(ClientState* newState)
 {
 	if (_state)
+	{
+		_state->exitAction();
 		delete _state;
+	}
+
 	_state = newState;
+
+	if (_state)
+	{
+		log("Changed to state: " + _state->getName());
+		_state->entryAction();
+	}
 }
 
 bool Client::sendRegisterNameRequest(const string& userName)
@@ -213,23 +223,27 @@ void Client::processMessage(const Message& message, bool& exitNow)
 	case Message::TYPE_USER_INPUT:
 	{
 		string userInput = reader.readString();
+		log("Processing user input: " + userInput);
 		_state->processUserInputMessage(userInput);
 		break;
 	}
 	case Message::TYPE_USER_EXIT:
 	{
 		exitNow = true;
-		_state->processExit();
+		log("Processing user exit");
+		_state->processUserExit();
 		break;
 	}
 	case Message::TYPE_REGISTER_NAME_RESPONSE:
 	{
 		bool responseOk = reader.read<bool> ();
+		log("Processing register name response. Response: " + toStr(responseOk));
 		_state->processRegisterNameResponse(responseOk);
 		break;
 	}
 	case Message::TYPE_PEER_TABLE_RESPONSE:
 	{
+		log("Processing peer table response");
 		_state->processPeerTableResponse(message.getData());
 		break;
 	}
@@ -237,28 +251,37 @@ void Client::processMessage(const Message& message, bool& exitNow)
 	{
 		string peerName = reader.readString();
 		Peer peer(peerName, message.getMessengerPid());
+		log("Processing start chat request from: " + toStr(peer));
 		_state->processStartChatRequest(peer);
 		break;
 	}
 	case Message::TYPE_START_CHAT_RESPONSE:
 	{
 		bool responseOk = reader.read<bool> ();
+		log("Processing start chat response. Response: " + toStr(responseOk));
 		_state->processStartChatResponse(responseOk);
 		break;
 	}
 	case Message::TYPE_CHAT_MESSAGE:
 	{
 		string chatMessage = reader.readString();
+		log("Processing chat message: " + chatMessage);
 		_state->processChatMessage(chatMessage);
 		break;
 	}
 	case Message::TYPE_END_CHAT:
 	{
+		log("Processing end chat message");
 		_state->processEndChat();
 		break;
 	}
 	default:
-		throw Exception("Invalid message type " + toStr(message.getType()));
+	{
+		string logLine = "Invalid message received. Type: " + toStr(
+				message.getType());
+		log(logLine);
+		throw Exception(logLine);
+	}
 	}
 }
 

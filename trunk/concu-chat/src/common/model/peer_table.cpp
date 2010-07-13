@@ -19,7 +19,7 @@ std::ostream& operator << (std::ostream& os, const Peer& peer)
 
 std::ostream& operator << (std::ostream& os, const PeerTable& peers)
 {
-	os << "Peer Table: Name - Adress\n";
+	os << "Usuarios: Nombre - Dirección\n";
 
 	vector<Peer>::const_iterator iterator = peers._peers.begin();
 	for (; iterator != peers._peers.end(); iterator++)

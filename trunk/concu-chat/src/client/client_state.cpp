@@ -30,13 +30,25 @@ public:
 	}
 };
 
-ClientState::ClientState(Client& client) :
-	_client(client)
+const string& ClientState::getName()
 {
+	return _stateName;
+}
 
+ClientState::ClientState(const string& stateName, Client& client) :
+	_client(client), _stateName(stateName)
+{
 }
 
 ClientState::~ClientState()
+{
+}
+
+void ClientState::entryAction()
+{
+}
+
+void ClientState::exitAction()
 {
 }
 
@@ -79,18 +91,18 @@ void ClientState::processChatMessage(const string& chatMessage)
 			<< "\n";
 }
 
-void ClientState::processExit()
+void ClientState::processUserExit()
 {
 }
 
 NotRegisteredState::NotRegisteredState(Client& client) :
-	ClientState(client)
+	ClientState("Not registered", client)
 {
-	_client.getView().askUserName();
 }
 
-NotRegisteredState::~NotRegisteredState()
+void NotRegisteredState::entryAction()
 {
+	_client.getView().askUserName();
 }
 
 void NotRegisteredState::processUserInputMessage(const string& userInput)
@@ -110,11 +122,7 @@ void NotRegisteredState::processUserInputMessage(const string& userInput)
 
 WaitingRegisterNameResponseState::WaitingRegisterNameResponseState(
 		Client& client, const string& userName) :
-	ClientState(client), _userName(userName)
-{
-}
-
-WaitingRegisterNameResponseState::~WaitingRegisterNameResponseState()
+	ClientState("Waiting register name response", client), _userName(userName)
 {
 }
 
@@ -130,18 +138,28 @@ void WaitingRegisterNameResponseState::processRegisterNameResponse(
 	}
 }
 
-RegisteredState::RegisteredState(Client& client, const string& userName) :
-	ClientState(client), _userName(userName)
+RegisteredState::RegisteredState(const string& stateName, Client& client,
+		const string& userName) :
+	ClientState(stateName, client), _userName(userName)
 {
 }
 
-void RegisteredState::processExit()
+void RegisteredState::processStartChatRequest(const Peer& peer)
+{
+	_client.sendStartChatResponse(peer, false);
+}
+
+void RegisteredState::processUserExit()
 {
 	_client.sendUnregisterNameRequest(_userName);
 }
 
 IdleState::IdleState(Client& client, const string& userName) :
-	RegisteredState(client, userName)
+	RegisteredState("Idle", client, userName)
+{
+}
+
+void IdleState::entryAction()
 {
 	_client.getView().showIdleStateCommands();
 	_client.sendPeerTableRequest();
@@ -197,9 +215,14 @@ void IdleState::processStartChatRequest(const Peer& peer)
 
 WaitingPeerStartChatResponseState::WaitingPeerStartChatResponseState(
 		Client& client, const string& userName, const Peer& peer) :
-	RegisteredState(client, userName), _peer(peer)
+	RegisteredState("Waiting for " + peer.getName() + " start chat response",
+			client, userName), _peer(peer)
 {
-	_client.getView().showWaitingPeerResponse(peer.getName());
+}
+
+void WaitingPeerStartChatResponseState::entryAction()
+{
+	_client.getView().showWaitingPeerResponse(_peer.getName());
 }
 
 void WaitingPeerStartChatResponseState::processUserInputMessage(const string&)
@@ -225,7 +248,12 @@ void WaitingPeerStartChatResponseState::processStartChatResponse(
 
 WaitingUserStartChatResponseState::WaitingUserStartChatResponseState(
 		Client& client, const string& userName, const Peer& peer) :
-	RegisteredState(client, userName), _peer(peer)
+	RegisteredState("Waiting for user start chat response", client, userName),
+			_peer(peer)
+{
+}
+
+void WaitingUserStartChatResponseState::entryAction()
 {
 	_client.getView().askUserStartChatWith(_peer.getName());
 }
@@ -254,16 +282,25 @@ void WaitingUserStartChatResponseState::processUserInputMessage(
 	}
 }
 
+void WaitingUserStartChatResponseState::processUserExit()
+{
+	_client.sendStartChatResponse(_peer, false);
+}
+
 ChattingState::ChattingState(Client& client, const string& userName,
 		const Peer& peer) :
-	RegisteredState(client, userName), _peer(peer), _peerQueue(
-			getClientQueueFileName(peer.getId()), CommonConstants::QUEUE_ID,
-			false)
+	RegisteredState("Chatting with " + peer.getName(), client, userName),
+			_peer(peer), _peerQueue(getClientQueueFileName(peer.getId()),
+					CommonConstants::QUEUE_ID, false)
+{
+}
+
+void ChattingState::entryAction()
 {
 	_client.getView().showStartChatSession(_peer.getName());
 }
 
-ChattingState::~ChattingState()
+void ChattingState::exitAction()
 {
 	_client.getView().showEndChatSession(_peer.getName());
 }
@@ -296,14 +333,9 @@ void ChattingState::processChatMessage(const string& chatMessage)
 	_client.getView().showChatMessage(_peer.getName(), chatMessage);
 }
 
-void ChattingState::processStartChatRequest(const Peer& peer)
+void ChattingState::processUserExit()
 {
-	_client.sendStartChatResponse(peer, false);
-}
-
-void ChattingState::processExit()
-{
-	RegisteredState::processExit();
+	RegisteredState::processUserExit();
 	_client.sendEndChatMessage(_peerQueue);
 }
 

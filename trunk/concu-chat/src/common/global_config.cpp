@@ -8,11 +8,9 @@
 #include "global_config.h"
 #include <iostream>
 
-GlobalConfig::ConfigPtr GlobalConfig::_config;
+Config* GlobalConfig::_config = NULL;
 
-void GlobalConfig::setConfig(ConfigPtr config)
+void GlobalConfig::setConfig(Config* config)
 {
-	std::cout << "setConfig! " << config.get() << "\n" << std::flush;
-
 	_config = config;
 }

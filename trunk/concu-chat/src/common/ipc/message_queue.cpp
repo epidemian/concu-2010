@@ -36,18 +36,14 @@ RawMessageQueue::RawMessageQueue(const string& pathName, char id,
 void RawMessageQueue::sendFixedSize(const void* buffer, size_t size, long mtype)
 {
 	// Builds the package to send the message.
-	char *writeBuff = (char*) malloc(sizeof(mtype) + size);
-	if (!writeBuff)
-		throw IpcError("RawMessageQueue::send(): Could not build the package "
-			"to be send", errno);
+	char* writeBuff = new char[sizeof(mtype) + size];
 
 	*(long*) writeBuff = mtype;
-
 	memcpy(writeBuff + sizeof(mtype), buffer, size);
 
 	// Sends the message.
 	int errorCode = msgsnd(_queueId, writeBuff, size, 0);
-	free(writeBuff);
+	delete[] writeBuff;
 
 	if (errorCode == -1)
 		throw IpcError("RawMessageQueue::send(): Could not write into the "
@@ -62,25 +58,21 @@ void RawMessageQueue::receiveFixedSize(void* buffer, size_t size, long mtype)
 size_t RawMessageQueue::tryReceive(void* buffer, size_t size, long mtype)
 {
 	// Builds the package to receive the message.
-	char *readBuff = (char*) malloc(sizeof(long) + size);
-	if (!readBuff)
-		throw IpcError("RawMessageQueue::receive(): Could not build the "
-			"package to be received", errno);
+	char *readBuff = new char[sizeof(mtype) + size];
 
 	// Receives the message.
 	ssize_t returnValue = msgrcv(_queueId, readBuff, size, mtype, 0);
-	// E2BIG: We don't receive everything that we were supposed to receive.
-	// Something wrong happened.
-	if (returnValue == -1 && errno != E2BIG)
-	{
-		free(readBuff);
+	int rcvErrno = errno;
+
+	if (returnValue != -1)
+		memcpy(buffer, readBuff + sizeof(mtype), size);
+	delete[] readBuff;
+
+	// E2BIG: We don't receive everything that we were supposed to receive (the
+	// size is not enough).
+	if (returnValue == -1 && rcvErrno != E2BIG)
 		throw IpcError("RawMessageQueue::receive(): Could not read from"
 			" the queue", errno);
-	}
-
-	memcpy(buffer, readBuff + sizeof(long), size);
-
-	free(readBuff);
 	return returnValue;
 }
 
@@ -117,7 +109,7 @@ const ByteArray MessageQueue::receiveByteArray(long mtype)
 
 	while (!receiveOk)
 	{
-		char* readBuff = (char*) malloc(bufferSize);
+		char* readBuff = new char[bufferSize];
 
 		ssize_t returnValue;
 
@@ -126,7 +118,7 @@ const ByteArray MessageQueue::receiveByteArray(long mtype)
 			returnValue = tryReceive(readBuff, bufferSize, mtype);
 		} catch (...)
 		{
-			free(readBuff);
+			delete[] readBuff;
 			throw;
 		}
 
@@ -141,7 +133,7 @@ const ByteArray MessageQueue::receiveByteArray(long mtype)
 			receiveOk = true;
 		}
 
-		free(readBuff);
+		delete[] readBuff;
 	}
 
 	return message;

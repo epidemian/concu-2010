@@ -74,6 +74,6 @@ void parseArguments(int argc, char* argv[])
 
 void loadConfigFile()
 {
-	GlobalConfig::ConfigPtr configFile(new ConfigFile(CONFIG_FILE_NAME));
-	GlobalConfig::setConfig(configFile);
+	static ConfigFile configFile(CONFIG_FILE_NAME);
+	GlobalConfig::setConfig(&configFile);
 }

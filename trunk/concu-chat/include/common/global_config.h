@@ -20,17 +20,15 @@ public:
 	template <typename T>
 	static T get(const string& key)
 	{
-		if (!_config.get())
+		if (!_config)
 			throw Exception("No configuration has been set");
 		return _config->get<T>(key);
 	}
 
-	typedef std::auto_ptr<Config> ConfigPtr;
-
-	static void setConfig(ConfigPtr config);
+	static void setConfig(Config* config);
 
 private:
-	static ConfigPtr _config;
+	static Config* _config;
 
 	DECLARE_NON_COPIABLE(GlobalConfig)
 };
