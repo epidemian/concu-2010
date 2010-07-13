@@ -151,7 +151,7 @@ void Server::processMessage(const Message& message, bool& exit)
 	}
 }
 
-void Server::processRegisterNameRequest(string userName, pid_t userPid)
+void Server::processRegisterNameRequest(const string& userName, pid_t userPid)
 {
 	bool registerOk = !_peerTable.containsName(userName);
 	if (registerOk)
@@ -190,7 +190,7 @@ void Server::processPeerTableRequest(pid_t userPid)
 	queue.sendByteArray(message.serialize());
 }
 
-void Server::processUnregisterNameRequest(string userName)
+void Server::processUnregisterNameRequest(const string& userName)
 {
 	try
 	{
