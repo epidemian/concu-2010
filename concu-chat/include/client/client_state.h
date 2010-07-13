@@ -29,6 +29,12 @@ class ClientState
 public:
 	virtual ~ClientState();
 
+	/** Called when the client enters this state. */
+	virtual void entryAction();
+
+	/** Called when the client leaves this state. */
+	virtual void exitAction();
+
 	virtual void processUserInputMessage(const string& userInput);
 	virtual void processRegisterNameResponse(bool responseOk);
 	virtual void processPeerTableResponse(const ByteArray& data);
@@ -36,12 +42,16 @@ public:
 	virtual void processStartChatResponse(bool responseOk);
 	virtual void processEndChat();
 	virtual void processChatMessage(const string& chatMessage);
-	virtual void processExit();
+	virtual void processUserExit();
 
+	const string& getName();
 protected:
-	ClientState(Client& client);
+	ClientState(const string& name, Client& client);
 
 	Client& _client;
+
+private:
+	const string _stateName;
 };
 
 /**
@@ -54,9 +64,9 @@ class NotRegisteredState: public ClientState
 {
 public:
 	NotRegisteredState(Client& client);
-	~NotRegisteredState();
 
-	void processUserInputMessage(const string& userName);
+	virtual void entryAction();
+	virtual void processUserInputMessage(const string& userName);
 };
 
 /**
@@ -69,7 +79,6 @@ class WaitingRegisterNameResponseState: public ClientState
 {
 public:
 	WaitingRegisterNameResponseState(Client& client, const string& userName);
-	~WaitingRegisterNameResponseState();
 
 	virtual void processRegisterNameResponse(bool responseOk);
 
@@ -77,18 +86,22 @@ private:
 	string _userName;
 };
 
-
 /**
  * Abstract superclass of all registered states. That is: all states after the
  * user name has been registered in the server.
- * Responds to the exit event unregistering the name from the server.
+ * Responds to the user exit event unregistering the name from the server.
+ * If a peer wants to start chatting, it immediately responds that it's busy
+ * (the IdleState redefines this behavior, which is correct for the other
+ * RegisteredStates).
  */
 class RegisteredState: public ClientState
 {
 public:
-	RegisteredState(Client& client, const string& userName);
+	RegisteredState(const string& stateName, Client& client,
+			const string& userName);
 
-	virtual void processExit();
+	virtual void processStartChatRequest(const Peer& peer);
+	virtual void processUserExit();
 
 protected:
 	/** The user name already registered in the server. */
@@ -111,6 +124,7 @@ public:
 
 	IdleState(Client& client, const string& userName);
 
+	virtual void entryAction();
 	virtual void processUserInputMessage(const string& userInput);
 	virtual void processPeerTableResponse(const ByteArray& data);
 	virtual void processStartChatRequest(const Peer& peer);
@@ -131,6 +145,7 @@ public:
 	WaitingPeerStartChatResponseState(Client& client, const string& userName,
 			const Peer& peer);
 
+	virtual void entryAction();
 	virtual void processUserInputMessage(const string& userInput);
 	virtual void processStartChatResponse(bool responseOk);
 
@@ -149,7 +164,9 @@ public:
 	WaitingUserStartChatResponseState(Client& client, const string& userName,
 			const Peer& peer);
 
+	virtual void entryAction();
 	virtual void processUserInputMessage(const string& userInput);
+	virtual void processUserExit();
 
 private:
 	Peer _peer;
@@ -161,7 +178,6 @@ private:
  *  - Input message: the user has entered some text. It's interpreted as a chat
  *    message and sent to the peer.
  *  - End chat: the peer left the chat session.
- *  - Start chat request by other peer: the client responds that it is busy.
  *  - CLient exists: Not only the user name has to be unregistered from the
  *    server (as with every other RegisteredState) but also a message must be
  *    sent to the peer to inform him that the user has left.
@@ -170,14 +186,13 @@ class ChattingState: public RegisteredState
 {
 public:
 	ChattingState(Client& client, const string& userName, const Peer& peer);
-	virtual ~ChattingState();
 
+	virtual void entryAction();
+	virtual void exitAction();
 	virtual void processUserInputMessage(const string& userInput);
 	virtual void processEndChat();
 	virtual void processChatMessage(const string& chatMessage);
-	virtual void processStartChatRequest(const Peer& peer);
-	virtual void processExit();
-
+	virtual void processUserExit();
 
 private:
 	Peer _peer;

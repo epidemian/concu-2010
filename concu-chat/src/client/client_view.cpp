@@ -55,7 +55,7 @@ void ClientView::showWelcomeMessage()
 	println("Bienvenido a Concu-Chat 2010!");
 	println(
 			"Escribí " + EXIT_COMMAND
-					+ " o un caracter e fin de archivo (ctrl + D) para salir cuando quieras.");
+					+ " o un caracter de fin de archivo (ctrl + D) para salir cuando quieras.");
 	printLineSeparator();
 }
 
