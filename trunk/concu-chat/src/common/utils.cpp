@@ -20,6 +20,13 @@ int strToInt(const char* str) throw (std::invalid_argument)
 	return n;
 }
 
+string toStr(bool b)
+{
+	std::ostringstream oss;
+	oss << std::boolalpha << b;
+	return oss.str();
+}
+
 string trimLeft(const string& str)
 {
 	size_t startPos = 0;

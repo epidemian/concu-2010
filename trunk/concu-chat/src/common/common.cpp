@@ -71,6 +71,7 @@ void parseArguments(int argc, char* argv[])
 	}
 }
 
+
 char getQueueId(){
 	return 'Q';
 }

@@ -100,6 +100,8 @@ void Client::changeState(ClientState* newState)
 
 bool Client::sendRegisterNameRequest(const string& userName)
 {
+	log("Sending register name request. Name: " + userName);
+
 	ByteArrayWriter writer;
 	writer.writeString(userName);
 	ByteArray data = writer.getByteArray();
@@ -109,6 +111,8 @@ bool Client::sendRegisterNameRequest(const string& userName)
 
 bool Client::sendUnregisterNameRequest(const string& userName)
 {
+	log("Sending unregister name request. Name: " + userName);
+
 	ByteArrayWriter writer;
 	writer.writeString(userName);
 	ByteArray data = writer.getByteArray();
@@ -118,11 +122,15 @@ bool Client::sendUnregisterNameRequest(const string& userName)
 
 bool Client::sendPeerTableRequest()
 {
-	return sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST);
+	log("Sending peer table request");
+
+	sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST);
 }
 
 bool Client::sendStartChatRequest(const Peer& peer, const string& userName)
 {
+	log("Sending start chat request to: " + toStr(peer));
+
 	ByteArrayWriter writer;
 	writer.writeString(userName);
 	ByteArray data = writer.getByteArray();
@@ -132,6 +140,9 @@ bool Client::sendStartChatRequest(const Peer& peer, const string& userName)
 
 bool Client::sendStartChatResponse(const Peer& peer, bool responseOk)
 {
+	log("Sending start chat response to:" + toStr(peer) + ", response: "
+			+ toStr(responseOk));
+
 	ByteArrayWriter writer;
 	writer.write(responseOk);
 	ByteArray data = writer.getByteArray();
@@ -141,6 +152,8 @@ bool Client::sendStartChatResponse(const Peer& peer, bool responseOk)
 
 bool Client::sendChatMessage(MessageQueue& peerQueue, const string& chatMessage)
 {
+	log("Sending chat message: " + chatMessage);
+
 	ByteArrayWriter writer;
 	writer.writeString(chatMessage);
 	ByteArray data = writer.getByteArray();
@@ -150,6 +163,8 @@ bool Client::sendChatMessage(MessageQueue& peerQueue, const string& chatMessage)
 
 bool Client::sendEndChatMessage(MessageQueue& peerQueue)
 {
+	log("Sending end chat message");
+
 	return sendMessageToQueue(peerQueue, Message::TYPE_END_CHAT);
 }
 
@@ -223,27 +238,27 @@ void Client::processMessage(const Message& message, bool& exitNow)
 	case Message::TYPE_USER_INPUT:
 	{
 		string userInput = reader.readString();
-		log("Processing user input: " + userInput);
+		log("Received user input: " + userInput);
 		_state->processUserInputMessage(userInput);
 		break;
 	}
 	case Message::TYPE_USER_EXIT:
 	{
 		exitNow = true;
-		log("Processing user exit");
+		log("Received user exit");
 		_state->processUserExit();
 		break;
 	}
 	case Message::TYPE_REGISTER_NAME_RESPONSE:
 	{
 		bool responseOk = reader.read<bool> ();
-		log("Processing register name response. Response: " + toStr(responseOk));
+		log("Received register name response. Response: " + toStr(responseOk));
 		_state->processRegisterNameResponse(responseOk);
 		break;
 	}
 	case Message::TYPE_PEER_TABLE_RESPONSE:
 	{
-		log("Processing peer table response");
+		log("Received peer table response");
 		_state->processPeerTableResponse(message.getData());
 		break;
 	}
@@ -251,27 +266,27 @@ void Client::processMessage(const Message& message, bool& exitNow)
 	{
 		string peerName = reader.readString();
 		Peer peer(peerName, message.getMessengerPid());
-		log("Processing start chat request from: " + toStr(peer));
+		log("Received start chat request from: " + toStr(peer));
 		_state->processStartChatRequest(peer);
 		break;
 	}
 	case Message::TYPE_START_CHAT_RESPONSE:
 	{
 		bool responseOk = reader.read<bool> ();
-		log("Processing start chat response. Response: " + toStr(responseOk));
+		log("Received start chat response. Response: " + toStr(responseOk));
 		_state->processStartChatResponse(responseOk);
 		break;
 	}
 	case Message::TYPE_CHAT_MESSAGE:
 	{
 		string chatMessage = reader.readString();
-		log("Processing chat message: " + chatMessage);
+		log("Received chat message: " + chatMessage);
 		_state->processChatMessage(chatMessage);
 		break;
 	}
 	case Message::TYPE_END_CHAT:
 	{
-		log("Processing end chat message");
+		log("Received end chat message");
 		_state->processEndChat();
 		break;
 	}
@@ -295,11 +310,8 @@ bool Client::sendMessageToQueue(MessageQueue& queue, MessageType type,
 		return true;
 	} catch (IpcError& e)
 	{
-		// TODO log
-		std::cout
-				<< "Could not send message to queue. IpcError thrown. Error code: "
-				<< e.getErrorCode() << " - " << strerror(e.getErrorCode())
-				<< "\n";
+		log("Could not send message to queue. IpcError thrown. Error code: "
+				+ toStr(e.getErrorCode()) + " - " + strerror(e.getErrorCode()));
 		return false;
 	}
 }
@@ -313,11 +325,8 @@ bool Client::sendMessage(const string& queueFileName, MessageType type,
 		return sendMessageToQueue(queue, type, data);
 	} catch (IpcError& e)
 	{
-		// TODO log
-		std::cout
-				<< "Could not create message queue. IpcError thrown. Error code: "
-				<< e.getErrorCode() << " - " << strerror(e.getErrorCode())
-				<< "\n";
+		log("Could not create message queue. IpcError thrown. Error code: "
+				+ toStr(e.getErrorCode()) + " - " + strerror(e.getErrorCode()));
 		return false;
 	}
 }
