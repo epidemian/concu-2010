@@ -19,7 +19,7 @@ void test2();
 void test3();
 void test4();
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	cout << "Exceptions Test\n\n";
 
@@ -86,12 +86,12 @@ public:
 	Explosion(int a, float lol) { method1(lol, a); }
 
 private:
-	float method1(float m, int n) { return method2(n); }
+	float method1(float, int n) { return method2(n); }
 	float method2(int what, char the = 't', string fuck = "foo")
-	{ return explode(fuck); }
+	{ return what + the + explode(fuck); }
 	float explode(string lol)
 	{
-		throw Exception("Booooooooom!");
+		throw Exception(lol + "Booooooooom!");
 	}
 
 };
@@ -107,13 +107,13 @@ template <typename First, typename Second>
 class SuperClass
 {
 public:
-	SuperClass(First f, Second s) { }
+	SuperClass(First, Second) { }
 
 	void explode() { method1(); }
 
 private:
 	void method1() { method2(3); }
-	float method2(int a) { templateMethod<std::vector<int> >(); return 3; }
+	float method2(int) { templateMethod<std::vector<int> >(); return 3; }
 	template <typename T>
 	T templateMethod() { doExplode();  return T(); }
 	void doExplode()

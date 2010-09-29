@@ -24,7 +24,7 @@ const char PERSON_ID = 'p';
 int writerProcess(pid_t childPid, const string& pathName);
 int readerProcess(const string& pathName);
 
-int main(int argc, char* argv[])
+int main(int, char* argv[])
 {
 	cout << "Shared Memory Test\n\n";
 

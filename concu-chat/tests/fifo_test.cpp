@@ -19,7 +19,7 @@ using std::cout;
 int writerProcess(pid_t);
 int readerProcess();
 
-int main(int argc, char* argv[]) {
+int main(int, char**) {
 
 	cout << "Fifo Test\n\n";
 

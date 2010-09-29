@@ -26,7 +26,7 @@ int test1();
 int child(int fd);
 int father(int fd);
 
-int main(int argc, char **argv)
+int main(int, char**)
 {
 	return test1();
 }
@@ -35,7 +35,7 @@ int test1()
 {
 	string pathname = "filelock.txt";
 
-	int fd = open(pathname.c_str(), O_RDWR | O_CREAT);
+	int fd = open(pathname.c_str(), O_RDWR | O_CREAT, 0666);
 	if (fd == -1)
 		throw Exception("Error in open");
 
