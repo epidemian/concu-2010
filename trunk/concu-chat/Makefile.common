@@ -1,21 +1,60 @@
+################################################################################
+#                                                                              #
+# Multi-target Makefile Common Rules                                           #
+#                                                                              #
+# Author: Demian Ferreiro                                                      #
+# Created: 2009/04/18                                                          #
+#                                                                              #
+# Copyleft 2009 Demian Ferreiro - Under the GPL license (http://www.gnu.org)   #
+#                                                                              #
+################################################################################
+
+# NOTE: Must be included from a configuration Makefile.
+
 ##### VARIABLES CALCULATED FROM CONFIGURATION ##################################
 
 # Compiler options to make it more strict.
 CFLAGS += -Wall -Wextra -pedantic -pedantic-errors
 
+# Optimization level 3 and Link Time Optimization enabled.
+CFLAGS += -O3 
+#CFLAGS += -flto
+LDFLAGS += -flto
+
 # Debug compiler options.
-debug_cflags = -ggdb -g3 -DDEBUG -O0
+debug_cflags = -ggdb -g3 -DDEBUG
 debug_cflags += -fno-inline
 
 # Release compiler options. 
 # Definig the NDEBUG avoids comipiling the asserts.
-release_cflags = -DNDEBUG -O3
+release_cflags = -DNDEBUG 
+
+# GTK+ flags and libraries.
+ifdef gtk
+CFLAGS += $(shell pkg-config --cflags gtk+-2.0)
+LDFLAGS += $(shell pkg-config --libs gtk+-2.0)
+endif
+
+# GTKmm flags and libraries.
+ifdef gtkmm
+CFLAGS += $(shell pkg-config --cflags gtkmm-2.4)
+LDFLAGS += $(shell pkg-config --libs gtkmm-2.4)
+endif
+
+# Curses library.
+ifdef curses
+LDFLAGS += -lcurses
+endif
+
+# SDL library.
+ifdef sdl
+LDFLAGS += -lSDLmain -lSDL
+endif
 
 # Adds the -static flag if specified.
 ifdef static
 LDFLAGS += -static
 endif
-
 
 
 # All src and include dirs.
@@ -26,23 +65,20 @@ all_src_dirs = $(common_src_dirs) \
 CFLAGS += $(patsubst %,-I%,$(include_dirs))
 
 
+# C flags go for C++ too.
+CXXFLAGS += $(CFLAGS)
+
+
 # Configures source file extensions, linker and standard depending on language.
 ifeq ($(language), C++)
 src_extension = .cpp
 LD = $(CXX)
-CFLAGS += -std=c++98
 else ifeq ($(language), C)
 src_extension = .c
 LD = $(CC)
-CFLAGS += -std=c99
 else
 # TODO: abort make here.
 endif
-
-
-# C flags go for C++ too.
-CXXFLAGS += $(CFLAGS)
-
 
 ifdef verbose
 RM := $(RM) -v
@@ -73,10 +109,9 @@ all_src_files := $(call find_src_files,$(all_src_dirs)) \
 
 
 # Converts a source file to the corresponding object file. 
-src_to_obj = $(patsubst %$(src_extension),%.o,\
-	$(patsubst $(framework_dir)/src/%, framework-src/%, $(1)))
+src_to_obj = $(patsubst %$(src_extension),%.o,$(1))
 
-all_obj_files := $(foreach file,$(all_src_files),$(call src_to_obj,$(file)))
+all_obj_files := $(call src_to_obj,$(all_src_files))
 
 # Creates the dependency files names by substituting the object files extension. 
 debug_deps_files   = $(all_obj_files:%.o=debug/%.d)
@@ -91,14 +126,20 @@ release_programs = $(programs:%=release/%)
 ##### RULES ####################################################################
 
 # PHONY rules: Are not associated to a file.
-.PHONY : all clean debug release release-ub $(programs)
+.PHONY : all clean debug release $(programs) help
 
 # Includes the dependecy files.
 -include $(debug_deps_files)
 -include $(release_deps_files)
 
-all :
-	@echo "all $(all_obj_files)"
+all : debug
+
+debug : $(debug_programs)
+
+release : $(release_programs)
+
+
+help :
 	@echo "Use make <target>"
 	@echo "Where target might be:"
 	@echo " debug:   builds all executables with debug information"
@@ -134,11 +175,6 @@ $(foreach file,$(all_src_files), $(call generate_obj_rule,$(file),debug))
 $(foreach file,$(all_src_files), $(call generate_obj_rule,$(file),release))
 
 
-debug : $(debug_programs)
-
-release : $(release_programs)
-
-
 # Every program depends on the debug compilation of that program.
 define DEFAULT_PROGRAM
 $(1) : debug/$(1)
@@ -157,10 +193,11 @@ $(1) : $(2) Makefile
 	$(call on_link_finish,$(1))
 endef
 
-get_program_obj_files = $(foreach src_file,\
-	$(call find_src_files,$(common_src_dirs) $($(notdir $(1))_src_dirs)) \
-	$($(notdir $(1))_src_files),\
-	$(patsubst %,$(dir $(1))%,$(call src_to_obj, $(src_file))))
+get_program_obj_files = \
+	$(foreach src_file,\
+		$(call find_src_files,$(common_src_dirs) $($(notdir $(1))_src_dirs)) \
+			$($(notdir $(1))_src_files),\
+		$(patsubst %,$(dir $(1))%,$(call src_to_obj, $(src_file))))
 
 get_program_ldflags = $($(notdir $(1))_ldflags) $(LDFLAGS)
 

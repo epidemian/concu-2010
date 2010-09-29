@@ -25,7 +25,7 @@ const char SHARED_MEM_ID = 'm';
 int writerProcess(pid_t childPid, const string& pathName);
 int readerProcess(const string& pathName);
 
-int main(int argc, char* argv[])
+int main(int, char** argv)
 {
 	cout << "Semaphore Test\n\n";
 

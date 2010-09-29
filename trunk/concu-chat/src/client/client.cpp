@@ -123,7 +123,7 @@ bool Client::sendPeerTableRequest()
 {
 	log("Sending peer table request");
 
-	sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST);
+	return sendMessageToServer(Message::TYPE_PEER_TABLE_REQUEST);
 }
 
 bool Client::sendStartChatRequest(const Peer& peer, const string& userName)

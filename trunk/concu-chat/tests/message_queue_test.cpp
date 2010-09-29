@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 	test2(argc, argv);
 }
 
-int test1(int argc, char **argv)
+int test1(int, char** argv)
 {
 	string pathName = argv[0];
 	MessageQueue queue(pathName, ID);
@@ -51,7 +51,7 @@ int test1(int argc, char **argv)
 	return 0;
 }
 
-int test2(int argc, char **argv)
+int test2(int, char** argv)
 {
 	string pathName = argv[0];
 
